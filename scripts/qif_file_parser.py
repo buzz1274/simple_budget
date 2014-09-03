@@ -258,14 +258,11 @@ class Quicken(object):
         config = ConfigParser.ConfigParser()
         config.read(self.CONFIG_PATH)
 
-
-
         self.db_engine = config.get('DB', 'db_engine')
         self.db_user = config.get('DB', 'db_user')
         self.db_password = config.get('DB', 'db_password')
         self.db_host = config.get('DB', 'db_host')
         self.db_port = config.get('DB', 'db_port')
-        self.db_name = config.get('DB', 'db_name')
         self.db_name = config.get('DB', 'db_name')
         self.transfer_accounts = config.get('ACCOUNTS', 'accounts')
 

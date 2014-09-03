@@ -40,9 +40,6 @@ table#budget {
 table#budget tbody tr > td.currency {
     text-align:right;
 }
-table#budget tbody tr > td.overage {
-    text-align:right;
-}
 table#budget tbody tr > td.success {
     color:#32CD32;
     font-weight:bold;

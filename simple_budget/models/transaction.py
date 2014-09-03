@@ -36,7 +36,7 @@ class Transaction(models.Model):
         if not os.path.isfile(filename):
             return False
         else:
-            subprocess.call(['python',
-                             '%s/scripts/qif_file_parser.py' % (settings.BASE_DIR,),
-                             filename])
+            subprocess.Popen(['nohup', 'python',
+                              '%s/scripts/qif_file_parser.py' % (settings.BASE_DIR,),
+                              filename])
             return True

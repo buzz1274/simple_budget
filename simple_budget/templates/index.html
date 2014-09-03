@@ -52,7 +52,14 @@
                             <td class="currency">-</td>
                         {% endif %}
                         </td>
-                        <td class="overage">-</td>
+                        {% if transaction.6 %}
+                            <td class="currency
+                                {% if transaction.6 > 0 %}warning{% endif %}">
+                                {{transaction.6}}
+                            </td>
+                        {% else %}
+                            <td class="currency">-</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </table>

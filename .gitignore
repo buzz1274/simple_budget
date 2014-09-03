@@ -4,3 +4,5 @@
 db.sqlite3
 simple_budget.zz50.co.uk.iml
 config.ini
+*.QIF
+nohup.out
