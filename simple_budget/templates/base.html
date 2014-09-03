@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Simple Budget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/static/assets/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/assets/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css"
+          href="//code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/styles.css" />
+</head>
+<body id="body">
+
+    <div class="container-fluid">
+        <div id="header" class="row-fluid">
+            <div id="header_content" class="row-fluid">
+                <a href="/"><h1>Simple Budget</h1></a>
+            </div>
+        </div>
+        <div id="main" class="row-fluid">
+            {% block content %}{% endblock %}
+            <br style="clear:both;" />
+        </div>
+
+        <div id="footer">
+            &nbsp;
+        </div>
+    </div>
+
+    <script data-main="/static/assets/js/main"
+            src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js">
+    </script>
+
+</body>
+</html>

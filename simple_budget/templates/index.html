@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="sub_main">
+        {% if transactions %}
+            <table id="budget" class="table table-condensed table-striped table-bordered">
+                <tr>
+                    <th id="date_header" colspan="5">
+                        <span id="previous_date">
+                            <a href="/" title="previous">&laquo;&laquo;</a>
+                        </span>
+                        {{date|date:"F Y"}}
+                        <span id="next_date">
+                            <a href="/" title="next">&raquo;&raquo;</a>
+                        </span>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Budget Category</th>
+                    <th>Budget(£)</th>
+                    <th>Actual(£)</th>
+                    <th>Difference(£)</th>
+                    <th>Overage(%)</th>
+                </tr>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{transaction.1}}</td>
+                        <td class="currency">
+                            {% if transaction.3 %}
+                                {{transaction.3}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="currency">
+                            {% if transaction.4 %}
+                                {{transaction.4}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        {% if transaction.5 %}
+                            <td class="currency
+                                {% if transaction.5 > 0 %}
+                                    success
+                                {% else %}
+                                    warning
+                                {% endif %}">
+                                {{transaction.5}}
+                            </td>
+                        {% else %}
+                            <td class="currency">-</td>
+                        {% endif %}
+                        </td>
+                        <td class="overage">-</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <div id="upload_file">
+            <strong>Upload Quicken File</strong>
+            <form action="/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,69 @@
+#body {
+    background:#f2f2e9;
+    font-family: "Trebuchet MS";
+}
+.container-fluid {
+    margin-right:auto;
+    margin-left:auto;
+    width:1000px;
+    background:#FFFFFF;
+    padding:0;
+}
+#header {
+    background:#ffdf43;
+    height:60px;
+}
+#header_content {
+    height:60px;
+    margin-left:10px;
+}
+#header_content h1 {
+    font-size:1.85em;
+    color:#000000;
+}
+#header_content a {
+    text-decoration:none;
+}
+#main {
+    padding:10px;
+}
+div#upload_file {
+    border:1px solid #DDDDDD;
+    margin-left:10px;
+    padding:10px;
+    float:left;
+}
+table#budget {
+    width:60%;
+    float:left;
+}
+table#budget tbody tr > td.currency {
+    text-align:right;
+}
+table#budget tbody tr > td.overage {
+    text-align:right;
+}
+table#budget tbody tr > td.success {
+    color:#32CD32;
+    font-weight:bold;
+}
+table#budget tbody tr > td.warning {
+    color:#FF0000;
+    font-weight:bold;
+}
+table#budget th#date_header {
+    text-align:center;
+}
+table#budget th#date_header span {
+    font-size:0.85em;
+}
+table#budget th#date_header span > a {
+    text-decoration:none;
+    color:#000000;
+}
+table#budget th#date_header span#next_date {
+    float:right;
+}
+table#budget th#date_header span#previous_date {
+    float:left;
+}
