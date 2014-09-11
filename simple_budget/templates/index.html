@@ -24,7 +24,13 @@
                 </tr>
                 {% for transaction in transactions %}
                     <tr>
-                        <td>{{transaction.1}}</td>
+                        <td>
+                            {% if forloop.counter == 1 %}
+                                {{transaction.1}}*
+                            {% else %}
+                                {{transaction.1}}
+                            {% endif %}
+                        </td>
                         <td class="currency">
                             {% if transaction.3 %}
                                 {{transaction.3}}
@@ -49,7 +55,13 @@
                                 {{transaction.5}}
                             </td>
                         {% else %}
-                            <td class="currency">-</td>
+                            <td class="currency {% if not transaction.4 %}success{% endif %}">
+                                {% if not transaction.4 %}
+                                    {{transaction.3}}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
                         {% endif %}
                         </td>
                         {% if transaction.6 %}
@@ -61,7 +73,61 @@
                             <td class="currency">-</td>
                         {% endif %}
                     </tr>
+                    {% if forloop.counter == 1 %}
+                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                        <tr>
+                            <td><strong>Total Income(£)</strong></td>
+                            <td class="currency">-</td>
+                            <td class="currency">
+                                <strong>{{totals.income.actual}}</strong>
+                            </td>
+                            <td class="currency">-</td>
+                            <td class="currency">-</td>
+                        </tr>
+                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                    {% endif %}
                 {% endfor %}
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr>
+                    <td><strong>Total Expense(£)</strong></td>
+                    <td class="currency">
+                        <strong>{{totals.expense.budget}}</strong>
+                    </td>
+                    <td class="currency">
+                        <strong>{{totals.expense.actual}}</strong>
+                    </td>
+                    <td class="currency
+                        {% if totals.expense.difference > 0 %}
+                            success
+                        {% else %}
+                            warning
+                        {% endif %}">
+                        <strong>{{totals.expense.difference}}</strong>
+                    </td>
+                    <td class="currency {% if totals.expense.overage > 0 %}warning{% endif %}">
+                        {% if totals.expense.overage > 0 %}
+                            <strong>
+                                {{totals.expense.overage}}
+                            </strong>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr>
+                    <td><strong>Grand Total(£)</strong></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
             </table>
         {% endif %}
         <div id="upload_file">

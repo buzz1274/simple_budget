@@ -22,6 +22,7 @@ def index(request):
         end_date = today
 
     transactions = BudgetCategory().budget_transactions(start_date, end_date)
+    totals = BudgetCategory().calculate_totals(transactions)
 
     if request.method == 'POST':
         form = UploadQuickenFile(request.POST, request.FILES)
@@ -35,6 +36,7 @@ def index(request):
         form = UploadQuickenFile()
 
     return render_to_response('index.html', {'transactions': transactions,
+                                             'totals': totals,
                                              'date': start_date,
                                              'form': form},
                               context_instance=RequestContext(request))

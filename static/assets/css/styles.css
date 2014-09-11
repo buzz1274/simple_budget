@@ -64,3 +64,10 @@ table#budget th#date_header span#next_date {
 table#budget th#date_header span#previous_date {
     float:left;
 }
+table#budget td.seperator {
+    line-height:1px;
+    background-color:#000000;
+    border:0px;
+    margin:0px;
+    padding:0px;
+}
