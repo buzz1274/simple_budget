@@ -24,6 +24,9 @@ class BudgetCategory(models.Model):
         end_date_income = start_date - datetime.timedelta(1)
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
 
+        annual_start_date = '2013-09-01'
+        annual_end_date = '2014-08-31'
+
         cursor = connection.cursor()
         cursor.execute("SELECT    bc.budget_category_id AS id, "
                        "          bc.budget_category AS category, "
@@ -33,7 +36,8 @@ class BudgetCategory(models.Model):
                        "            WHEN bc.expense = TRUE AND spend.remaining < 0 AND bc.budget_amount > 0 "
                        "              THEN @ROUND(((spend.remaining / bc.budget_amount) * 100), 2) "
                        "            ELSE 0 "
-                       "          END AS overage "
+                       "          END AS overage, "
+                       "          annual_spend.amount as annual_spend "
                        "FROM      budget_category bc "
                        "LEFT JOIN (SELECT    bc.budget_category_id AS id, "
                        "                     @SUM(tl.amount) AS amount, "
@@ -48,8 +52,18 @@ class BudgetCategory(models.Model):
                        "                          AND bc.expense = FALSE)) "
                        "           GROUP BY  id "
                        "           ) AS spend ON spend.id = bc.budget_category_id "
+                       "LEFT JOIN (SELECT    bc.budget_category_id AS id, "
+                       "                     ROUND(@(SUM(tl.amount) / 12), 2) AS amount "
+                       "           FROM      transaction_line tl "
+                       "           JOIN      \"transaction\" t ON (t.transaction_id = tl.transaction_id) "
+                       "           JOIN      transaction_category tc ON (tc.transaction_category_id = tl.transaction_category_id) "
+                       "           LEFT JOIN budget_category bc ON (bc.budget_category_id = tc.budget_category_id) "
+                       "           WHERE     t.transaction_date BETWEEN '%s' AND '%s' "
+                       "           GROUP BY  id "
+                       "           ) AS annual_spend ON annual_spend.id = bc.budget_category_id "
                        "ORDER BY  bc.expense ASC NULLS LAST, bc.budget_amount DESC NULLS LAST" %
-                       (start_date, end_date, start_date_income, end_date_income,))
+                       (start_date, end_date, start_date_income, end_date_income,
+                        annual_start_date, annual_end_date,))
 
         return cursor.fetchall()
 

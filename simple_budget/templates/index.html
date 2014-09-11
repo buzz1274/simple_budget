@@ -3,155 +3,170 @@
 {% block content %}
     <div id="sub_main">
         {% if transactions %}
-            <table id="budget" class="table table-condensed
-                                      table-striped table-bordered">
-                <tr>
-                    <th id="date_header" colspan="6">
-                        <span id="previous_date">
-                            <a href="/" title="previous">&laquo;&laquo;</a>
-                        </span>
-                        {{date|date:"F Y"}}
-                        <span id="next_date">
-                            <a href="/" title="next">&raquo;&raquo;</a>
-                        </span>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Budget Category</th>
-                    <th>Budget(£)</th>
-                    <th>Actual(£)</th>
-                    <th>Difference(£)</th>
-                    <th>Overage(%)</th>
-                    <th>12mnth Avg(£)</th>
-                </tr>
-                {% for transaction in transactions %}
+            <div id="budget_holder">
+                <table id="budget" class="table table-condensed
+                                          table-striped table-bordered">
                     <tr>
-                        <td>
-                            {% if forloop.counter == 1 %}
-                                {{transaction.1}}*
-                            {% else %}
-                                {{transaction.1}}
-                            {% endif %}
-                        </td>
-                        <td class="currency">
-                            {% if transaction.3 %}
-                                {{transaction.3}}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td class="currency">
-                            {% if transaction.4 %}
-                                {{transaction.4}}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        {% if transaction.5 %}
-                            <td class="currency
-                                {% if transaction.5 > 0 %}
-                                    success
+                        <th id="date_header" colspan="6">
+                            <span id="previous_date">
+                                <a href="/" title="previous">&laquo;&laquo;</a>
+                            </span>
+                            {{date|date:"F Y"}}
+                            <span id="next_date">
+                                <a href="/" title="next">&raquo;&raquo;</a>
+                            </span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Budget Category</th>
+                        <th>Budget(£)</th>
+                        <th>Actual(£)</th>
+                        <th>Difference(£)</th>
+                        <th>Overage(%)</th>
+                        <th>12mnth Avg(£)</th>
+                    </tr>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>
+                                {% if forloop.counter == 1 %}
+                                    {{transaction.1}}*
                                 {% else %}
-                                    warning
-                                {% endif %}">
-                                {{transaction.5}}
+                                    {{transaction.1}}
+                                {% endif %}
                             </td>
-                        {% else %}
-                            <td class="currency
-                                {% if not transaction.4 %}success{% endif %}">
-                                {% if not transaction.4 %}
+                            <td class="currency">
+                                {% if transaction.3 %}
                                     {{transaction.3}}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
-                        {% endif %}
-                        </td>
-                        {% if transaction.6 %}
-                            <td class="currency
-                                {% if transaction.6 > 0 %}warning{% endif %}">
-                                {{transaction.6}}
+                            <td class="currency">
+                                {% if transaction.4 %}
+                                    {{transaction.4}}
+                                {% else %}
+                                    -
+                                {% endif %}
                             </td>
-                        {% else %}
-                            <td class="currency">-</td>
+                            {% if transaction.5 %}
+                                <td class="currency
+                                    {% if transaction.5 > 0 %}
+                                        success
+                                    {% else %}
+                                        warning
+                                    {% endif %}">
+                                    {{transaction.5}}
+                                </td>
+                            {% else %}
+                                <td class="currency
+                                        {% if not transaction.4 %}
+                                            success
+                                        {% endif %}">
+                                    {% if not transaction.4 %}
+                                        {{transaction.3}}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            </td>
+                            {% if transaction.6 %}
+                                <td class="currency
+                                        {% if transaction.6 > 0 %}
+                                            warning
+                                        {% endif %}">
+                                    {{transaction.6}}
+                                </td>
+                            {% else %}
+                                <td class="currency">-</td>
+                            {% endif %}
+                            <td class="currency
+                                    {% if transaction.3 and transaction.7 < transaction.3 %}
+                                        success
+                                    {% else %}
+                                        warning
+                                    {% endif %}">
+                                <strong>{{transaction.7}}</strong>
+                            </td>
+                        </tr>
+                        {% if forloop.counter == 1 %}
+                            <tr>
+                                <td colspan="6" class="notes">
+                                    *Income figures calculated using values from
+                                    previous month.
+                                </td>
+                            </tr>
+                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                            <tr>
+                                <td><strong>Total Income(£)</strong></td>
+                                <td class="currency">-</td>
+                                <td class="currency">
+                                    <strong>{{totals.income.actual}}</strong>
+                                </td>
+                                <td class="currency">-</td>
+                                <td class="currency">-</td>
+                                <td class="currency">-</td>
+                            </tr>
+                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                         {% endif %}
+                    {% endfor %}
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                    <tr>
+                        <td><strong>Total Expense(£)</strong></td>
+                        <td class="currency">
+                            <strong>{{totals.expense.budget}}</strong>
+                        </td>
+                        <td class="currency">
+                            <strong>{{totals.expense.actual}}</strong>
+                        </td>
+                        <td class="currency
+                            {% if totals.expense.difference > 0 %}
+                                success
+                            {% else %}
+                                warning
+                            {% endif %}">
+                            <strong>{{totals.expense.difference}}</strong>
+                        </td>
+                        <td class="currency
+                                {% if totals.expense.overage > 0 %}
+                                    warning
+                                {% endif %}">
+                            {% if totals.expense.overage > 0 %}
+                                <strong>
+                                    {{totals.expense.overage}}
+                                </strong>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td class="currency">-</td>
                     </tr>
-                    {% if forloop.counter == 1 %}
-                        <tr>
-                            <td colspan="6" class="notes">
-                                *Income figures calculated using values from
-                                previous month.
-                            </td>
-                        </tr>
-                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                        <tr>
-                            <td><strong>Total Income(£)</strong></td>
-                            <td class="currency">-</td>
-                            <td class="currency">
-                                <strong>{{totals.income.actual}}</strong>
-                            </td>
-                            <td class="currency">-</td>
-                            <td class="currency">-</td>
-                            <td class="currency">-</td>
-                        </tr>
-                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                    {% endif %}
-                {% endfor %}
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                <tr>
-                    <td><strong>Total Expense(£)</strong></td>
-                    <td class="currency">
-                        <strong>{{totals.expense.budget}}</strong>
-                    </td>
-                    <td class="currency">
-                        <strong>{{totals.expense.actual}}</strong>
-                    </td>
-                    <td class="currency
-                        {% if totals.expense.difference > 0 %}
-                            success
-                        {% else %}
-                            warning
-                        {% endif %}">
-                        <strong>{{totals.expense.difference}}</strong>
-                    </td>
-                    <td class="currency
-                        {% if totals.expense.overage > 0 %}warning{% endif %}">
-                        {% if totals.expense.overage > 0 %}
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                    <tr>
+                        <td><strong>Grand Total(£)</strong></td>
+                        <td class="currency">-</td>
+                        <td class="currency
+                            {% if totals.grand_total.actual > 0 %}
+                                success
+                            {% else %}
+                                warning
+                            {% endif %}">
                             <strong>
-                                {{totals.expense.overage}}
+                                {{totals.grand_total.actual}}
                             </strong>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                    <td class="currency">-</td>
-                </tr>
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                <tr>
-                    <td><strong>Grand Total(£)</strong></td>
-                    <td class="currency">-</td>
-                    <td class="currency
-                        {% if totals.grand_total.actual > 0 %}
-                            success
-                        {% else %}
-                            warning
-                        {% endif %}">
-                        <strong>
-                            {{totals.grand_total.actual}}
-                        </strong>
-                    </td>
-                    <td class="currency">-</td>
-                    <td class="currency">-</td>
-                    <td class="currency">-</td>
-                </tr>
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-            </table>
+                        </td>
+                        <td class="currency">-</td>
+                        <td class="currency">-</td>
+                        <td class="currency">-</td>
+                    </tr>
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                </table>
+            </div>
         {% endif %}
         <div id="upload_file">
             <strong>Upload Quicken File</strong>
