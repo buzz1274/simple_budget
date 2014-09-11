@@ -60,7 +60,8 @@ class BudgetCategory(models.Model):
         :return: float
         """
         totals = {'income': {},
-                  'expense': {}}
+                  'expense': {},
+                  'grand_total': {}}
 
         if not transactions:
             return totals
@@ -69,26 +70,38 @@ class BudgetCategory(models.Model):
                 if transaction[1] == 'Income' and not transaction[2]:
                     totals['income'] = {'actual': transaction[4],
                                         'budget': transaction[3],
-                                        'difference': abs(transaction[4] - transaction[3])}
+                                        'difference': abs(transaction[4] -
+                                                          transaction[3])}
                     if transaction[3]:
-                        totals['income']['overage'] = (totals['income']['overage'] / transaction[3]) * 100
+                        totals['income']['overage'] = \
+                            (totals['income']['overage'] / transaction[3]) * 100
                 elif transaction[2]:
                     if transaction[4]:
-                        if not totals['expense'] or 'actual' not in totals['expense']:
+                        if (not totals['expense'] or
+                            'actual' not in totals['expense']):
                             totals['expense']['actual'] = transaction[4]
                         else:
                             totals['expense']['actual'] += transaction[4]
                     if transaction[3]:
-                        if not totals['expense'] or 'budget' not in totals['expense']:
+                        if (not totals['expense'] or
+                            'budget' not in totals['expense']):
                             totals['expense']['budget'] = transaction[3]
                         else:
                             totals['expense']['budget'] += transaction[3]
 
-            totals['expense']['difference'] = totals['expense']['budget'] - \
-                                              totals['expense']['actual']
+            if ('actual' in totals['expense'] and
+                'actual' in totals['income'] and
+                'budget' in totals['expense']):
 
-            if totals['expense']['difference'] < 0:
-                totals['expense']['overage'] = abs(round(((totals['expense']['difference'] /
-                                                           totals['expense']['actual']) * 100), 2))
+                totals['expense']['difference'] = \
+                    totals['expense']['budget'] - totals['expense']['actual']
+
+                totals['grand_total']['actual'] = \
+                    totals['income']['actual'] - totals['expense']['actual']
+
+                if totals['expense']['difference'] < 0:
+                    totals['expense']['overage'] = \
+                        abs(round(((totals['expense']['difference'] /
+                                    totals['expense']['actual']) * 100), 2))
 
             return totals

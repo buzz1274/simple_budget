@@ -3,7 +3,8 @@
 {% block content %}
     <div id="sub_main">
         {% if transactions %}
-            <table id="budget" class="table table-condensed table-striped table-bordered">
+            <table id="budget" class="table table-condensed
+                                      table-striped table-bordered">
                 <tr>
                     <th id="date_header" colspan="5">
                         <span id="previous_date">
@@ -55,7 +56,8 @@
                                 {{transaction.5}}
                             </td>
                         {% else %}
-                            <td class="currency {% if not transaction.4 %}success{% endif %}">
+                            <td class="currency
+                                {% if not transaction.4 %}success{% endif %}">
                                 {% if not transaction.4 %}
                                     {{transaction.3}}
                                 {% else %}
@@ -107,7 +109,8 @@
                         {% endif %}">
                         <strong>{{totals.expense.difference}}</strong>
                     </td>
-                    <td class="currency {% if totals.expense.overage > 0 %}warning{% endif %}">
+                    <td class="currency
+                        {% if totals.expense.overage > 0 %}warning{% endif %}">
                         {% if totals.expense.overage > 0 %}
                             <strong>
                                 {{totals.expense.overage}}
@@ -121,10 +124,19 @@
                 <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
                 <tr>
                     <td><strong>Grand Total(£)</strong></td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td class="currency">-</td>
+                    <td class="currency
+                        {% if totals.grand_total.actual > 0 %}
+                            success
+                        {% else %}
+                            warning
+                        {% endif %}">
+                        <strong>
+                            {{totals.grand_total.actual}}
+                        </strong>
+                    </td>
+                    <td class="currency">-</td>
+                    <td class="currency">-</td>
                 </tr>
                 <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
                 <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
