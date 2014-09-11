@@ -32,9 +32,10 @@ div#upload_file {
     margin-left:10px;
     padding:10px;
     float:left;
+    width:25%
 }
 table#budget {
-    width:60%;
+    width:70%;
     float:left;
 }
 table#budget tbody tr > td.currency {
@@ -70,4 +71,13 @@ table#budget td.seperator {
     border:0px;
     margin:0px;
     padding:0px;
+}
+table#budget td.notes {
+    background-color:#FFFFFF;
+    color:#FF0000;
+    margin:0px;
+    padding:0px;
+    font-size:0.85em;
+    font-style:italic;
+    padding:2px 2px 2px 20px;
 }

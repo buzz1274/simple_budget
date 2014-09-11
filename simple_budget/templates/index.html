@@ -6,7 +6,7 @@
             <table id="budget" class="table table-condensed
                                       table-striped table-bordered">
                 <tr>
-                    <th id="date_header" colspan="5">
+                    <th id="date_header" colspan="6">
                         <span id="previous_date">
                             <a href="/" title="previous">&laquo;&laquo;</a>
                         </span>
@@ -22,6 +22,7 @@
                     <th>Actual(£)</th>
                     <th>Difference(£)</th>
                     <th>Overage(%)</th>
+                    <th>12mnth Avg(£)</th>
                 </tr>
                 {% for transaction in transactions %}
                     <tr>
@@ -74,10 +75,17 @@
                         {% else %}
                             <td class="currency">-</td>
                         {% endif %}
+                        <td class="currency">-</td>
                     </tr>
                     {% if forloop.counter == 1 %}
-                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
-                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                        <tr>
+                            <td colspan="6" class="notes">
+                                *Income figures calculated using values from
+                                previous month.
+                            </td>
+                        </tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                         <tr>
                             <td><strong>Total Income(£)</strong></td>
                             <td class="currency">-</td>
@@ -86,13 +94,14 @@
                             </td>
                             <td class="currency">-</td>
                             <td class="currency">-</td>
+                            <td class="currency">-</td>
                         </tr>
-                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
-                        <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                     {% endif %}
                 {% endfor %}
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                 <tr>
                     <td><strong>Total Expense(£)</strong></td>
                     <td class="currency">
@@ -119,9 +128,10 @@
                             -
                         {% endif %}
                     </td>
+                    <td class="currency">-</td>
                 </tr>
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                 <tr>
                     <td><strong>Grand Total(£)</strong></td>
                     <td class="currency">-</td>
@@ -137,9 +147,10 @@
                     </td>
                     <td class="currency">-</td>
                     <td class="currency">-</td>
+                    <td class="currency">-</td>
                 </tr>
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
-                <tr><td colspan="5" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
             </table>
         {% endif %}
         <div id="upload_file">
