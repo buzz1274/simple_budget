@@ -2,9 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db import connection
 from datetime import date
-from decimal import *
 import datetime
-import sqlalchemy
 
 class BudgetCategory(models.Model):
     """
