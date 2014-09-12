@@ -23,7 +23,7 @@
                         <th>Actual(£)</th>
                         <th>Difference(£)</th>
                         <th>Overage(%)</th>
-                        <th>12mnth Avg(£)</th>
+                        <th>12Mnth Avg(£)</th>
                     </tr>
                     {% for transaction in transactions %}
                         <tr>
@@ -80,13 +80,8 @@
                             {% else %}
                                 <td class="currency">-</td>
                             {% endif %}
-                            <td class="currency
-                                    {% if transaction.3 and transaction.7 < transaction.3 %}
-                                        success
-                                    {% else %}
-                                        warning
-                                    {% endif %}">
-                                <strong>{{transaction.7}}</strong>
+                            <td class="currency">
+                                {{transaction.7}}
                             </td>
                         </tr>
                         {% if forloop.counter == 1 %}
@@ -106,7 +101,13 @@
                                 </td>
                                 <td class="currency">-</td>
                                 <td class="currency">-</td>
-                                <td class="currency">-</td>
+                                <td class="currency">
+                                    {% if totals.income.average %}
+                                        <strong>{{totals.income.average}}</strong>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                             </tr>
                             <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                             <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
@@ -142,7 +143,13 @@
                                 -
                             {% endif %}
                         </td>
-                        <td class="currency">-</td>
+                        <td class="currency">
+                            {% if totals.expense.average %}
+                                <strong>{{totals.expense.average}}</strong>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                     <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
@@ -150,18 +157,29 @@
                         <td><strong>Grand Total(£)</strong></td>
                         <td class="currency">-</td>
                         <td class="currency
-                            {% if totals.grand_total.actual > 0 %}
-                                success
-                            {% else %}
-                                warning
-                            {% endif %}">
+                                {% if totals.grand_total.actual > 0 %}
+                                    success
+                                {% else %}
+                                    warning
+                                {% endif %}">
                             <strong>
                                 {{totals.grand_total.actual}}
                             </strong>
                         </td>
                         <td class="currency">-</td>
                         <td class="currency">-</td>
-                        <td class="currency">-</td>
+                        <td class="currency
+                                {% if totals.grand_total.average > 0 %}
+                                    success
+                                {% else %}
+                                    warning
+                                {% endif %}">
+                            {% if totals.grand_total.average %}
+                                <strong>{{totals.grand_total.average}}</strong>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                     </tr>
                     <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                     <tr><td colspan="6" class="seperator">&nbsp;</td></tr>

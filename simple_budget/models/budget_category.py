@@ -89,6 +89,8 @@ class BudgetCategory(models.Model):
                     if transaction[3]:
                         totals['income']['overage'] = \
                             (totals['income']['overage'] / transaction[3]) * 100
+                    if transaction[7]:
+                        totals['income']['average'] = transaction[7]
                 elif transaction[2]:
                     if transaction[4]:
                         if (not totals['expense'] or
@@ -102,6 +104,13 @@ class BudgetCategory(models.Model):
                             totals['expense']['budget'] = transaction[3]
                         else:
                             totals['expense']['budget'] += transaction[3]
+
+                    if transaction[7]:
+                        if (not totals['expense'] or
+                            'average' not in totals['expense']):
+                            totals['expense']['average'] = transaction[7]
+                        else:
+                            totals['expense']['average'] += transaction[7]
 
             if ('actual' in totals['expense'] and
                 'actual' in totals['income'] and
@@ -117,5 +126,9 @@ class BudgetCategory(models.Model):
                     totals['expense']['overage'] = \
                         abs(round(((totals['expense']['difference'] /
                                     totals['expense']['actual']) * 100), 2))
+
+            if 'average' in totals['expense'] and 'average' in totals['income']:
+                totals['grand_total']['average'] = \
+                    totals['income']['average'] - totals['expense']['average']
 
             return totals
