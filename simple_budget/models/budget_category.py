@@ -1,8 +1,9 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.db import connection
-from datetime import date
-import datetime
+from datetime import datetime, date, timedelta
+import calendar
+
 
 class BudgetCategory(models.Model):
     """
@@ -16,16 +17,28 @@ class BudgetCategory(models.Model):
     class Meta:
         db_table = 'budget_category'
 
-    def budget_transactions(self, start_date, end_date):
+    def budget_transactions(self, start_date=None, end_date=None):
         """
         retrieves spending by budget category between the specified dates
         :return: dict
         """
-        end_date_income = start_date - datetime.timedelta(1)
-        start_date_income = date(end_date_income.year, end_date_income.month, 1)
+        if not start_date or not end_date:
+            today = date(datetime.now().year, datetime.now().month,
+                         datetime.now().day)
+            start_date = date(datetime.now().year, datetime.now().month, 1)
+            end_date = date(datetime.now().year, datetime.now().month,
+                            calendar.monthrange(datetime.now().year,
+                                                datetime.now().month)[1])
 
-        annual_start_date = '2013-09-01'
-        annual_end_date = '2014-08-31'
+            if end_date > today:
+                end_date = today
+
+        end_date_income = start_date - timedelta(1)
+        start_date_income = date(end_date_income.year, end_date_income.month, 1)
+        annual_start_date = date(today.year - 1, today.month, 1)
+        annual_end_date = date(today.year, today.month - 1,
+                               calendar.monthrange(today.year,
+                                                   today.month - 1)[1])
 
         cursor = connection.cursor()
         cursor.execute("SELECT    bc.budget_category_id AS id, "
@@ -71,7 +84,7 @@ class BudgetCategory(models.Model):
         """
         calculates total income, expense and remaining
         :param transactions:
-        :return: float
+        :return: dict
         """
         totals = {'income': {},
                   'expense': {},
