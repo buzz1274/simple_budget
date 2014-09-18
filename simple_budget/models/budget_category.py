@@ -2,7 +2,9 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db import connection
 from datetime import datetime, date, timedelta
+from simple_budget.sql import SQL
 import calendar
+from sqlalchemy import select, func, or_, and_
 
 
 class BudgetCategory(models.Model):
@@ -40,21 +42,83 @@ class BudgetCategory(models.Model):
                                calendar.monthrange(today.year,
                                                    today.month - 1)[1])
 
+        sql = SQL()
+        spend = sql.db_session.query(
+            select([sql.transaction_category.c.budget_category_id,
+                    sql.budget_category.c.budget_category,
+                    sql.budget_category.c.budget_amount,
+                    func.ABS(func.SUM(sql.transaction_line.c.amount)).\
+                                                        label('amount')]).\
+            where(sql.transaction_line.c.transaction_category_id==
+                  sql.transaction_category.c.transaction_category_id).\
+            where(sql.transaction.c.transaction_id==
+                  sql.transaction_line.c.transaction_id).\
+            where(sql.budget_category.c.budget_category_id==
+                  sql.transaction_category.c.budget_category_id).\
+            where(or_(and_(sql.transaction.c.transaction_date.between(start_date,
+                                                                      end_date),
+                           sql.budget_category.c.expense == True).self_group(),
+                      and_(sql.transaction.c.transaction_date.between(
+                                         start_date_income, end_date_income),
+                           sql.budget_category.c.expense ==
+                                         False).self_group())).\
+            group_by(sql.transaction_category.c.budget_category_id,
+                     sql.budget_category.c.budget_category,
+                     sql.budget_category.c.budget_amount).\
+            alias('spend'))
+
+        print str(spend)
+
+        #print spend.count()
+        """
+            filter(or_(and_(sql.transaction.c.transaction_date.between(start_date,
+                                                                       end_date),
+                            sql.budget_category.c.expense == True),
+                       and_(sql.transaction.c.transaction_date.between(
+                           start_date_income, end_date_income),
+                            sql.budget_category.c.expense == False))). \
+
+        """
+
+
+
+
+
+        """
+                   or_(sql.transaction.c.transaction_date.between(
+                                start_date_income, end_date_income). \
+                   and_(sql.budget_category.c.expense == False)))
+"""
+
+
+        q = sql.db_session.query(
+                select([sql.budget_category.c.budget_category_id.label('id'),
+                        sql.budget_category.c.budget_category.label('category'),
+                        sql.budget_category.c.expense,
+                        func.COALESCE(sql.budget_category.c.budget_amount, 0).
+                            label('budget_amount')]))
+
         cursor = connection.cursor()
         cursor.execute("SELECT    bc.budget_category_id AS id, "
                        "          bc.budget_category AS category, "
-                       "          bc.expense, COALESCE(bc.budget_amount, 0) AS budget_amount, "
-                       "          spend.amount, spend.remaining, "
+                       "          bc.expense, "
+                       "          COALESCE(bc.budget_amount, 0) AS budget_amount, "
+                       "          spend.amount, "
                        "          CASE "
-                       "            WHEN bc.expense = TRUE AND spend.remaining < 0 AND bc.budget_amount > 0 "
-                       "              THEN @ROUND(((spend.remaining / bc.budget_amount) * 100), 2) "
+                       "            WHEN bc.expense = TRUE "
+                       "              THEN spend.difference * -1 "
+                       "              ELSE spend.difference "
+                       "          END AS difference, "
+                       "          CASE "
+                       "            WHEN spend.difference < 0 AND bc.budget_amount > 0 "
+                       "              THEN @TRUNC(((spend.difference / bc.budget_amount) * 100), 2) "
                        "            ELSE 0 "
                        "          END AS overage, "
                        "          annual_spend.amount as annual_spend "
                        "FROM      budget_category bc "
                        "LEFT JOIN (SELECT    bc.budget_category_id AS id, "
                        "                     @SUM(tl.amount) AS amount, "
-                       "                     bc.budget_amount - @SUM(tl.amount) AS remaining "
+                       "                     bc.budget_amount - (@SUM(tl.amount)) AS difference "
                        "           FROM      transaction_line tl "
                        "           JOIN      \"transaction\" t ON (t.transaction_id = tl.transaction_id) "
                        "           JOIN      transaction_category tc ON (tc.transaction_category_id = tl.transaction_category_id) "
@@ -97,13 +161,17 @@ class BudgetCategory(models.Model):
                 if transaction[1] == 'Income' and not transaction[2]:
                     totals['income'] = {'actual': transaction[4],
                                         'budget': transaction[3],
-                                        'difference': abs(transaction[4] -
-                                                          transaction[3])}
-                    if transaction[3]:
+                                        'average': transaction[7],
+                                        'difference': abs(transaction[5])}
+
+                    print transaction
+
+                    if (totals['income']['difference'] and
+                        totals['income']['actual']):
                         totals['income']['overage'] = \
-                            (totals['income']['overage'] / transaction[3]) * 100
-                    if transaction[7]:
-                        totals['income']['average'] = transaction[7]
+                            str(round(abs(((totals['income']['difference'] /
+                                            totals['income']['actual']) * 100)), 2))
+
                 elif transaction[2]:
                     if transaction[4]:
                         if (not totals['expense'] or
@@ -134,6 +202,9 @@ class BudgetCategory(models.Model):
 
                 totals['grand_total']['actual'] = \
                     totals['income']['actual'] - totals['expense']['actual']
+
+                totals['grand_total']['budget'] = \
+                    totals['income']['budget'] - totals['expense']['budget']
 
                 if totals['expense']['difference'] < 0:
                     totals['expense']['overage'] = \

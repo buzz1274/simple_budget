@@ -95,12 +95,18 @@
                             <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                             <tr>
                                 <td><strong>Total Income(£)</strong></td>
-                                <td class="currency">-</td>
+                                <td class="currency">
+                                    <strong>{{totals.income.budget}}</strong>
+                                </td>
                                 <td class="currency">
                                     <strong>{{totals.income.actual}}</strong>
                                 </td>
-                                <td class="currency">-</td>
-                                <td class="currency">-</td>
+                                <td class="currency">
+                                    <strong>{{totals.income.difference}}</strong>
+                                </td>
+                                <td class="currency">
+                                    <strong>{{totals.income.overage}}</strong>
+                                </td>
                                 <td class="currency">
                                     {% if totals.income.average %}
                                         <strong>{{totals.income.average}}</strong>
@@ -155,17 +161,34 @@
                     <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                     <tr>
                         <td><strong>Grand Total(£)</strong></td>
-                        <td class="currency">-</td>
-                        <td class="currency
-                                {% if totals.grand_total.actual > 0 %}
+                        {% if totals.grand_total.budget %}
+                            <td class="currency
+                                {% if totals.grand_total.budget > 0 %}
                                     success
                                 {% else %}
                                     warning
                                 {% endif %}">
-                            <strong>
-                                {{totals.grand_total.actual}}
-                            </strong>
-                        </td>
+                                <strong>
+                                    {{totals.grand_total.budget}}
+                                </strong>
+                            </td>
+                        {% else %}
+                            <td class="currency">-</td>
+                        {% endif %}
+                        {% if totals.grand_total.actual %}
+                            <td class="currency
+                                    {% if totals.grand_total.actual > 0 %}
+                                        success
+                                    {% else %}
+                                        warning
+                                    {% endif %}">
+                                <strong>
+                                    {{totals.grand_total.actual}}
+                                </strong>
+                            </td>
+                        {% else %}
+                            <td class="currency">-</td>
+                        {% endif %}
                         <td class="currency">-</td>
                         <td class="currency">-</td>
                         <td class="currency
