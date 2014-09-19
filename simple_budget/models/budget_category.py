@@ -83,20 +83,21 @@ class BudgetCategory(models.Model):
                      sql.budget_category.c.budget_category,
                      sql.budget_category.c.budget_amount).subquery()
 
-        budget = sql.db_session.query(sql.budget_category.c.budget_category_id,
-                                      sql.budget_category.c.budget_category,
-                                      sql.budget_category.c.expense,
-                                      spend.c.difference.label('difference'),
-                                      func.COALESCE(sql.budget_category.c.budget_amount,
-                                                    0).label('budget_amount'),
-                                      spend.c.amount.label('actual_spend'),
-                                      case([(and_(spend.c.difference < 0,
-                                                  sql.budget_category.c.budget_amount > 0),
-                                             func.TRUNC(func.ABS((spend.c.difference /
-                                                                   sql.budget_category.c.budget_amount)
-                                                        * 100),2)),
-                                           ], else_=0).label('overage'),
-                                      annual_spend.c.amount.label('average_annual_spend')).\
+        budget = \
+            sql.db_session.query(sql.budget_category.c.budget_category_id,
+                                 sql.budget_category.c.budget_category,
+                                 sql.budget_category.c.expense,
+                                 spend.c.difference.label('difference'),
+                                 func.COALESCE(sql.budget_category.c.budget_amount,
+                                               0).label('budget_amount'),
+                                 spend.c.amount.label('actual_spend'),
+                                 case([(and_(spend.c.difference < 0,
+                                             sql.budget_category.c.budget_amount > 0),
+                                       func.TRUNC(func.ABS((spend.c.difference /
+                                                            sql.budget_category.c.budget_amount)
+                                                  * 100),2)),
+                                      ], else_=0).label('overage'),
+                                 annual_spend.c.amount.label('average_annual_spend')).\
                         outerjoin(spend,
                                   and_(spend.c.id==
                                        sql.budget_category.c.budget_category_id)).\

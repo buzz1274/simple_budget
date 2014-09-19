@@ -59,11 +59,11 @@
                                 </td>
                             {% else %}
                                 <td class="currency
-                                        {% if not transaction.4 %}
+                                        {% if not transaction.difference %}
                                             success
                                         {% endif %}">
-                                    {% if not transaction.4 %}
-                                        {{transaction.3}}
+                                    {% if not transaction.difference %}
+                                        {{transaction.budget_amount}}
                                     {% else %}
                                         -
                                     {% endif %}
