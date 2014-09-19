@@ -42,6 +42,5 @@ class SQL(object):
             self.transaction_line = Table('transaction_line', MetaData(),
                                           autoload=True, autoload_with=self.db)
 
-        except Exception, e:
-            print e
+        except Exception:
             pass

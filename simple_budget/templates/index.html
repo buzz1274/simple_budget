@@ -29,33 +29,33 @@
                         <tr>
                             <td>
                                 {% if forloop.counter == 1 %}
-                                    {{transaction.1}}*
+                                    {{transaction.budget_category}}*
                                 {% else %}
-                                    {{transaction.1}}
+                                    {{transaction.budget_category}}
                                 {% endif %}
                             </td>
                             <td class="currency">
-                                {% if transaction.3 %}
-                                    {{transaction.3}}
+                                {% if transaction.budget_amount %}
+                                    {{transaction.budget_amount}}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
                             <td class="currency">
-                                {% if transaction.4 %}
-                                    {{transaction.4}}
+                                {% if transaction.actual_spend %}
+                                    {{transaction.actual_spend}}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
-                            {% if transaction.5 %}
+                            {% if transaction.difference %}
                                 <td class="currency
-                                    {% if transaction.5 > 0 %}
+                                    {% if transaction.difference > 0 %}
                                         success
                                     {% else %}
                                         warning
                                     {% endif %}">
-                                    {{transaction.5}}
+                                    {{transaction.difference}}
                                 </td>
                             {% else %}
                                 <td class="currency
@@ -70,18 +70,18 @@
                                 </td>
                             {% endif %}
                             </td>
-                            {% if transaction.6 %}
+                            {% if transaction.overage %}
                                 <td class="currency
-                                        {% if transaction.6 > 0 %}
+                                        {% if transaction.overage > 0 %}
                                             warning
                                         {% endif %}">
-                                    {{transaction.6}}
+                                    {{transaction.overage}}
                                 </td>
                             {% else %}
                                 <td class="currency">-</td>
                             {% endif %}
                             <td class="currency">
-                                {{transaction.7}}
+                                {{transaction.average_annual_spend}}
                             </td>
                         </tr>
                         {% if forloop.counter == 1 %}
