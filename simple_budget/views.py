@@ -11,8 +11,7 @@ def index(request):
     """
     index
     """
-    transactions = BudgetCategory().budget_transactions()
-    totals = BudgetCategory().calculate_totals(transactions)
+    transactions, totals, grand_total = BudgetCategory().budget_transactions()
 
     if request.method == 'POST':
         form = UploadQuickenFile(request.POST, request.FILES)
@@ -27,6 +26,7 @@ def index(request):
 
     return render_to_response('index.html', {'transactions': transactions,
                                              'totals': totals,
+                                             'grand_total': grand_total,
                                              'date': datetime.now(),
                                              'form': form},
                               context_instance=RequestContext(request))

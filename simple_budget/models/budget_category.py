@@ -113,7 +113,10 @@ class BudgetCategory(models.Model):
                         order_by(sql.budget_type.c.ordering.asc()).\
                         order_by(sql.budget_category.c.budget_amount.desc().nullslast())
 
-        return budget.all()
+        transactions = budget.all()
+        sorted_totals, grand_total = self.calculate_totals(transactions)
+
+        return [transactions, sorted_totals, grand_total]
 
     def calculate_totals(self, transactions):
         """
@@ -125,6 +128,7 @@ class BudgetCategory(models.Model):
             return False
         else:
             totals = {}
+            grand_total = {'budget': 0, 'actual': 0, 'average_annual': 0}
             sorted_totals = []
 
             for transaction in transactions:
@@ -151,64 +155,23 @@ class BudgetCategory(models.Model):
                 total['overage'] = 1234
                 sorted_totals.append(total)
 
+                if key == 'Income':
+                    grand_total['budget'] += total['budget']
+                    grand_total['actual'] += total['actual']
+                    grand_total['average_annual'] += total['average_annual']
+                else:
+                    grand_total['budget'] -= total['budget']
+                    grand_total['actual'] -= total['actual']
+                    grand_total['average_annual'] -= total['average_annual']
+
+            grand_total['difference'] = grand_total['actual'] - \
+                                        grand_total['budget']
+
+            if grand_total['difference'] < 0:
+                grand_total['difference_percent'] =\
+                    abs(round(((grand_total['difference'] /
+                            float(grand_total['budget'])) * 100), 2))
+
             sorted_totals = sorted(sorted_totals, key=lambda k: k['ordering'])
 
-            return sorted_totals
-            """
-            if transaction[1] == 'Income' and not transaction[2]:
-                totals['income'] = {'actual': transaction[4],
-                                    'budget': transaction[3],
-                                    'average': transaction[7],
-                                    'difference': abs(transaction[5])}
-
-                print transaction
-
-                if (totals['income']['difference'] and
-                    totals['income']['actual']):
-                    totals['income']['overage'] = \
-                        str(round(abs(((totals['income']['difference'] /
-                                        totals['income']['actual']) * 100)), 2))
-
-            elif transaction[2]:
-                if transaction[4]:
-                    if (not totals['expense'] or
-                        'actual' not in totals['expense']):
-                        totals['expense']['actual'] = transaction[4]
-                    else:
-                        totals['expense']['actual'] += transaction[4]
-                if transaction[3]:
-                    if (not totals['expense'] or
-                        'budget' not in totals['expense']):
-                        totals['expense']['budget'] = transaction[3]
-                    else:
-                        totals['expense']['budget'] += transaction[3]
-
-                if transaction[7]:
-                    if (not totals['expense'] or
-                        'average' not in totals['expense']):
-                        totals['expense']['average'] = transaction[7]
-                    else:
-                        totals['expense']['average'] += transaction[7]
-
-        if ('actual' in totals['expense'] and
-            'actual' in totals['income'] and
-            'budget' in totals['expense']):
-
-            totals['expense']['difference'] = \
-                totals['expense']['budget'] - totals['expense']['actual']
-
-            totals['grand_total']['actual'] = \
-                totals['income']['actual'] - totals['expense']['actual']
-
-            totals['grand_total']['budget'] = \
-                totals['income']['budget'] - totals['expense']['budget']
-
-            if totals['expense']['difference'] < 0:
-                totals['expense']['overage'] = \
-                    abs(round(((totals['expense']['difference'] /
-                                totals['expense']['actual']) * 100), 2))
-
-        if 'average' in totals['expense'] and 'average' in totals['income']:
-            totals['grand_total']['average'] = \
-                totals['income']['average'] - totals['expense']['average']
-        """
+            return [sorted_totals, grand_total]
