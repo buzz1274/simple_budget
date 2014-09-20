@@ -25,140 +25,105 @@
                         <th>Overage(%)</th>
                         <th>12Mnth Avg(£)</th>
                     </tr>
-                    {% for transaction in transactions %}
-                        <tr>
-                            <td>
-                                {% if forloop.counter == 1 %}
-                                    {{transaction.budget_category}}*
-                                {% else %}
-                                    {{transaction.budget_category}}
-                                {% endif %}
-                            </td>
-                            <td class="currency">
-                                {% if transaction.budget_amount %}
-                                    {{transaction.budget_amount}}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td class="currency">
-                                {% if transaction.actual_spend %}
-                                    {{transaction.actual_spend}}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            {% if transaction.difference %}
-                                <td class="currency
-                                    {% if transaction.difference > 0 %}
-                                        success
-                                    {% else %}
-                                        warning
-                                    {% endif %}">
-                                    {{transaction.difference}}
-                                </td>
-                            {% else %}
-                                <td class="currency
-                                        {% if not transaction.difference %}
+                    {% for total in totals %}
+                        {% for transaction in transactions %}
+                            {% if total.budget_type == transaction.budget_type %}
+                                <tr>
+                                    <td>
+                                        {{transaction.budget_category}}
+                                    </td>
+                                    <td class="currency">
+                                        {% if transaction.budget_amount %}
+                                            {{transaction.budget_amount}}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="currency">
+                                        {% if transaction.actual_spend %}
+                                            {{transaction.actual_spend}}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    {% if transaction.difference %}
+                                        <td class="currency
+                                        {% if transaction.difference > 0 %}
                                             success
-                                        {% endif %}">
-                                    {% if not transaction.difference %}
-                                        {{transaction.budget_amount}}
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                            </td>
-                            {% if transaction.overage %}
-                                <td class="currency
-                                        {% if transaction.overage > 0 %}
+                                        {% else %}
                                             warning
                                         {% endif %}">
-                                    {{transaction.overage}}
-                                </td>
-                            {% else %}
-                                <td class="currency">-</td>
+                                            {{transaction.difference}}
+                                        </td>
+                                    {% else %}
+                                        <td class="currency
+                                            {% if not transaction.difference %}
+                                                success
+                                            {% endif %}">
+                                            {% if not transaction.difference %}
+                                                {{transaction.budget_amount}}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    </td>
+                                    {% if transaction.overage %}
+                                        <td class="currency
+                                            {% if transaction.overage > 0 %}
+                                                warning
+                                            {% endif %}">
+                                            {{transaction.overage}}
+                                        </td>
+                                    {% else %}
+                                        <td class="currency">-</td>
+                                    {% endif %}
+                                    <td class="currency">
+                                        {{transaction.average_annual_spend}}
+                                    </td>
+                                </tr>
                             {% endif %}
-                            <td class="currency">
-                                {{transaction.average_annual_spend}}
-                            </td>
-                        </tr>
-                        {% if forloop.counter == 1 %}
+                        {% endfor %}
+                        {% if total.budget_type == 'Income' %}
                             <tr>
                                 <td colspan="6" class="notes">
                                     *Income figures calculated using values from
                                     previous month.
                                 </td>
                             </tr>
-                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                            <tr>
-                                <td><strong>Total Income(£)</strong></td>
-                                <td class="currency">
-                                    <strong>{{totals.income.budget}}</strong>
-                                </td>
-                                <td class="currency">
-                                    <strong>{{totals.income.actual}}</strong>
-                                </td>
-                                <td class="currency">
-                                    <strong>{{totals.income.difference}}</strong>
-                                </td>
-                                <td class="currency">
-                                    <strong>{{totals.income.overage}}</strong>
-                                </td>
-                                <td class="currency">
-                                    {% if totals.income.average %}
-                                        <strong>{{totals.income.average}}</strong>
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                            <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                        {% endif %}
+                        {%  endif %}
+                        <tr>
+                            <td colspan="6" class="seperator">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="seperator">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total {{total.budget_type}}(£)</strong></td>
+                            <td class="currency">
+                                <strong>{{total.budget}}</strong>
+                            </td>
+                            <td class="currency">
+                                <strong>{{total.actual}}</strong>
+                            </td>
+                            <td class="currency">
+                                <strong>{{total.difference}}</strong>
+                            </td>
+                            <td class="currency">
+                                <strong>{{totals.income.overage}}</strong>
+                            </td>
+                            <td class="currency">
+                                {% if totals.income.average %}
+                                    <strong>{{totals.income.average}}</strong>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+                        <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
                     {% endfor %}
-                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                    <tr>
-                        <td><strong>Total Expense(£)</strong></td>
-                        <td class="currency">
-                            <strong>{{totals.expense.budget}}</strong>
-                        </td>
-                        <td class="currency">
-                            <strong>{{totals.expense.actual}}</strong>
-                        </td>
-                        <td class="currency
-                            {% if totals.expense.difference > 0 %}
-                                success
-                            {% else %}
-                                warning
-                            {% endif %}">
-                            <strong>{{totals.expense.difference}}</strong>
-                        </td>
-                        <td class="currency
-                                {% if totals.expense.overage > 0 %}
-                                    warning
-                                {% endif %}">
-                            {% if totals.expense.overage > 0 %}
-                                <strong>
-                                    {{totals.expense.overage}}
-                                </strong>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td class="currency">
-                            {% if totals.expense.average %}
-                                <strong>{{totals.expense.average}}</strong>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
-                    <tr><td colspan="6" class="seperator">&nbsp;</td></tr>
+
                     <tr>
                         <td><strong>Grand Total(£)</strong></td>
                         {% if totals.grand_total.budget %}

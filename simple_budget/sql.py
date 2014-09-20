@@ -32,6 +32,9 @@ class SQL(object):
             self.budget_category = Table('budget_category', MetaData(),
                                          autoload=True, autoload_with=self.db)
 
+            self.budget_type = Table('budget_type', MetaData(),
+                                     autoload=True, autoload_with=self.db)
+
             self.transaction = Table('transaction', MetaData(),
                                      autoload=True, autoload_with=self.db)
 

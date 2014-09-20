@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 from django.db import models
 from datetime import datetime, date, timedelta
 from simple_budget.sql import SQL
-import calendar
 from sqlalchemy import func, or_, and_, case
+import calendar
 
 
 class BudgetCategory(models.Model):
@@ -50,17 +50,19 @@ class BudgetCategory(models.Model):
                      func.ABS(func.SUM(sql.transaction_line.c.amount))).\
                         label('difference')).\
             filter(sql.transaction_line.c.transaction_category_id==
-                   sql.transaction_category.c.transaction_category_id). \
+                   sql.transaction_category.c.transaction_category_id).\
             filter(sql.transaction.c.transaction_id==
                    sql.transaction_line.c.transaction_id). \
             filter(sql.budget_category.c.budget_category_id==
                    sql.transaction_category.c.budget_category_id). \
+            filter(sql.budget_category.c.budget_type_id==
+                   sql.budget_type.c.budget_type_id). \
             filter(or_(and_(sql.transaction.c.transaction_date.between(start_date,
                                                                       end_date),
-                            sql.budget_category.c.expense == True).self_group(),
+                            sql.budget_type.c.budget_type != 'Income').self_group(),
                        and_(sql.transaction.c.transaction_date.between(
                             start_date_income, end_date_income),
-                            sql.budget_category.c.expense == False).self_group())). \
+                            sql.budget_type.c.budget_type == 'Income').self_group())).\
             group_by(sql.transaction_category.c.budget_category_id,
                      sql.budget_category.c.budget_category,
                      sql.budget_category.c.budget_amount).subquery()
@@ -86,7 +88,8 @@ class BudgetCategory(models.Model):
         budget = \
             sql.db_session.query(sql.budget_category.c.budget_category_id,
                                  sql.budget_category.c.budget_category,
-                                 sql.budget_category.c.expense,
+                                 sql.budget_type.c.ordering,
+                                 sql.budget_type.c.budget_type,
                                  spend.c.difference.label('difference'),
                                  func.COALESCE(sql.budget_category.c.budget_amount,
                                                0).label('budget_amount'),
@@ -98,13 +101,16 @@ class BudgetCategory(models.Model):
                                                   * 100),2)),
                                       ], else_=0).label('overage'),
                                  annual_spend.c.amount.label('average_annual_spend')).\
+                        join(sql.budget_type,
+                             sql.budget_type.c.budget_type_id ==
+                             sql.budget_category.c.budget_type_id).\
                         outerjoin(spend,
                                   and_(spend.c.id==
                                        sql.budget_category.c.budget_category_id)).\
                         outerjoin(annual_spend,
                                   and_(annual_spend.c.id==
                                        sql.budget_category.c.budget_category_id)).\
-                        order_by(sql.budget_category.c.expense.asc().nullslast()).\
+                        order_by(sql.budget_type.c.ordering.asc()).\
                         order_by(sql.budget_category.c.budget_amount.desc().nullslast())
 
         return budget.all()
@@ -115,71 +121,94 @@ class BudgetCategory(models.Model):
         :param transactions:
         :return: dict
         """
-        totals = {'income': {},
-                  'expense': {},
-                  'grand_total': {}}
-
-        return totals
-
         if not transactions:
-            return totals
+            return False
         else:
+            totals = {}
+            sorted_totals = []
+
             for transaction in transactions:
-                if transaction[1] == 'Income' and not transaction[2]:
-                    totals['income'] = {'actual': transaction[4],
-                                        'budget': transaction[3],
-                                        'average': transaction[7],
-                                        'difference': abs(transaction[5])}
+                if transaction.budget_type not in totals:
+                    totals[transaction.budget_type] = \
+                        {'actual': 0, 'budget': 0, 'average_annual': 0,
+                         'budget_type': transaction.budget_type,
+                         'ordering': transaction.ordering}
 
-                    print transaction
+                if transaction.actual_spend:
+                    totals[transaction.budget_type]['actual'] += \
+                        transaction.actual_spend
 
-                    if (totals['income']['difference'] and
-                        totals['income']['actual']):
-                        totals['income']['overage'] = \
-                            str(round(abs(((totals['income']['difference'] /
-                                            totals['income']['actual']) * 100)), 2))
+                if transaction.budget_amount:
+                    totals[transaction.budget_type]['budget'] += \
+                        transaction.budget_amount
 
-                elif transaction[2]:
-                    if transaction[4]:
-                        if (not totals['expense'] or
-                            'actual' not in totals['expense']):
-                            totals['expense']['actual'] = transaction[4]
-                        else:
-                            totals['expense']['actual'] += transaction[4]
-                    if transaction[3]:
-                        if (not totals['expense'] or
-                            'budget' not in totals['expense']):
-                            totals['expense']['budget'] = transaction[3]
-                        else:
-                            totals['expense']['budget'] += transaction[3]
+                if transaction.average_annual_spend:
+                    totals[transaction.budget_type]['average_annual'] += \
+                        transaction.average_annual_spend
 
-                    if transaction[7]:
-                        if (not totals['expense'] or
-                            'average' not in totals['expense']):
-                            totals['expense']['average'] = transaction[7]
-                        else:
-                            totals['expense']['average'] += transaction[7]
+            for key, total in totals.iteritems():
+                total['difference'] = total['budget'] - total['actual']
+                total['overage'] = 1234
+                sorted_totals.append(total)
 
-            if ('actual' in totals['expense'] and
-                'actual' in totals['income'] and
-                'budget' in totals['expense']):
+            sorted_totals = sorted(sorted_totals, key=lambda k: k['ordering'])
 
-                totals['expense']['difference'] = \
-                    totals['expense']['budget'] - totals['expense']['actual']
+            return sorted_totals
+            """
+            if transaction[1] == 'Income' and not transaction[2]:
+                totals['income'] = {'actual': transaction[4],
+                                    'budget': transaction[3],
+                                    'average': transaction[7],
+                                    'difference': abs(transaction[5])}
 
-                totals['grand_total']['actual'] = \
-                    totals['income']['actual'] - totals['expense']['actual']
+                print transaction
 
-                totals['grand_total']['budget'] = \
-                    totals['income']['budget'] - totals['expense']['budget']
+                if (totals['income']['difference'] and
+                    totals['income']['actual']):
+                    totals['income']['overage'] = \
+                        str(round(abs(((totals['income']['difference'] /
+                                        totals['income']['actual']) * 100)), 2))
 
-                if totals['expense']['difference'] < 0:
-                    totals['expense']['overage'] = \
-                        abs(round(((totals['expense']['difference'] /
-                                    totals['expense']['actual']) * 100), 2))
+            elif transaction[2]:
+                if transaction[4]:
+                    if (not totals['expense'] or
+                        'actual' not in totals['expense']):
+                        totals['expense']['actual'] = transaction[4]
+                    else:
+                        totals['expense']['actual'] += transaction[4]
+                if transaction[3]:
+                    if (not totals['expense'] or
+                        'budget' not in totals['expense']):
+                        totals['expense']['budget'] = transaction[3]
+                    else:
+                        totals['expense']['budget'] += transaction[3]
 
-            if 'average' in totals['expense'] and 'average' in totals['income']:
-                totals['grand_total']['average'] = \
-                    totals['income']['average'] - totals['expense']['average']
+                if transaction[7]:
+                    if (not totals['expense'] or
+                        'average' not in totals['expense']):
+                        totals['expense']['average'] = transaction[7]
+                    else:
+                        totals['expense']['average'] += transaction[7]
 
-            return totals
+        if ('actual' in totals['expense'] and
+            'actual' in totals['income'] and
+            'budget' in totals['expense']):
+
+            totals['expense']['difference'] = \
+                totals['expense']['budget'] - totals['expense']['actual']
+
+            totals['grand_total']['actual'] = \
+                totals['income']['actual'] - totals['expense']['actual']
+
+            totals['grand_total']['budget'] = \
+                totals['income']['budget'] - totals['expense']['budget']
+
+            if totals['expense']['difference'] < 0:
+                totals['expense']['overage'] = \
+                    abs(round(((totals['expense']['difference'] /
+                                totals['expense']['actual']) * 100), 2))
+
+        if 'average' in totals['expense'] and 'average' in totals['income']:
+            totals['grand_total']['average'] = \
+                totals['income']['average'] - totals['expense']['average']
+        """
