@@ -37,12 +37,10 @@ div#upload_file {
 }
 div#budget_holder {
     float:left;
+    width:75%
 }
 table#budget {
     width:100%;
-}
-table#budget td {
-    width:17%;
 }
 table#budget tbody tr > td.currency {
     text-align:right;
@@ -82,5 +80,6 @@ table#budget td.notes {
     color:#FF0000;
     font-size:0.85em;
     font-style:italic;
-    padding:2px 2px 2px 20px;
+    word-wrap: break-word;
+    padding:2px 20px 2px 20px;
 }

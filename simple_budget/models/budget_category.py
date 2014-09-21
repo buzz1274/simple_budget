@@ -46,17 +46,21 @@ class BudgetCategory(models.Model):
                     sql.transaction_category.c.budget_category_id.label('id'),
                     func.ABS(func.SUM(sql.transaction_line.c.amount)).\
                         label('amount'),
-                    (sql.budget_category.c.budget_amount -
-                     func.ABS(func.SUM(sql.transaction_line.c.amount))).\
-                        label('difference')).\
+                    case([(sql.budget_type.c.budget_type != 'Expense',
+                           func.ABS(func.SUM(sql.transaction_line.c.amount)) -
+                           sql.budget_category.c.budget_amount),
+                          (sql.budget_type.c.budget_type == 'Expense',
+                           sql.budget_category.c.budget_amount -
+                           func.ABS(func.SUM(sql.transaction_line.c.amount))),
+                          ], else_=0).label('difference')).\
             filter(sql.transaction_line.c.transaction_category_id==
                    sql.transaction_category.c.transaction_category_id).\
             filter(sql.transaction.c.transaction_id==
                    sql.transaction_line.c.transaction_id). \
             filter(sql.budget_category.c.budget_category_id==
-                   sql.transaction_category.c.budget_category_id). \
+                   sql.transaction_category.c.budget_category_id).\
             filter(sql.budget_category.c.budget_type_id==
-                   sql.budget_type.c.budget_type_id). \
+                   sql.budget_type.c.budget_type_id).\
             filter(or_(and_(sql.transaction.c.transaction_date.between(start_date,
                                                                       end_date),
                             sql.budget_type.c.budget_type != 'Income').self_group(),
@@ -65,7 +69,8 @@ class BudgetCategory(models.Model):
                             sql.budget_type.c.budget_type == 'Income').self_group())).\
             group_by(sql.transaction_category.c.budget_category_id,
                      sql.budget_category.c.budget_category,
-                     sql.budget_category.c.budget_amount).subquery()
+                     sql.budget_category.c.budget_amount,
+                     sql.budget_type.c.budget_type).subquery()
 
         annual_spend = sql.db_session.query(
                     sql.transaction_category.c.budget_category_id.label('id'),
@@ -94,12 +99,12 @@ class BudgetCategory(models.Model):
                                  func.COALESCE(sql.budget_category.c.budget_amount,
                                                0).label('budget_amount'),
                                  spend.c.amount.label('actual_spend'),
-                                 case([(and_(spend.c.difference < 0,
+                                 case([(and_(spend.c.difference != 0,
                                              sql.budget_category.c.budget_amount > 0),
-                                       func.TRUNC(func.ABS((spend.c.difference /
+                                       func.ROUND(func.ABS((spend.c.difference /
                                                             sql.budget_category.c.budget_amount)
                                                   * 100),2)),
-                                      ], else_=0).label('overage'),
+                                      ], else_=0).label('difference_percent'),
                                  annual_spend.c.amount.label('average_annual_spend')).\
                         join(sql.budget_type,
                              sql.budget_type.c.budget_type_id ==
@@ -151,8 +156,16 @@ class BudgetCategory(models.Model):
                         transaction.average_annual_spend
 
             for key, total in totals.iteritems():
-                total['difference'] = total['budget'] - total['actual']
-                total['overage'] = 1234
+                if total['budget_type'] == 'Expense':
+                    total['difference'] = total['budget'] - total['actual']
+                else:
+                    total['difference'] = total['actual'] - total['budget']
+
+                if total['difference'] != 0:
+                    total['difference_percent'] = \
+                        abs(round(((total['difference'] /
+                                    total['budget']) * 100), 2))
+
                 sorted_totals.append(total)
 
                 if key == 'Income':
@@ -167,10 +180,10 @@ class BudgetCategory(models.Model):
             grand_total['difference'] = grand_total['actual'] - \
                                         grand_total['budget']
 
-            if grand_total['difference'] < 0:
+            if grand_total['difference'] != 0:
                 grand_total['difference_percent'] =\
-                    abs(round(((grand_total['difference'] /
-                            float(grand_total['budget'])) * 100), 2))
+                    abs(round(((float(grand_total['difference']) /
+                                float(grand_total['budget'])) * 100), 2))
 
             sorted_totals = sorted(sorted_totals, key=lambda k: k['ordering'])
 
