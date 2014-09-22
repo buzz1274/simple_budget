@@ -120,13 +120,11 @@
                                 <strong>{{total.budget}}</strong>
                             </td>
                             <td class="currency">
-                                <strong>
-                                    {% if total.actual %}
-                                        {{total.actual}}
-                                    {% else %}
-                                        -
-                                    {%  endif %}
-                                </strong>
+                                {% if total.actual %}
+                                    <strong>{{total.actual}}</strong>
+                                {% else %}
+                                    -
+                                {%  endif %}
                             </td>
                             {% if total.difference %}
                                 <td class="currency

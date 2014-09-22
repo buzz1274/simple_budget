@@ -31,9 +31,6 @@ class BudgetCategory(models.Model):
                             calendar.monthrange(datetime.now().year,
                                                 datetime.now().month)[1])
 
-            if end_date > today:
-                end_date = today
-
         end_date_income = start_date - timedelta(1)
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
         annual_start_date = date(today.year - 1, today.month, 1)

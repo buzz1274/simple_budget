@@ -11,7 +11,11 @@ def index(request):
     """
     index
     """
-    transactions, totals, grand_total = BudgetCategory().budget_transactions()
+
+
+
+    transactions, totals, grand_total = \
+        BudgetCategory().budget_transactions()
 
     if request.method == 'POST':
         form = UploadQuickenFile(request.POST, request.FILES)

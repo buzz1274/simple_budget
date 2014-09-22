@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Table, MetaData
-from sqlalchemy.orm import sessionmaker, aliased
+from sqlalchemy.orm import sessionmaker
 from settings import DATABASES
 
 class SQL(object):
@@ -45,5 +45,6 @@ class SQL(object):
             self.transaction_line = Table('transaction_line', MetaData(),
                                           autoload=True, autoload_with=self.db)
 
-        except Exception:
+        except Exception, e:
+            print e
             pass

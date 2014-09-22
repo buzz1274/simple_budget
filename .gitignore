@@ -3,7 +3,8 @@
 *.qif
 db.sqlite3
 simple_budget.zz50.co.uk.iml
-config.ini
+scripts/config.ini
+scripts/config.yaml
 *.QIF
 nohup.out
 simple_budget.iml
