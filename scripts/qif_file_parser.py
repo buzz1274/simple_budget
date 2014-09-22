@@ -272,7 +272,7 @@ class Quicken(object):
         class variables
         """
         self.sql = SQL()
-        with open('config.yaml') as f:
+        with open(self.CONFIG_PATH) as f:
             config = yaml.load(f)
 
         if 'accounts' in config:
