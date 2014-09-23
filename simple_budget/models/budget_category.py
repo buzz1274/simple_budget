@@ -119,7 +119,8 @@ class BudgetCategory(models.Model):
                                   and_(annual_spend.c.id==
                                        sql.budget_category.c.budget_category_id)).\
                         order_by(sql.budget_type.c.ordering.asc()).\
-                        order_by(sql.budget_category.c.budget_amount.desc().nullslast())
+                        order_by(sql.budget_category.c.budget_amount.desc().nullslast()).\
+                        order_by(sql.budget_category.c.budget_category.asc())
 
         transactions = budget.all()
         sorted_totals, grand_total = self.calculate_totals(transactions)
