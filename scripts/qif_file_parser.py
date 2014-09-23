@@ -119,6 +119,8 @@ class Quicken(object):
 
                         for transaction_line in transaction['split']:
                             if (transaction_line['category'] and
+                                (not transaction['reference'] or
+                                 transaction['reference'] != 'xxx') and
                                 (not re.match('\[', transaction_line['category']) or
                                  transaction_line['category'] in self.transfer_accounts or
                                  (transaction['reference'] and

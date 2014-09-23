@@ -29,14 +29,21 @@ def index(request):
 
         if year_month:
             start_date = date(year_month.year, year_month.month, 1)
-            end_date = date(year_month.year, year_month.month,
-                            calendar.monthrange(year_month.year,
-                                                year_month.month)[1])
-            display_date = start_date
-            next_month = date(year_month.year, year_month.month, 1) + \
-                         relativedelta(months=1)
-            prev_month = date(year_month.year, year_month.month, 1) - \
-                         relativedelta(months=1)
+            if (START_DATE and
+                (datetime.strptime(str(start_date), '%Y-%m-%d') <
+                 datetime.strptime(START_DATE, '%Y-%m-%d')) or
+                (datetime.strptime(str(start_date), '%Y-%m-%d') >
+                 datetime.now())):
+                start_date = None
+            else:
+                display_date = start_date
+                end_date = date(year_month.year, year_month.month,
+                calendar.monthrange(year_month.year,
+                                    year_month.month)[1])
+                next_month = date(year_month.year, year_month.month, 1) + \
+                             relativedelta(months=1)
+                prev_month = date(year_month.year, year_month.month, 1) - \
+                             relativedelta(months=1)
 
     if (START_DATE and
         datetime.strptime(str(prev_month), '%Y-%m-%d') <

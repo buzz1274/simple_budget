@@ -3,6 +3,7 @@ from django.db import models
 from datetime import datetime, date, timedelta
 from simple_budget.sql import SQL
 from sqlalchemy import func, or_, and_, case
+from dateutil.relativedelta import relativedelta
 import calendar
 
 
@@ -33,10 +34,15 @@ class BudgetCategory(models.Model):
                      datetime.now().day)
         end_date_income = start_date - timedelta(1)
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
-        annual_start_date = date(today.year - 1, today.month, 1)
-        annual_end_date = date(today.year, today.month - 1,
-                               calendar.monthrange(today.year,
-                                                   today.month - 1)[1])
+
+
+        annual_start_date = date(today.year, start_date.month, 1) - \
+                            relativedelta(years=1)
+        annual_end_date = date(start_date.year, start_date.month, 1) - \
+                          relativedelta(months=1)
+        annual_end_date = date(annual_end_date.year, annual_end_date.month,
+                               calendar.monthrange(annual_end_date.year,
+                                                   annual_end_date.month)[1])
 
         sql = SQL()
         spend = sql.db_session.query(
