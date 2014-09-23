@@ -24,13 +24,13 @@ class BudgetCategory(models.Model):
         :return: dict
         """
         if not start_date or not end_date:
-            today = date(datetime.now().year, datetime.now().month,
-                         datetime.now().day)
             start_date = date(datetime.now().year, datetime.now().month, 1)
             end_date = date(datetime.now().year, datetime.now().month,
                             calendar.monthrange(datetime.now().year,
                                                 datetime.now().month)[1])
 
+        today = date(datetime.now().year, datetime.now().month,
+                     datetime.now().day)
         end_date_income = start_date - timedelta(1)
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
         annual_start_date = date(today.year - 1, today.month, 1)

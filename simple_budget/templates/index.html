@@ -8,13 +8,23 @@
                                           table-striped table-bordered">
                     <tr>
                         <th id="date_header" colspan="6">
-                            <span id="previous_date">
-                                <a href="/" title="previous">&laquo;&laquo;</a>
-                            </span>
+                            {% if prev_month %}
+                                <span id="previous_date">
+                                    <a href="/?date={{prev_month|date:"Y-m"}}"
+                                       title="previous month">
+                                        &laquo;&laquo;
+                                    </a>
+                                </span>
+                            {% endif %}
                             {{date|date:"F Y"}}
-                            <span id="next_date">
-                                <a href="/" title="next">&raquo;&raquo;</a>
-                            </span>
+                            {% if next_month %}
+                                <span id="next_date">
+                                    <a href="/?date={{next_month|date:"Y-m"}}"
+                                       title="next month">
+                                        &raquo;&raquo;
+                                    </a>
+                                </span>
+                            {% endif %}
                         </th>
                     </tr>
                     <tr>

@@ -16,9 +16,9 @@ from sql import SQL
 class QuickenException(Exception):
     pass
 
-
 class Quicken(object):
-    CONFIG_PATH = os.path.dirname(os.path.realpath(__file__)) + '/config.yaml'
+    CONFIG_PATH = os.path.dirname(os.path.realpath(__file__)) + \
+                  '/../simple_budget/config.yaml'
     arguments = {}
     db_user = None
     db_host = None
@@ -125,7 +125,6 @@ class Quicken(object):
                                   transaction['reference'] in self.references))):
 
                                 if transaction['reference'] in self.references:
-                                    print self.references[transaction['reference']]
                                     transaction_line['sub_category'] = None
                                     transaction_line['category'] = \
                                         self.references[transaction['reference']]
