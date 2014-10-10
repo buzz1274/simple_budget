@@ -11,7 +11,7 @@ import yaml
 
 sys.path.insert(0, '%s/../simple_budget/' %
                 (os.path.dirname(os.path.realpath(__file__)),))
-from sql import SQL
+from helper.sql import SQL
 
 class QuickenException(Exception):
     pass
@@ -56,7 +56,8 @@ class Quicken(object):
 
         self.arguments = {'action': '_parse',
                           'clean_db': True,
-                          'filename': sys.argv[1]}
+                          'filename': sys.argv[1],
+                          'delete_file': True}
 
     def _parse(self):
         """
@@ -144,6 +145,12 @@ class Quicken(object):
 
             self._clean_childless_transactions()
             self.sql.db_session.commit()
+
+            if self.arguments['delete_file']:
+                try:
+                    os.remove(self.arguments['filename'])
+                except OSError:
+                    pass
 
         except Exception, e:
             self.sql.db_session.rollback()

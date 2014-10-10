@@ -1,7 +1,6 @@
 #body {
     background:#f2f2e9;
     font-family: "Trebuchet MS";
-    font-size:0.85em;
 }
 .container-fluid {
     margin-right:auto;
@@ -15,25 +14,28 @@
     height:60px;
 }
 #header_content {
-    height:60px;
-    margin-left:10px;
+    padding:15px 0 0 15px;
 }
 #header_content h1 {
-    font-size:1.85em;
     color:#000000;
+    font-weight:bold;
+    margin:0;
+    padding:0;
+    font-size:1.7em;
 }
 #header_content a {
+    color:#000000;
     text-decoration:none;
 }
-div#main {
-    margin:10px;
+div#sub_main {
+    padding:10px;
 }
 div#upload_file {
     border:1px solid #DDDDDD;
     margin-left:10px;
     padding:10px;
-    float:left;
-    width:20%
+    float:right;
+    width:23%
 }
 div#budget_holder {
     float:left;
@@ -51,13 +53,11 @@ table#budget tbody tr > td.success {
 }
 table#budget tbody tr > td.warning {
     color:#FF0000;
+    background-color:#f2dede;
     font-weight:bold;
 }
 table#budget th#date_header {
     text-align:center;
-}
-table#budget th#date_header span {
-    font-size:0.85em;
 }
 table#budget th#date_header span > a {
     text-decoration:none;
@@ -82,4 +82,7 @@ table#budget td.notes {
     font-style:italic;
     word-wrap: break-word;
     padding:2px 20px 2px 20px;
+}
+table#budget_category th.center, td.center {
+    text-align:center;
 }

@@ -1,6 +1,14 @@
 from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy.orm import sessionmaker
-from settings import DATABASES
+
+try:
+    from simple_budget.settings import DATABASES
+except ImportError:
+    import os
+    import sys
+    sys.path.insert(0, '%s/../simple_budget/' %
+                    (os.path.dirname(os.path.realpath(__file__)),))
+    from settings import DATABASES
 
 class SQL(object):
 

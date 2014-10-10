@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <div id="sub_main">
+        <table id="budget_category"
+               class="table table-condensed table-striped table-bordered">
+            <tr>
+                <th colspan="4" class="center">
+                    Transaction Categories
+                    <span style="float:right;">
+                        <a href="/transaction/category/add/"
+                           class="btn btn-default btn-xs">
+                            Add
+                        </a>
+                    </span>
+                </th>
+            </tr>
+            <tr>
+                <th>Transaction Category</th>
+                <th>Budget Category</th>
+                <th>Budget Type</th>
+                <th class="center">-</th>
+            </tr>
+            {% for category in transaction_categories %}
+                <tr>
+                    <td>{{category.category}}</td>
+                    <td>{{category.budget_category}}</td>
+                    <td>{{category.budget_type}}</td>
+                    <td class="text-right">
+                        <div class="btn-toolbar">
+                            <div class="btn-group">
+                                <a href="/transaction/category/edit/{{category.transaction_category_id}}"
+                                   class="btn btn-default btn-xs">
+                                    Edit
+                                </a>
+                            </div>
+                            <div class="btn-group">
+                                <a href="/transaction/category/delete/{{category.transaction_category_id}}"
+                                   class="btn btn-danger btn-xs">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

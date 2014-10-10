@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from datetime import datetime, date, timedelta
-from simple_budget.sql import SQL
+from simple_budget.helper.sql import SQL
 from sqlalchemy import func, or_, and_, case
 from dateutil.relativedelta import relativedelta
 import calendar
@@ -134,7 +134,7 @@ class BudgetCategory(models.Model):
         :return: dict
         """
         if not transactions:
-            return False
+            return [False, False]
         else:
             totals = {}
             grand_total = {'budget': 0, 'actual': 0, 'average_annual': 0}

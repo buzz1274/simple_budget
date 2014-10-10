@@ -8,20 +8,22 @@
     <link rel="icon" href="/static/assets/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css"
           href="//code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
           rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/assets/css/styles.css" />
 </head>
 <body id="body">
 
     <div class="container-fluid">
-        <div id="header" class="row-fluid">
-            <div id="header_content" class="row-fluid">
-                <a href="/"><h1>Simple Budget</h1></a>
+        <div id="header">
+            <div id="header_content">
+                <h1><a href="/">Simple Budget</a></h1>
             </div>
         </div>
         <div id="main" class="row-fluid">
-            {% block content %}{% endblock %}
+            <div id="sub_main">
+                {% block content %}{% endblock %}
+            </div>
             <br style="clear:both;" />
         </div>
 
@@ -29,6 +31,7 @@
             &nbsp;
         </div>
     </div>
+    <br />
 
     <script data-main="/static/assets/js/main"
             src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js">
