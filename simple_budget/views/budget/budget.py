@@ -1,9 +1,6 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from simple_budget.models.budget_category import BudgetCategory
-from simple_budget.models.transaction import Transaction
-from simple_budget.forms.upload_quicken_file import UploadQuickenFile
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from simple_budget.settings import START_DATE
@@ -56,23 +53,11 @@ def budget(request):
     transactions, totals, grand_total = \
         BudgetCategory().budget_transactions(start_date, end_date)
 
-    if request.method == 'POST':
-        form = UploadQuickenFile(request.POST, request.FILES)
-        if form.is_valid():
-            if Transaction.process_upload_quicken_file(request.FILES['file']):
-                return HttpResponseRedirect('/budget/?message=upload_success')
-            else:
-                return HttpResponseRedirect('/budget/?message=upload_failure')
-
-    else:
-        form = UploadQuickenFile()
-
     return render_to_response('budget/budget.html',
                               {'transactions': transactions,
                                'totals': totals,
                                'grand_total': grand_total,
                                'date': display_date,
                                'next_month': next_month,
-                               'prev_month': prev_month,
-                               'form': form},
+                               'prev_month': prev_month},
                               context_instance=RequestContext(request))

@@ -11,6 +11,9 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
           rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/assets/css/styles.css" />
+    <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.12/d3.min.js"></script>
 </head>
 <body id="body">
 
@@ -20,18 +23,37 @@
                 <h1><a href="/">Simple Budget</a></h1>
             </div>
         </div>
+        <div class="navbar-header">
+            <div class="dropdown">
+                <a class="btn btn-sm btn-default dropdown-toggle"
+                   data-toggle="dropdown" href="#">
+                    Menu&nbsp;<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li>
+                        <a role="menuitem" href="/">
+                            Budget Summary
+                        </a>
+                        <a role="menuitem" href="/budget/">
+                            Budget
+                        </a>
+                        <a role="menuitem" href="/transaction/upload_quicken_file/">
+                            Upload Quicken File
+                        </a>
+                        <a role="menuitem" href="/transaction/category/">
+                            Transaction Categories
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div id="main" class="row-fluid">
             <div id="sub_main">
                 {% block content %}{% endblock %}
             </div>
-            <br style="clear:both;" />
         </div>
-
-        <div id="footer">
-            &nbsp;
-        </div>
+        <div id="footer">simple budget v0.1</div>
     </div>
-    <br />
 
     <script data-main="/static/assets/js/main"
             src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js">

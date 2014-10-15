@@ -5,9 +5,10 @@
 .container-fluid {
     margin-right:auto;
     margin-left:auto;
-    width:1000px;
+    width:720px;
     background:#FFFFFF;
     padding:0;
+    margin-bottom:40px;
 }
 #header {
     background:#ffdf43;
@@ -27,8 +28,25 @@
     color:#000000;
     text-decoration:none;
 }
+#footer {
+    border-top:1px solid #000000;
+    border-bottom:1px solid #000000;
+    font-size:0.75em;
+    padding-left:10px;
+    background-color:#F9F9F9;
+    font-weight:bold;
+}
+div.navbar-header {
+    border-bottom:1px solid #000000;
+    border-top:1px solid #000000;
+    width:100%;
+    margin-bottom:10px;
+    padding:5px 5px 5px 10px;
+    background-color:#F9F9F9;
+}
 div#sub_main {
     padding:10px;
+    min-height:500px;
 }
 div#upload_file {
     border:1px solid #DDDDDD;
@@ -38,8 +56,7 @@ div#upload_file {
     width:23%
 }
 div#budget_holder {
-    float:left;
-    width:75%
+    width:100%
 }
 table#budget {
     width:100%;

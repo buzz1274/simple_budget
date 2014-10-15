@@ -3,6 +3,8 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from simple_budget.models.transaction_category import TransactionCategory
 from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
+from simple_budget.models.transaction import Transaction
+from simple_budget.forms.upload_quicken_file import UploadQuickenFile
 
 
 def index(request):
@@ -12,6 +14,25 @@ def index(request):
     return render_to_response('transaction/category.html',
                               {'transaction_categories':
                                    TransactionCategory().transaction_category_mapping()},
+                              context_instance=RequestContext(request))
+
+def upload_quicken_file(request):
+    """
+    processes an uploaded quicken file
+    """
+    if request.method == 'POST':
+        form = UploadQuickenFile(request.POST, request.FILES)
+        if form.is_valid():
+            if Transaction.process_upload_quicken_file(request.FILES['file']):
+                return HttpResponseRedirect('/budget/?message=upload_success')
+            else:
+                return HttpResponseRedirect('/budget/?message=upload_failure')
+
+    else:
+        form = UploadQuickenFile()
+
+    return render_to_response('transaction/upload_quicken_file.html',
+                              {'form': form},
                               context_instance=RequestContext(request))
 
 def add_edit_transaction_category(request, action, transaction_category_id=None):
@@ -26,11 +47,11 @@ def add_edit_transaction_category(request, action, transaction_category_id=None)
             if form.cleaned_data['transaction_category_id']:
                 transaction_category = \
                     TransactionCategory(transaction_category_id=
-                                                form.cleaned_data['transaction_category_id'],
+                                            form.cleaned_data['transaction_category_id'],
                                         budget_category_id=
-                                                form.cleaned_data['budget_category'],
+                                            form.cleaned_data['budget_category'],
                                         transaction_category=
-                                                form.cleaned_data['transaction_category'])
+                                            form.cleaned_data['transaction_category'])
             else:
                 transaction_category = \
                     TransactionCategory(budget_category_id=
