@@ -5,37 +5,61 @@
 .container-fluid {
     margin-right:auto;
     margin-left:auto;
-    width:1000px;
+    width:720px;
     background:#FFFFFF;
     padding:0;
+    margin-bottom:40px;
 }
 #header {
     background:#ffdf43;
     height:60px;
 }
 #header_content {
-    height:60px;
-    margin-left:10px;
+    padding:15px 0 0 15px;
 }
 #header_content h1 {
-    font-size:1.85em;
     color:#000000;
+    font-weight:bold;
+    margin:0;
+    padding:0;
+    font-size:1.7em;
 }
 #header_content a {
+    color:#000000;
     text-decoration:none;
 }
-#main {
+#footer {
+    border-top:1px solid #000000;
+    border-bottom:1px solid #000000;
+    font-size:0.75em;
+    padding-left:10px;
+    background-color:#F9F9F9;
+    font-weight:bold;
+}
+div.navbar-header {
+    border-bottom:1px solid #000000;
+    border-top:1px solid #000000;
+    width:100%;
+    margin-bottom:10px;
+    padding:5px 5px 5px 10px;
+    background-color:#F9F9F9;
+}
+div#sub_main {
     padding:10px;
+    min-height:500px;
 }
 div#upload_file {
     border:1px solid #DDDDDD;
     margin-left:10px;
     padding:10px;
-    float:left;
+    float:right;
+    width:23%
+}
+div#budget_holder {
+    width:100%
 }
 table#budget {
-    width:60%;
-    float:left;
+    width:100%;
 }
 table#budget tbody tr > td.currency {
     text-align:right;
@@ -46,13 +70,11 @@ table#budget tbody tr > td.success {
 }
 table#budget tbody tr > td.warning {
     color:#FF0000;
+    background-color:#f2dede;
     font-weight:bold;
 }
 table#budget th#date_header {
     text-align:center;
-}
-table#budget th#date_header span {
-    font-size:0.85em;
 }
 table#budget th#date_header span > a {
     text-decoration:none;
@@ -63,4 +85,21 @@ table#budget th#date_header span#next_date {
 }
 table#budget th#date_header span#previous_date {
     float:left;
+}
+table#budget td.seperator {
+    line-height:1px;
+    background-color:#000000;
+    border:0px;
+    padding:0px;
+}
+table#budget td.notes {
+    background-color:#FFFFFF;
+    color:#FF0000;
+    font-size:0.85em;
+    font-style:italic;
+    word-wrap: break-word;
+    padding:2px 20px 2px 20px;
+}
+table#budget_category th.center, td.center {
+    text-align:center;
 }

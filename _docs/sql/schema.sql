@@ -9,14 +9,14 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -29,11 +29,11 @@ SET search_path = public, pg_catalog;
 --
 
 CREATE SEQUENCE budget_category_id
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER TABLE public.budget_category_id OWNER TO accounts;
@@ -43,39 +43,53 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: budget_category; Type: TABLE; Schema: public; Owner: accounts; Tablespace:
+-- Name: budget_category; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
 --
 
 CREATE TABLE budget_category (
-  budget_category_id integer DEFAULT nextval('budget_category_id'::regclass) NOT NULL,
-  budget_category text,
-  budget_amount numeric(7,2)
+    budget_category_id integer DEFAULT nextval('budget_category_id'::regclass) NOT NULL,
+    budget_category text,
+    budget_amount numeric(7,2),
+    budget_type_id smallint NOT NULL
 );
 
 
 ALTER TABLE public.budget_category OWNER TO accounts;
 
 --
+-- Name: budget_type; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
+--
+
+CREATE TABLE budget_type (
+    budget_type_id smallint NOT NULL,
+    budget_type character varying(15) NOT NULL,
+    ordering smallint NOT NULL
+);
+
+
+ALTER TABLE public.budget_type OWNER TO accounts;
+
+--
 -- Name: transaction_id; Type: SEQUENCE; Schema: public; Owner: accounts
 --
 
 CREATE SEQUENCE transaction_id
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER TABLE public.transaction_id OWNER TO accounts;
 
 --
--- Name: transaction; Type: TABLE; Schema: public; Owner: accounts; Tablespace:
+-- Name: transaction; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
 --
 
 CREATE TABLE transaction (
-  transaction_id integer DEFAULT nextval('transaction_id'::regclass) NOT NULL,
-  transaction_date date
+    transaction_id integer DEFAULT nextval('transaction_id'::regclass) NOT NULL,
+    transaction_date date
 );
 
 
@@ -86,24 +100,24 @@ ALTER TABLE public.transaction OWNER TO accounts;
 --
 
 CREATE SEQUENCE transaction_category_id
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER TABLE public.transaction_category_id OWNER TO accounts;
 
 --
--- Name: transaction_category; Type: TABLE; Schema: public; Owner: accounts; Tablespace:
+-- Name: transaction_category; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
 --
 
 CREATE TABLE transaction_category (
-  transaction_category_id integer DEFAULT nextval('transaction_category_id'::regclass) NOT NULL,
-  transaction_category_parent_id integer,
-  budget_category_id integer,
-  transaction_category text
+    transaction_category_id integer DEFAULT nextval('transaction_category_id'::regclass) NOT NULL,
+    transaction_category_parent_id integer,
+    budget_category_id integer,
+    transaction_category text
 );
 
 
@@ -114,59 +128,83 @@ ALTER TABLE public.transaction_category OWNER TO accounts;
 --
 
 CREATE SEQUENCE transaction_line_id
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
 
 ALTER TABLE public.transaction_line_id OWNER TO accounts;
 
 --
--- Name: transaction_line; Type: TABLE; Schema: public; Owner: accounts; Tablespace:
+-- Name: transaction_line; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
 --
 
 CREATE TABLE transaction_line (
-  transaction_line_id integer DEFAULT nextval('transaction_line_id'::regclass) NOT NULL,
-  transaction_id integer,
-  transaction_category_id integer,
-  amount numeric(7,2)
+    transaction_line_id integer DEFAULT nextval('transaction_line_id'::regclass) NOT NULL,
+    transaction_id integer,
+    transaction_category_id integer,
+    amount numeric(9,2)
 );
 
 
 ALTER TABLE public.transaction_line OWNER TO accounts;
 
 --
--- Name: budget_category_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace:
+-- Name: budget_category_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
 --
 
 ALTER TABLE ONLY budget_category
-ADD CONSTRAINT budget_category_pkey PRIMARY KEY (budget_category_id);
+    ADD CONSTRAINT budget_category_pkey PRIMARY KEY (budget_category_id);
 
 
 --
--- Name: transaction_category_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace:
+-- Name: budget_type_ordering_key; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
+--
+
+ALTER TABLE ONLY budget_type
+    ADD CONSTRAINT budget_type_ordering_key UNIQUE (ordering);
+
+
+--
+-- Name: budget_type_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
+--
+
+ALTER TABLE ONLY budget_type
+    ADD CONSTRAINT budget_type_pkey PRIMARY KEY (budget_type_id);
+
+
+--
+-- Name: transaction_category_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
 --
 
 ALTER TABLE ONLY transaction_category
-ADD CONSTRAINT transaction_category_pkey PRIMARY KEY (transaction_category_id);
+    ADD CONSTRAINT transaction_category_pkey PRIMARY KEY (transaction_category_id);
 
 
 --
--- Name: transaction_line_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace:
+-- Name: transaction_line_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
 --
 
 ALTER TABLE ONLY transaction_line
-ADD CONSTRAINT transaction_line_pkey PRIMARY KEY (transaction_line_id);
+    ADD CONSTRAINT transaction_line_pkey PRIMARY KEY (transaction_line_id);
 
 
 --
--- Name: transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace:
+-- Name: transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
 --
 
 ALTER TABLE ONLY transaction
-ADD CONSTRAINT transaction_pkey PRIMARY KEY (transaction_id);
+    ADD CONSTRAINT transaction_pkey PRIMARY KEY (transaction_id);
+
+
+--
+-- Name: budget_category_budget_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: accounts
+--
+
+ALTER TABLE ONLY budget_category
+    ADD CONSTRAINT budget_category_budget_type_id_fkey FOREIGN KEY (budget_type_id) REFERENCES budget_type(budget_type_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -174,7 +212,7 @@ ADD CONSTRAINT transaction_pkey PRIMARY KEY (transaction_id);
 --
 
 ALTER TABLE ONLY transaction_category
-ADD CONSTRAINT transaction_category_transaction_category_parent_id_fkey FOREIGN KEY (transaction_category_parent_id) REFERENCES transaction_category(transaction_category_id);
+    ADD CONSTRAINT transaction_category_transaction_category_parent_id_fkey FOREIGN KEY (transaction_category_parent_id) REFERENCES transaction_category(transaction_category_id);
 
 
 --
@@ -182,7 +220,7 @@ ADD CONSTRAINT transaction_category_transaction_category_parent_id_fkey FOREIGN 
 --
 
 ALTER TABLE ONLY transaction_line
-ADD CONSTRAINT transaction_line_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);
+    ADD CONSTRAINT transaction_line_transaction_id_fkey FOREIGN KEY (transaction_id) REFERENCES transaction(transaction_id);
 
 
 --
@@ -198,3 +236,4 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
+

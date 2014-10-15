@@ -1,76 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div id="sub_main">
-        {% if transactions %}
-            <table id="budget" class="table table-condensed table-striped table-bordered">
+    <svg class="chart"></svg>
+
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th style="width:17%">Date</th>
+            <th style="width:14%">Income(£)</th>
+            <th style="width:14%">Expense(£)</th>
+            <th style="width:14%">Savings(£)</th>
+            <th style="width:22%">Debt Repayment(£)</th>
+            <th style="width:14%">Total(£)</th>
+        </tr>
+        <tbody>
+            {% for key, spending in spending_by_budget_type.items %}
                 <tr>
-                    <th id="date_header" colspan="5">
-                        <span id="previous_date">
-                            <a href="/" title="previous">&laquo;&laquo;</a>
-                        </span>
-                        {{date|date:"F Y"}}
-                        <span id="next_date">
-                            <a href="/" title="next">&raquo;&raquo;</a>
-                        </span>
-                    </th>
-                </tr>
-                <tr>
-                    <th>Budget Category</th>
-                    <th>Budget(£)</th>
-                    <th>Actual(£)</th>
-                    <th>Difference(£)</th>
-                    <th>Overage(%)</th>
-                </tr>
-                {% for transaction in transactions %}
-                    <tr>
-                        <td>{{transaction.1}}</td>
-                        <td class="currency">
-                            {% if transaction.3 %}
-                                {{transaction.3}}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td class="currency">
-                            {% if transaction.4 %}
-                                {{transaction.4}}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        {% if transaction.5 %}
-                            <td class="currency
-                                {% if transaction.5 > 0 %}
-                                    success
-                                {% else %}
-                                    warning
-                                {% endif %}">
-                                {{transaction.5}}
-                            </td>
+                    <td>
+                        <a href="/budget/?date={{spending.date|date:"Y-m"}}">
+                            {{spending.date|date:"F Y"}}
+                        </a>
+                    </td>
+                    <td class="currency">{{spending.income}}</td>
+                    <td class="currency">{{spending.expense}}</td>
+                    <td class="currency">{{spending.savings}}</td>
+                    <td class="currency">{{spending.debt_repayment}}</td>
+                    <td class="currency
+                        {% if spending.total < 0 %}
+                            warning
                         {% else %}
-                            <td class="currency">-</td>
-                        {% endif %}
-                        </td>
-                        {% if transaction.6 %}
-                            <td class="currency
-                                {% if transaction.6 > 0 %}warning{% endif %}">
-                                {{transaction.6}}
-                            </td>
-                        {% else %}
-                            <td class="currency">-</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
-        <div id="upload_file">
-            <strong>Upload Quicken File</strong>
-            <form action="/" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{form.as_p}}
-                <input type="submit" value="Submit" />
-            </form>
-        </div>
-    </div>
+                            success{% endif %}">
+                        {{spending.total}}
+                    </td>
+                </tr>
+            {%  endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

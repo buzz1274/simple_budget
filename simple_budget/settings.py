@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import yaml
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -70,6 +71,7 @@ DATABASES = {
         'NAME': 'accounts',
         'USER': 'accounts',
         'HOST': '127.0.0.1',
+        'PORT': 5432,
         'PASSWORD': 'accounts'
     }
 }
@@ -79,7 +81,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-gb'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 
@@ -90,3 +92,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 TEMP_SAVE_PATH = '/tmp/'
+
+with open(BASE_DIR + '/simple_budget/config.yaml') as f:
+    config = yaml.load(f)
+
+    if 'start_date' in config:
+        START_DATE = config['start_date']
+    else:
+        START_DATE = None
+

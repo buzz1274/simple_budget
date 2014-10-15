@@ -24,11 +24,6 @@ class Transaction(models.Model):
         """
         filename = settings.TEMP_SAVE_PATH + quicken_file.name.lower()
 
-        try:
-            os.remove(filename)
-        except OSError:
-            pass
-
         with open(filename, 'w+') as destination:
             for chunk in quicken_file.chunks():
                 destination.write(chunk)
