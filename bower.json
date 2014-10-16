@@ -14,6 +14,10 @@
     "tests"
   ],
   "dependencies": {
-    "marionette": "2.2"
+    "marionette": "2.2",
+    "requirejs": "2.1",
+    "bootstrap": "3.2",
+    "json2": "*",
+    "d3": "3.4"
   }
 }
