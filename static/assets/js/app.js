@@ -27,13 +27,12 @@ require.config({
     }
 });
 
-require(["marionette"], function(Marionette) {
-
+require(["marionette"], function (Marionette) {
     "use strict"
 
     var Accounts = new Marionette.Application();
 
-    require(["modules/main"], function() {
+    require(["modules/main"], function () {
         Accounts.start();
     });
 

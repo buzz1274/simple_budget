@@ -1,0 +1,19 @@
+{
+  "name": "simple_budget",
+  "version": "0.1.0",
+  "authors": [
+    "David Exelby"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "marionette": "2.2"
+  }
+}
