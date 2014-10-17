@@ -19,5 +19,23 @@
     "bootstrap": "3.2",
     "json2": "*",
     "d3": "3.4"
+  },
+  "dependenciesIgnore": {
+    "backbone": [ "!**/backbone.js" ],
+    "backbone.babysitter": [ "!**/backbone.babysitter.js" ],
+    "backbone.wreqr": [ "!**/backbone.wreqr.js" ],
+    "bootstrap": [ "!**/bootstrap.js" ],
+    "jquery": [ "!**/jquery.js" ],
+    "underscore": [ "!**/underscore.js" ],
+    "marionette": [ "!**/backbone.marionette.js" ],
+    "requirejs": [ "!**/require.js" ],
+    "json2": [ "!**/json2.js" ],
+    "d3": [ "!**/d3.js" ]
+  },
+  "install" : {
+    "path" : "static/assets/js/lib/",
+    "sources" : {
+      "json2" : "temp/json2/json2.js"
+    }
   }
 }
