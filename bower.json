@@ -35,7 +35,7 @@
   "install" : {
     "path" : "static/assets/js/lib/",
     "sources" : {
-      "json2" : "temp/json2/json2.js"
+      "json2" : "_docs/js/json2/json2.js"
     }
   }
 }
