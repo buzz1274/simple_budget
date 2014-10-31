@@ -1,5 +1,6 @@
 define(["marionette",
         "config/marionette/regions/dialog"], function (Marionette) {
+
     "use strict";
 
     var Accounts = new Marionette.Application();
@@ -17,20 +18,32 @@ define(["marionette",
         Backbone.history.navigate(route, options);
     };
 
-    Accounts.getCurrentRoute = function() {
-        return Backbone.history.fragment;
-    };
-
-    Accounts.on("start", function () {
-        if(Backbone.history) {
-            Backbone.history.start();
-
-            if(this.getCurrentRoute() == "") {
-                Accounts.trigger("accounts:summary");
-            }
-
+    Accounts.router = Marionette.AppRouter.extend({
+        appRoutes: {
+            "#": "budgetSummary"
         }
     });
+
+    var API = {
+        budgetSummary: function() {
+            alert("HEREW");
+            require(["modules/accounts/controller/summary_controller"],
+                function(budgetSummaryController) {
+                    alert("DERP");
+                    budgetSummaryController.Summary();
+                }
+            );
+        }
+    }
+
+    Accounts.addInitializer(function() {
+        new Accounts.router({
+            controller: API
+        });
+    });
+
+    console.log(Accounts);
+
 
     return Accounts;
 
