@@ -47,7 +47,7 @@ class BudgetCategory(models.Model):
         sql = SQL()
         spend = sql.db_session.query(
                     sql.transaction_category.c.budget_category_id.label('id'),
-                    func.ABS(func.SUM(sql.transaction_line.c.amount)).\
+                    func.SUM(sql.transaction_line.c.amount).\
                         label('amount'),
                     case([(sql.budget_type.c.budget_type != 'Expense',
                            func.ABS(func.SUM(sql.transaction_line.c.amount)) -
@@ -151,6 +151,8 @@ class BudgetCategory(models.Model):
                     totals[transaction.budget_type]['actual'] += \
                         transaction.actual_spend
 
+                    transaction.actual_spend = abs(transaction.actual_spend)
+
                 if transaction.budget_amount:
                     totals[transaction.budget_type]['budget'] += \
                         transaction.budget_amount
@@ -160,6 +162,8 @@ class BudgetCategory(models.Model):
                         transaction.average_annual_spend
 
             for key, total in totals.iteritems():
+                total['actual'] = abs(total['actual'])
+
                 if total['budget_type'] == 'Expense':
                     total['difference'] = total['budget'] - total['actual']
                 else:
