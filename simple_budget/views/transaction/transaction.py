@@ -1,10 +1,12 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from simple_budget.models.transaction_category import TransactionCategory
 from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
 from simple_budget.models.transaction import Transaction
 from simple_budget.forms.upload_quicken_file import UploadQuickenFile
+from simple_budget.models.qif_parser.qif_parser import QIFParser
+import json
 
 
 def index(request):
@@ -34,6 +36,14 @@ def upload_quicken_file(request):
     return render_to_response('transaction/upload_quicken_file.html',
                               {'form': form},
                               context_instance=RequestContext(request))
+
+def upload_quicken_file_status(request):
+    """
+    gets the status for the last uploaded qif file
+    :return:
+    """
+    return HttpResponse(json.dumps({'status':  QIFParser.get_status()}),
+                        content_type='application/json')
 
 def add_edit_transaction_category(request, action, transaction_category_id=None):
     """

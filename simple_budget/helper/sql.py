@@ -1,14 +1,7 @@
 from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy.orm import sessionmaker
-
-try:
-    from simple_budget.settings import DATABASES
-except ImportError:
-    import os
-    import sys
-    sys.path.insert(0, '%s/../simple_budget/' %
-                    (os.path.dirname(os.path.realpath(__file__)),))
-    from settings import DATABASES
+from sqlalchemy.exc import DatabaseError
+from simple_budget.settings import DATABASES
 
 class SQL(object):
 
@@ -17,7 +10,7 @@ class SQL(object):
     budget_category = None
     transaction = None
     transaction_line = None
-
+    connection_active = False
 
     def __init__(self):
         """
@@ -53,5 +46,5 @@ class SQL(object):
             self.transaction_line = Table('transaction_line', MetaData(),
                                           autoload=True, autoload_with=self.db)
 
-        except Exception:
-            pass
+        except DatabaseError:
+            self.db = False

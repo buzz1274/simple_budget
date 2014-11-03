@@ -1,0 +1,32 @@
+{% if message %}
+    <p class="bg-{{message_type}}" style="padding:5px;">
+        <strong class="text-{{message_type}}">{{message}}</strong>
+    </p>
+    {% if message_key == 'in_progress_quicken_file' %}
+        <script>
+            function get_quicken_file_status() {
+                $.getJSON("/transaction/upload_quicken_file_status/",
+                    function (data) {
+                    }).done(function(response) {
+                        if (response.status) {
+                            if(response.status == 'in_progress') {
+                                setInterval(function () {
+                                    get_quicken_file_status();
+                                }, 10000);
+                            } else if(response.status == 'complete') {
+                                window.location =
+                                        '/budget/?message=quicken_upload_complete';
+                            } else if(response.status == 'failed') {
+                                window.location =
+                                        '/budget/?message=quicken_upload_failed';
+                            } else {
+                                window.location = '/budget/';
+                            }
+                        }
+                    }
+                );
+            }
+            get_quicken_file_status();
+        </script>
+    {% endif %}
+{% endif %}

@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 import os
 import subprocess
+import time
 
 
 class Transaction(models.Model):
@@ -31,7 +32,10 @@ class Transaction(models.Model):
         if not os.path.isfile(filename):
             return False
         else:
-            subprocess.Popen(['nohup', 'python',
-                              '%s/scripts/qif_file_parser.py' % (settings.BASE_DIR,),
-                              filename])
+            subprocess.Popen(['nohup', settings.PYTHON_PATH,
+                              '%s/simple_budget/scripts/qif_file_parser.py' %
+                                (settings.BASE_DIR,),
+                              '-p', filename])
+            time.sleep(5)
+
             return True

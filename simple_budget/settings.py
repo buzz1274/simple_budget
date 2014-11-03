@@ -80,21 +80,20 @@ DATABASES = {
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
 LANGUAGE_CODE = 'en-gb'
-
 TIME_ZONE = 'Europe/London'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
-
 STATIC_URL = '/static/'
 TEMP_SAVE_PATH = '/tmp/'
 
 with open(BASE_DIR + '/simple_budget/config.yaml') as f:
     config = yaml.load(f)
+
+    if 'python_path' in config:
+        PYTHON_PATH = config['python_path']
+    else:
+        PYTHON_PATH = None
 
     if 'start_date' in config:
         START_DATE = config['start_date']

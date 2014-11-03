@@ -35,8 +35,6 @@ class BudgetType(models.Model):
         year_ago = date(datetime.now().year,
                         datetime.now().month, 1) - relativedelta(months=11)
 
-        print end_of_this_month
-
         sql = SQL()
         spend = \
             sql.db_session.query(
@@ -68,7 +66,6 @@ class BudgetType(models.Model):
 
         if spend:
             for s in spend:
-                print s
                 key = str(date(s.year_month.year, s.year_month.month,
                                s.year_month.day))
 

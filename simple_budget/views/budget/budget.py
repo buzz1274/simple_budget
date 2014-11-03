@@ -1,6 +1,8 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from simple_budget.models.budget_category import BudgetCategory
+from simple_budget.models.qif_parser.qif_parser import QIFParser
+from simple_budget.helper.message import Message
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from simple_budget.settings import START_DATE
@@ -17,6 +19,13 @@ def budget(request):
     prev_month = date(datetime.now().year, datetime.now().month - 1, 1)
     next_month = date(datetime.now().year, datetime.now().month + 1, 1)
 
+    if QIFParser.get_status() == 'in_progress':
+        message_key, message, message_type = \
+            Message().get_message('in_progress_quicken_file')
+    else:
+        message_key, message, message_type = \
+            Message().get_message(request.GET.get('message', None))
+
     if year_month:
         try:
             year_month = datetime.strptime(year_month, '%Y-%m')
@@ -26,10 +35,10 @@ def budget(request):
         if year_month:
             start_date = date(year_month.year, year_month.month, 1)
             if (START_DATE and
-                    (datetime.strptime(str(start_date), '%Y-%m-%d') <
-                         datetime.strptime(START_DATE, '%Y-%m-%d')) or
-                    (datetime.strptime(str(start_date), '%Y-%m-%d') >
-                         datetime.now())):
+                (datetime.strptime(str(start_date), '%Y-%m-%d') <
+                 datetime.strptime(START_DATE, '%Y-%m-%d')) or
+                (datetime.strptime(str(start_date), '%Y-%m-%d') >
+                 datetime.now())):
                 start_date = None
             else:
                 display_date = start_date
@@ -59,5 +68,8 @@ def budget(request):
                                'grand_total': grand_total,
                                'date': display_date,
                                'next_month': next_month,
-                               'prev_month': prev_month},
+                               'prev_month': prev_month,
+                               'message_key': message_key,
+                               'message': message,
+                               'message_type': message_type},
                               context_instance=RequestContext(request))

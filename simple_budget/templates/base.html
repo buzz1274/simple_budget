@@ -20,35 +20,42 @@
     <div class="container-fluid">
         <div id="header">
             <div id="header_content">
-                <h1><a href="/">Simple Budget</a></h1>
+                <h1><a href="/">Simple Accounts</a></h1>
             </div>
         </div>
         <div class="navbar-header">
             <div class="dropdown">
                 <a class="btn btn-sm btn-default dropdown-toggle"
                    data-toggle="dropdown" href="#">
-                    Menu&nbsp;<span class="caret"></span>
+                    Budget&nbsp;<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                     <li>
                         <a role="menuitem" href="/">
-                            Budget Summary
+                            Summary
                         </a>
                         <a role="menuitem" href="/budget/">
-                            Budget
+                            Monthly Spending
                         </a>
-                        <a role="menuitem" href="/transaction/upload_quicken_file/">
-                            Upload Quicken File
+                        <a role="menuitem" href="/transaction/category/">
+                            Budgets
+                        </a>
+                        <a role="menuitem" href="/transaction/category/">
+                            Budget Categories
                         </a>
                         <a role="menuitem" href="/transaction/category/">
                             Transaction Categories
+                        </a>
+                        <a role="menuitem" href="/transaction/upload_quicken_file/">
+                            Upload Quicken File
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
-        <div id="main" class="row-fluid">
+        <div id="main" class="row-fluid" style="clear:both;">
             <div id="sub_main">
+                {% include 'message.html' %}
                 {% block content %}{% endblock %}
             </div>
         </div>
