@@ -19,7 +19,7 @@ class BudgetCategory(models.Model):
     class Meta:
         db_table = 'budget_category'
 
-    def budget_transactions(self, start_date=None, end_date=None):
+    def spending_by_budget_category(self, start_date=None, end_date=None):
         """
         retrieves spending by budget category between the specified dates
         :return: dict
@@ -127,7 +127,8 @@ class BudgetCategory(models.Model):
 
         return [transactions, sorted_totals, grand_total]
 
-    def calculate_totals(self, transactions):
+    @staticmethod
+    def calculate_totals(transactions):
         """
         calculates total income, expense and remaining
         :param transactions:

@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
-import Transaction
+from simple_budget.models.transaction.transaction import Transaction
 
 
 class TransactionLine(models.Model):

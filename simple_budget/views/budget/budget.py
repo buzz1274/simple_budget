@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from simple_budget.models.budget_category import BudgetCategory
+from simple_budget.models.budget.budget_category import BudgetCategory
 from simple_budget.models.qif_parser.qif_parser import QIFParser
 from simple_budget.helper.message import Message
 from datetime import datetime, date
@@ -70,7 +70,7 @@ def budget(request):
         next_month = None
 
     transactions, totals, grand_total = \
-        BudgetCategory().budget_transactions(start_date, end_date)
+        BudgetCategory().spending_by_budget_category(start_date, end_date)
 
     return render_to_response('budget/budget.html',
                               {'transactions': transactions,

@@ -21,7 +21,7 @@ class BudgetType(models.Model):
     @staticmethod
     def spending_by_budget_type():
         """
-        get budget spend by type
+        retrieves spending by budget type for the last 12 months
         """
         simple_budget_start_date = datetime.strptime(START_DATE, '%Y-%m-%d')
         simple_budget_start_date_previous_month = \
@@ -64,7 +64,9 @@ class BudgetType(models.Model):
         spend = spend.all()
         spending = {}
 
-        if spend:
+        if not spend:
+            return False
+        else:
             for s in spend:
                 key = str(date(s.year_month.year, s.year_month.month,
                                s.year_month.day))
@@ -95,4 +97,4 @@ class BudgetType(models.Model):
             if spending.keys()[-1] < START_DATE or len(spending.keys()) > 12:
                del spending[spending.keys()[-1]]
 
-        return spending
+            return spending

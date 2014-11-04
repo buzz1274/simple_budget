@@ -1,9 +1,9 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
-from simple_budget.models.transaction_category import TransactionCategory
+from simple_budget.models.transaction.transaction_category import TransactionCategory
 from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
-from simple_budget.models.transaction import Transaction
+from simple_budget.models.transaction.transaction import Transaction
 from simple_budget.forms.upload_quicken_file import UploadQuickenFile
 from simple_budget.models.qif_parser.qif_parser import QIFParser
 import json

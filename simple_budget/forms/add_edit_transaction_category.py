@@ -1,5 +1,5 @@
 from django import forms
-from simple_budget.models.budget_category import BudgetCategory
+from simple_budget.models.budget.budget_category import BudgetCategory
 
 
 class AddEditTransactionCategory(forms.Form):
