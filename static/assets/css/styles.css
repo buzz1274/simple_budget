@@ -43,6 +43,10 @@ div.navbar-header {
     padding:5px 5px 5px 10px;
     background-color:#F9F9F9;
 }
+div.navbar_dropdown {
+    float:left;
+    padding-right:10px;
+}
 div#sub_main {
     padding:10px;
     min-height:500px;

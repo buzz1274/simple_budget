@@ -24,21 +24,18 @@
             </div>
         </div>
         <div class="navbar-header">
-            <div class="dropdown">
+            <div class="dropdown navbar_dropdown">
                 <a class="btn btn-sm btn-default dropdown-toggle"
                    data-toggle="dropdown" href="#">
                     Budget&nbsp;<span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                     <li>
-                        <a role="menuitem" href="/">
+                        <a role="menuitem" href="/budget/summary/">
                             Summary
                         </a>
                         <a role="menuitem" href="/budget/">
                             Monthly Spending
-                        </a>
-                        <a role="menuitem" href="/transaction/category/">
-                            Budgets
                         </a>
                         <a role="menuitem" href="/transaction/category/">
                             Budget Categories
@@ -46,8 +43,33 @@
                         <a role="menuitem" href="/transaction/category/">
                             Transaction Categories
                         </a>
+                        <a role="menuitem" href="/transaction/category/">
+                            Budgets
+                        </a>
+                        <a role="menuitem" href="/transaction/category/">
+                            Transactions
+                        </a>
                         <a role="menuitem" href="/transaction/upload_quicken_file/">
                             Upload Quicken File
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dropdown navbar_dropdown">
+                <a class="btn btn-sm btn-default dropdown-toggle"
+                   data-toggle="dropdown" href="#">
+                    Saving&nbsp;<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li>
+                        <a role="menuitem" href="/budget/summary/">
+                            Summary
+                        </a>
+                        <a role="menuitem" href="/budget/">
+                            Accounts
+                        </a>
+                        <a role="menuitem" href="/budget/">
+                            Update Balances
                         </a>
                     </li>
                 </ul>

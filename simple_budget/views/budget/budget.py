@@ -6,7 +6,17 @@ from simple_budget.helper.message import Message
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from simple_budget.settings import START_DATE
+from simple_budget.models.budget.budget_type import BudgetType
 import calendar
+
+def summary(request):
+    """
+    budget summary
+    """
+    return render_to_response('budget/summary.html',
+                              {'spending_by_budget_type':
+                                   BudgetType().spending_by_budget_type()},
+                              context_instance=RequestContext(request))
 
 def budget(request):
     """
