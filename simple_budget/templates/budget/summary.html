@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <svg class="chart"></svg>
+
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th style="width:17%">Date</th>
+            <th style="width:14%">Income(£)</th>
+            <th style="width:14%">Expense(£)</th>
+            <th style="width:14%">Savings(£)</th>
+            <th style="width:22%">Debt Repayment(£)</th>
+            <th style="width:14%">Total(£)</th>
+        </tr>
+        <tbody>
+        {% for key, spending in spending_by_budget_type.items %}
+            <tr>
+                <td>
+                    <a href="/budget/?date={{spending.date|date:"Y-m"}}">
+                        {{spending.date|date:"F Y"}}
+                    </a>
+                </td>
+                <td class="currency">{{spending.previous_month_income}}</td>
+                <td class="currency">{{spending.expense}}</td>
+                <td class="currency">{{spending.savings}}</td>
+                <td class="currency">{{spending.debt_repayment}}</td>
+                <td class="currency
+                        {% if spending.total < 0 %}
+                            warning
+                        {% else %}
+                            success{% endif %}">
+                    {{spending.total}}
+                </td>
+            </tr>
+        {%  endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
