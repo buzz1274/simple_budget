@@ -18,7 +18,8 @@ class TransactionCategory(models.Model):
     class Meta:
         db_table = 'transaction_category'
 
-    def transaction_category_mapping(self):
+    @staticmethod
+    def transaction_category_mapping():
         """
         returns budget/transaction category mapping
         :return:
@@ -32,7 +33,7 @@ class TransactionCategory(models.Model):
                 sql.budget_type.c.budget_type,
                 sql.budget_category.c.budget_category_id,
                 sql.budget_category.c.budget_category,
-                case([(parent_transaction_category.c.transaction_category != None,
+                case([(parent_transaction_category.c.transaction_category is not None,
                        func.CONCAT(parent_transaction_category.c.transaction_category,
                                    ' >> ',
                                    sql.transaction_category.c.transaction_category))
@@ -48,7 +49,7 @@ class TransactionCategory(models.Model):
                 outerjoin(sql.budget_type,
                           sql.budget_type.c.budget_type_id ==
                           sql.budget_category.c.budget_type_id). \
-                order_by(case([(parent_transaction_category.c.transaction_category != None,
+                order_by(case([(parent_transaction_category.c.transaction_category is not None,
                                 func.CONCAT(parent_transaction_category.c.transaction_category,
                                             ' >> ',
                                             sql.transaction_category.c.transaction_category))

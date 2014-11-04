@@ -15,7 +15,7 @@ def index(request):
     """
     return render_to_response('transaction/category.html',
                               {'transaction_categories':
-                                   TransactionCategory().transaction_category_mapping()},
+                                   TransactionCategory.transaction_category_mapping()},
                               context_instance=RequestContext(request))
 
 def upload_quicken_file(request):

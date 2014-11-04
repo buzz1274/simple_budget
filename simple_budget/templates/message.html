@@ -9,24 +9,22 @@
                     function (data) {
                     }).done(function(response) {
                         if (response.status) {
-                            if(response.status == 'in_progress') {
-                                setInterval(function () {
-                                    get_quicken_file_status();
-                                }, 10000);
-                            } else if(response.status == 'complete') {
+                            if(response.status == 'complete') {
                                 window.location =
                                         '/budget/?message=quicken_upload_complete';
                             } else if(response.status == 'failed') {
                                 window.location =
                                         '/budget/?message=quicken_upload_failed';
-                            } else {
+                            } else if(response.status != 'in_progress') {
                                 window.location = '/budget/';
                             }
                         }
                     }
                 );
             }
-            get_quicken_file_status();
+            setInterval(function () {
+                get_quicken_file_status();
+            }, 10000);
         </script>
     {% endif %}
 {% endif %}
