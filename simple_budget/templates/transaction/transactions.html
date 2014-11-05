@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th id="date_header" colspan="5">
+                    <span id="previous_date">
+                        <a href="/budget/?date={{prev_month|date:"Y-m"}}"
+                           title="previous month">
+                            &laquo;&laquo;
+                        </a>
+                    </span>
+                Transaction Log&nbsp;({{date|date:"F Y"}})
+                <span id="next_date">
+                    <a href="/budget/?date={{next_month|date:"Y-m"}}"
+                       title="next month">
+                        &raquo;&raquo;
+                    </a>
+                </span>
+            </th>
+        </tr>
+        <tr>
+            <th>Date</th>
+            <th>Transaction Category</th>
+            <th>Budget Category</th>
+            <th>Amount(£)</th>
+            <th class="center">-</th>
+        </tr>
+        {% if not transactions %}
+            <tr>
+                <td colspan="5" class="center text-danger">
+                    No Transactions Found
+                </td>
+            </tr>
+        {% else %}
+            {% for transaction in transactions %}
+                <tr>
+                    <td>
+                        {{transaction.transaction.transaction_date}}
+                    </td>
+                    <td>
+                        {% if transaction.transaction_category.transaction_category_parent.transaction_category %}
+                            {{transaction.transaction_category.transaction_category_parent.transaction_category}}&nbsp;>>
+                        {% endif %}
+                        {{transaction.transaction_category.transaction_category}}
+                    </td>
+                    <td>
+                        {{transaction.transaction_category.budget_category.budget_category}}
+                    </td>
+                    <td class="currency
+                                {% if transaction.amount > 0 %}
+                                    success
+                                {% else %}
+                                    warning
+                                {% endif %}">
+                        {{transaction.amount}}
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-toolbar">
+                            <div class="btn-group">
+                                <a href="/transaction/category/edit/{{category.transaction_category_id}}"
+                                   class="btn btn-default btn-xs">
+                                    Edit
+                                </a>
+                            </div>
+                            <div class="btn-group">
+                                <a href="/transaction/category/delete/{{category.transaction_category_id}}"
+                                   class="btn btn-danger btn-xs">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

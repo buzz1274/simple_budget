@@ -4,14 +4,32 @@ from django.template import RequestContext
 from simple_budget.models.transaction.transaction_category import TransactionCategory
 from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
 from simple_budget.models.transaction.transaction import Transaction
+from simple_budget.models.transaction.transaction_line import TransactionLine
 from simple_budget.forms.upload_quicken_file import UploadQuickenFile
 from simple_budget.models.qif_parser.qif_parser import QIFParser
 import json
+from datetime import datetime
 
 
-def index(request):
+def transactions(request):
     """
-    displays budget category --> quicken mapping
+    display transaction log
+    """
+    display_date = datetime.now()
+    monthly_transactions = TransactionLine.objects.filter(
+                                transaction__transaction_date__year=2014,
+                                transaction__transaction_date__month=11).\
+                                order_by('transaction__transaction_date',
+                                         '-amount')
+
+    return render_to_response('transaction/transactions.html',
+                              {'date': display_date,
+                               'transactions': monthly_transactions},
+                              context_instance=RequestContext(request))
+
+def category(request):
+    """
+    displays transaction category --> budget category mapping
     """
     return render_to_response('transaction/category.html',
                               {'transaction_categories':
@@ -37,7 +55,7 @@ def upload_quicken_file(request):
                               {'form': form},
                               context_instance=RequestContext(request))
 
-def upload_quicken_file_status(request):
+def upload_quicken_file_status():
     """
     gets the status for the last uploaded qif file
     :return:
@@ -104,14 +122,14 @@ def delete_transaction_category(request, transaction_category_id):
     :param request:
     :return:
     """
-    category = TransactionCategory.objects.get(transaction_category_id=
-                                               transaction_category_id)
+    category_to_delete = TransactionCategory.objects.get(transaction_category_id=
+                                                         transaction_category_id)
 
-    if not category:
+    if not category_to_delete:
         message = 'invalid_transaction_category'
     else:
         try:
-            category.delete()
+            category_to_delete.delete()
             message = 'transaction_category_deleted'
         except AssertionError:
             message = 'invalid_transaction_category'
