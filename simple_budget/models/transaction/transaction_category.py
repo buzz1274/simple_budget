@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
 from simple_budget.helper.sql import SQL
-from simple_budget.models.budget.budget_category import BudgetCategory
 from sqlalchemy.orm import aliased
 from sqlalchemy import func, case
 

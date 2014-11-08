@@ -1,29 +1,103 @@
 {% extends "base.html" %}
+{% load templatetags %}
+
 {% block content %}
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
             <th id="date_header" colspan="5">
+                {% if prev_month %}
                     <span id="previous_date">
-                        <a href="/budget/?date={{prev_month|date:"Y-m"}}"
+                        <a href="/transactions/?date={{prev_month|date:"Y-m"}}"
                            title="previous month">
                             &laquo;&laquo;
                         </a>
                     </span>
+                {% endif %}
                 Transaction Log&nbsp;({{date|date:"F Y"}})
-                <span id="next_date">
-                    <a href="/budget/?date={{next_month|date:"Y-m"}}"
-                       title="next month">
-                        &raquo;&raquo;
-                    </a>
-                </span>
+                {% if next_month %}
+                    <span id="next_date">
+                        <a href="/transactions/?date={{next_month|date:"Y-m"}}"
+                           title="next month">
+                            &raquo;&raquo;
+                        </a>
+                    </span>
+                {% endif %}
             </th>
         </tr>
         <tr>
-            <th>Date</th>
-            <th>Transaction Category</th>
-            <th>Budget Category</th>
-            <th>Amount(£)</th>
-            <th class="center">-</th>
+            <th style="width:14%">
+                {% if not sort == 0 %}
+                    <a class="sort" title="sort ascending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=0">
+                        Date
+                    </a>
+                {% else %}
+                    <a class="sort" title="sort descending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=1">
+                        Date
+                    </a>
+                {% endif %}
+                {% if sort == 0 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
+                {% elif sort == 1 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                {% endif %}
+            </th>
+            <th>
+                {% if not sort == 2 %}
+                    <a class="sort" title="sort ascending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=2">
+                        Transaction Category
+                    </a>
+                {% else %}
+                    <a class="sort" title="sort descending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=3">
+                        Transaction Category
+                    </a>
+                {% endif %}
+                {% if sort == 2 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
+                {% elif sort == 3 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                {% endif %}
+            </th>
+            <th>
+                {% if not sort == 4 %}
+                    <a class="sort" title="sort ascending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=4">
+                        Budget Category
+                    </a>
+                {% else %}
+                    <a class="sort" title="sort descending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=5">
+                        Budget Category
+                    </a>
+                {% endif %}
+                {% if sort == 4 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
+                {% elif sort == 5 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                {% endif %}
+            </th>
+            <th style="width:15%">
+                {% if not sort == 6 %}
+                    <a class="sort" title="sort ascending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=6">
+                        Amount(£)
+                    </a>
+                {% else %}
+                    <a class="sort" title="sort descending"
+                       href="/transactions/?date={{date|date:"Y-m"}}&sort=7">
+                        Amount(£)
+                    </a>
+                {% endif %}
+                {% if sort == 6 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
+                {% elif sort == 7 %}
+                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                {% endif %}
+            </th>
+            <th style="width:1%" class="center">-</th>
         </tr>
         {% if not transactions %}
             <tr>
@@ -33,18 +107,17 @@
             </tr>
         {% else %}
             {% for transaction in transactions %}
-                <tr>
+                <tr {% if transaction.transaction_date|in_the_future %}
+                        class="info"
+                    {% endif %}>
                     <td>
-                        {{transaction.transaction.transaction_date}}
+                        {{transaction.transaction_date}}
                     </td>
                     <td>
-                        {% if transaction.transaction_category.transaction_category_parent.transaction_category %}
-                            {{transaction.transaction_category.transaction_category_parent.transaction_category}}&nbsp;>>
-                        {% endif %}
-                        {{transaction.transaction_category.transaction_category}}
+                        {{transaction.category}}
                     </td>
                     <td>
-                        {{transaction.transaction_category.budget_category.budget_category}}
+                        {{transaction.budget_category}}
                     </td>
                     <td class="currency
                                 {% if transaction.amount > 0 %}
@@ -54,20 +127,24 @@
                                 {% endif %}">
                         {{transaction.amount}}
                     </td>
-                    <td class="text-right">
-                        <div class="btn-toolbar">
-                            <div class="btn-group">
-                                <a href="/transaction/category/edit/{{category.transaction_category_id}}"
-                                   class="btn btn-default btn-xs">
-                                    Edit
-                                </a>
-                            </div>
-                            <div class="btn-group">
-                                <a href="/transaction/category/delete/{{category.transaction_category_id}}"
-                                   class="btn btn-danger btn-xs">
-                                    Delete
-                                </a>
-                            </div>
+                    <td class="center">
+                        <div class="dropdown">
+                            <a class="btn btn-xs btn-default dropdown-toggle"
+                               data-toggle="dropdown" href="#">
+                                Actions&nbsp;<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li>
+                                    <a role="menuitem"
+                                       href="/transaction/edit/{{transaction.id}}/">
+                                        Edit Transaction
+                                    </a>
+                                    <a role="menuitem"
+                                       href="/transaction/delete/{{transaction.id}}/">
+                                        Delete Transaction
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </td>
                 </tr>

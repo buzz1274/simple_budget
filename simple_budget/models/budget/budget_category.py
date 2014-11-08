@@ -19,17 +19,11 @@ class BudgetCategory(models.Model):
     class Meta:
         db_table = 'budget_category'
 
-    def spending_by_budget_category(self, start_date=None, end_date=None):
+    def spending_by_budget_category(self, start_date, end_date):
         """
         retrieves spending by budget category between the specified dates
         :return: dict
         """
-        if not start_date or not end_date:
-            start_date = date(datetime.now().year, datetime.now().month, 1)
-            end_date = date(datetime.now().year, datetime.now().month,
-                            calendar.monthrange(datetime.now().year,
-                                                datetime.now().month)[1])
-
         today = date(datetime.now().year, datetime.now().month,
                      datetime.now().day)
         end_date_income = start_date - timedelta(1)

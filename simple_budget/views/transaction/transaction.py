@@ -7,25 +7,44 @@ from simple_budget.models.transaction.transaction import Transaction
 from simple_budget.models.transaction.transaction_line import TransactionLine
 from simple_budget.forms.upload_quicken_file import UploadQuickenFile
 from simple_budget.models.qif_parser.qif_parser import QIFParser
+from simple_budget.helper.date_calculation import DateCalculation
 import json
-from datetime import datetime
 
 
 def transactions(request):
     """
     display transaction log
     """
-    display_date = datetime.now()
-    monthly_transactions = TransactionLine.objects.filter(
-                                transaction__transaction_date__year=2014,
-                                transaction__transaction_date__month=11).\
-                                order_by('transaction__transaction_date',
-                                         '-amount')
+    prev_month, next_month, start_date, end_date, today = \
+        DateCalculation.calculate_dates(request.GET.get('date', None))
+
+    sort, monthly_transactions = \
+        TransactionLine.transaction_lines(start_date, end_date,
+                                          request.GET.get('sort', None))
 
     return render_to_response('transaction/transactions.html',
-                              {'date': display_date,
+                              {'date': today,
+                               'sort': sort,
+                               'next_month': next_month,
+                               'prev_month': prev_month,
                                'transactions': monthly_transactions},
                               context_instance=RequestContext(request))
+
+def add_edit_transaction(request, action, transaction_id):
+    """
+    add/edit a transaction
+    :param request:
+    :return:
+    """
+    return HttpResponseRedirect('/transactions/')
+
+def delete_transaction(request, transaction_id):
+    """
+    deletes the supplied transaction
+    :param request:
+    :return:
+    """
+    return HttpResponseRedirect('/transactions/')
 
 def category(request):
     """
@@ -55,7 +74,7 @@ def upload_quicken_file(request):
                               {'form': form},
                               context_instance=RequestContext(request))
 
-def upload_quicken_file_status():
+def upload_quicken_file_status(request):
     """
     gets the status for the last uploaded qif file
     :return:
@@ -134,4 +153,4 @@ def delete_transaction_category(request, transaction_category_id):
         except AssertionError:
             message = 'invalid_transaction_category'
 
-    return HttpResponseRedirect('/transaction/category/?message=%s' % (message,))
+    return HttpResponseRedirect('/transaction/category/?message=%s' % (message,),)

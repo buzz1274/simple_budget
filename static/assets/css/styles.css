@@ -92,6 +92,10 @@ table#budget td.seperator {
     border:0px;
     padding:0px;
 }
+table#budget th a.sort {
+    color:#000000;
+    text-decoration:underline;
+}
 table#budget td.notes {
     background-color:#FFFFFF;
     color:#FF0000;
@@ -100,6 +104,12 @@ table#budget td.notes {
     word-wrap: break-word;
     padding:2px 20px 2px 20px;
 }
-table#budget_category th.center, td.center {
+table#budget th.center, td.center {
     text-align:center;
+}
+span.sort_icon {
+    font-size:0.7em;
+}
+td.success {
+    background-color: #dff0d8 !important;
 }
