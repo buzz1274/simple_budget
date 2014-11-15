@@ -70,41 +70,6 @@ CREATE TABLE budget_type (
 ALTER TABLE public.budget_type OWNER TO accounts;
 
 --
--- Name: django_migrations; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
---
-
-CREATE TABLE django_migrations (
-    id integer NOT NULL,
-    app character varying(255) NOT NULL,
-    name character varying(255) NOT NULL,
-    applied timestamp with time zone NOT NULL
-);
-
-
-ALTER TABLE public.django_migrations OWNER TO accounts;
-
---
--- Name: django_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: accounts
---
-
-CREATE SEQUENCE django_migrations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.django_migrations_id_seq OWNER TO accounts;
-
---
--- Name: django_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: accounts
---
-
-ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
-
-
---
 -- Name: qif_parser; Type: TABLE; Schema: public; Owner: accounts; Tablespace: 
 --
 
@@ -224,13 +189,6 @@ ALTER TABLE public.transaction_line OWNER TO accounts;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: accounts
 --
 
-ALTER TABLE ONLY django_migrations ALTER COLUMN id SET DEFAULT nextval('django_migrations_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: accounts
---
-
 ALTER TABLE ONLY qif_parser ALTER COLUMN id SET DEFAULT nextval('qif_parser_id_seq'::regclass);
 
 
@@ -257,18 +215,6 @@ ALTER TABLE ONLY budget_type
 ALTER TABLE ONLY budget_type
     ADD CONSTRAINT budget_type_pkey PRIMARY KEY (budget_type_id);
 
-
---
--- Name: django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
---
-
-ALTER TABLE ONLY django_migrations
-    ADD CONSTRAINT django_migrations_pkey PRIMARY KEY (id);
-
-
---
--- Name: qif_parser_pkey; Type: CONSTRAINT; Schema: public; Owner: accounts; Tablespace: 
---
 
 ALTER TABLE ONLY qif_parser
     ADD CONSTRAINT qif_parser_pkey PRIMARY KEY (id);

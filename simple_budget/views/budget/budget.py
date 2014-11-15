@@ -23,13 +23,6 @@ def budget(request):
     prev_month, next_month, start_date, end_date, display_date = \
         DateCalculation.calculate_dates(request.GET.get('date', None))
 
-    if QIFParser.get_status() == 'in_progress':
-        message_key, message, message_type = \
-            Message().get_message('in_progress_quicken_file')
-    else:
-        message_key, message, message_type = \
-            Message().get_message(request.GET.get('message', None))
-
     transactions, totals, grand_total = \
         BudgetCategory().spending_by_budget_category(start_date, end_date)
 
@@ -39,8 +32,5 @@ def budget(request):
                                'grand_total': grand_total,
                                'date': display_date,
                                'next_month': next_month,
-                               'prev_month': prev_month,
-                               'message_key': message_key,
-                               'message': message,
-                               'message_type': message_type},
+                               'prev_month': prev_month},
                               context_instance=RequestContext(request))

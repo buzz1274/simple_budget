@@ -1,6 +1,6 @@
 class Message(object):
 
-    messages = {'upload_success':
+    MESSAGES = {'upload_success':
                     {'message': 'Quicken QIF successfully uploaded.',
                      'type': 'success'},
                 'quicken_upload_complete':
@@ -9,17 +9,26 @@ class Message(object):
                 'quicken_upload_failed':
                     {'message': 'An error occurred processing Quicken QIF file.',
                      'type': 'danger'},
+                'transaction_edit_success':
+                    {'message': 'Transaction edited.',
+                     'type': 'success'},
+                'transaction_edit_failure':
+                    {'message': 'An error occurred editing the transaction.',
+                     'type': 'danger'},
+                'transaction_add_success':
+                    {'message': 'Transaction added.',
+                     'type': 'success'},
+                'transaction_add_failure':
+                    {'message': 'An error occurred adding a new transaction.',
+                     'type': 'danger'},
+                'transaction_delete_success':
+                    {'message': 'Transaction deleted.',
+                     'type': 'success'},
+                'transaction_delete_failure':
+                    {'message': 'An error occurred deleting a transaction.',
+                     'type': 'danger'},
                 'in_progress_quicken_file':
                     {'message': 'Quicken QIF file processing.',
                      'type': 'success'}}
 
-    def get_message(self, message_key):
-        """
-        returns message and type
-        :return:
-        """
-        try:
-            message = self.messages[message_key]
-            return [message_key, message['message'], message['type']]
-        except KeyError:
-            return [False, False, False]
+

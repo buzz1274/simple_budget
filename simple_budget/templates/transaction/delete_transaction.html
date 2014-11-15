@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form">
+        <fieldset>
+            <legend>Delete Transaction</legend>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{field}}
+                    {% endif %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p class="text-danger">{{error}}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                <p class="text-danger form-warning">
+                    <strong>
+                        Warning!!! Deleting a transaction cannot be reversed.
+                    </strong>
+                </p>
+                <input name="submit" type="submit" value="Continue">
+                <input name="submit" type="submit" value="Cancel">
+                {% if QUICKEN_IMPORT_ACTIVE %}
+                    <p class="text-danger form-warning">
+                        <strong>
+                            Warning!!! All manually deleted transactions
+                            will be deleted if a quicken file is imported.
+                        </strong>
+                    </p>
+                {% endif %}
+            </form>
+        </fieldset>
+    </div>
+{% endblock %}

@@ -1,13 +1,17 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
+from django.db import DatabaseError
 from simple_budget.models.transaction.transaction_category import TransactionCategory
 from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
 from simple_budget.models.transaction.transaction import Transaction
 from simple_budget.models.transaction.transaction_line import TransactionLine
 from simple_budget.forms.upload_quicken_file import UploadQuickenFile
+from simple_budget.forms.transaction.add_edit_transaction import AddEditTransactionForm
+from simple_budget.forms.transaction.delete_transaction import DeleteTransactionForm
 from simple_budget.models.qif_parser.qif_parser import QIFParser
 from simple_budget.helper.date_calculation import DateCalculation
+from simple_budget.helper.helper import clean_message_from_url
 import json
 
 
@@ -30,21 +34,94 @@ def transactions(request):
                                'transactions': monthly_transactions},
                               context_instance=RequestContext(request))
 
-def add_edit_transaction(request, action, transaction_id):
+def add_edit_transaction(request, action, transaction_line_id):
     """
     add/edit a transaction
     :param request:
     :return:
     """
-    return HttpResponseRedirect('/transactions/')
+    if action == 'edit':
+        message = 'transaction_edit'
+        transaction_line = get_object_or_404(TransactionLine,
+                                             pk=transaction_line_id)
+    else:
+        message = 'transaction_add'
 
-def delete_transaction(request, transaction_id):
+    if request.method == 'POST':
+        if request.POST.get('submit', None) == 'Cancel':
+            return HttpResponseRedirect(request.POST.get('referer', '/'))
+
+        form = AddEditTransactionForm(request.POST)
+
+        if form.is_valid():
+            try:
+                Transaction().add_edit_transaction(action, form.cleaned_data)
+                return HttpResponseRedirect(
+                    '/transactions/?message=%s_success' % (message,))
+            except DatabaseError:
+                return HttpResponseRedirect(
+                    '/transactions/?message=%s_failure' % (message,))
+
+    else:
+        referer = \
+            clean_message_from_url(request.META.get('HTTP_REFERER', None))
+
+        if action == 'edit':
+            form = AddEditTransactionForm(
+                initial={'referer':
+                             referer,
+                         'transaction_line_id':
+                             transaction_line.pk,
+                         'transaction_category_id':
+                             transaction_line.transaction_category_id,
+                         'transaction_date':
+                             transaction_line.transaction.transaction_date,
+                         'amount':
+                             transaction_line.amount})
+        else:
+            form = AddEditTransactionForm(
+                initial={'referer': referer})
+
+    return render_to_response('transaction/add_edit_transaction.html',
+                {'form': form,
+                 'action': action},
+                context_instance=RequestContext(request))
+
+def delete_transaction(request, transaction_line_id):
     """
     deletes the supplied transaction
     :param request:
     :return:
     """
-    return HttpResponseRedirect('/transactions/')
+    transaction_line = get_object_or_404(TransactionLine,
+                                         pk=transaction_line_id)
+    referer = \
+        clean_message_from_url(request.META.get('HTTP_REFERER', None))
+
+    if request.method == 'POST':
+        if request.POST.get('submit', None) == 'Cancel':
+            return HttpResponseRedirect(request.POST.get('referer', '/'))
+
+        form = DeleteTransactionForm(request.POST)
+
+        if form.is_valid():
+            try:
+                Transaction().delete_transaction(form.cleaned_data)
+                return HttpResponseRedirect(
+                    '/transactions/?message=transaction_delete_success')
+            except DatabaseError:
+                return HttpResponseRedirect(
+                    '/transactions/?message=transaction_delete_failure')
+
+
+    form = DeleteTransactionForm(
+        initial={'transaction_line_id': transaction_line.pk,
+                 'referer': referer})
+
+    return render_to_response('transaction/delete_transaction.html',
+                              {'form': form,
+                               'refer': referer},
+                              context_instance=RequestContext(request))
 
 def category(request):
     """

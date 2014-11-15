@@ -1,0 +1,43 @@
+{
+  "name": "simple_budget",
+  "version": "0.1.0",
+  "authors": [
+    "David Exelby"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "marionette": "2.2",
+    "requirejs": "2.1",
+    "bootstrap": "3.2",
+    "json2": "*",
+    "d3": "3.4",
+    "jquery-ui": "*"
+  },
+  "dependenciesIgnore": {
+    "backbone": [ "!**/backbone.js" ],
+    "backbone.babysitter": [ "!**/backbone.babysitter.js" ],
+    "backbone.wreqr": [ "!**/backbone.wreqr.js" ],
+    "bootstrap": [ "!**/bootstrap.js" ],
+    "jquery": [ "!**/jquery.js" ],
+    "jquery-ui": [ "!**/jquery-ui.js" ],
+    "underscore": [ "!**/underscore.js" ],
+    "marionette": [ "!**/backbone.marionette.js" ],
+    "requirejs": [ "!**/require.js" ],
+    "json2": [ "!**/json2.js" ],
+    "d3": [ "!**/d3.js" ]
+  },
+  "install" : {
+    "path" : "static/assets/js/lib/",
+    "sources" : {
+      "json2" : "_docs/js/json2/json2.js"
+    }
+  }
+}

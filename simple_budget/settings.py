@@ -49,6 +49,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "simple_budget.context_processors.quicken_import_active",
+    "simple_budget.context_processors.get_message",
+)
+
 TEMPLATE_DIRS = (
     BASE_DIR + '/budget/templates/',
 )
@@ -86,6 +91,7 @@ USE_L10N = True
 USE_TZ = True
 STATIC_URL = '/static/'
 TEMP_SAVE_PATH = '/tmp/'
+QUICKEN_IMPORT_ACTIVE = True
 
 with open(BASE_DIR + '/simple_budget/config.yaml') as f:
     config = yaml.load(f)

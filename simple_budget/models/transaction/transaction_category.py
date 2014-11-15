@@ -48,11 +48,7 @@ class TransactionCategory(models.Model):
                 outerjoin(sql.budget_type,
                           sql.budget_type.c.budget_type_id ==
                           sql.budget_category.c.budget_type_id). \
-                order_by(case([(parent_transaction_category.c.transaction_category.isnot(None),
-                                func.CONCAT(parent_transaction_category.c.transaction_category,
-                                            ' >> ',
-                                            sql.transaction_category.c.transaction_category))
-                              ], else_=sql.transaction_category.c.transaction_category)).\
+                order_by('category').\
                 order_by(sql.budget_type.c.ordering.asc().nullsfirst()). \
                 order_by(sql.budget_category.c.budget_category.asc().nullsfirst())
 

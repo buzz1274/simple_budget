@@ -1,7 +1,7 @@
 #body {
-    background:#f2f2e9;
-    font-family: "Trebuchet MS";
-}
+     background:#f2f2e9;
+     font-family: "Trebuchet MS";
+ }
 .container-fluid {
     margin-right:auto;
     margin-left:auto;
@@ -112,4 +112,37 @@ span.sort_icon {
 }
 td.success {
     background-color: #dff0d8 !important;
+}
+div.form {
+    width:70%;
+    margin:0 auto;
+}
+div.form fieldset {
+    border:1px solid #000000;
+}
+div.form legend {
+    width:inherit;
+    padding:0px 10px;
+    border-bottom:none;
+    font-size:1.15em;
+}
+div.form form {
+    padding:0px 50px 35px 50px;
+}
+p.form-warning {
+    margin-top:20px;
+    padding:5px;
+    border:1px solid #a94442;
+    width:350px;
+}
+select.form-medium,
+input.form-medium {
+    width:150px;
+}
+select.form-large,
+input.form-large {
+    width:350px;
+}
+label {
+    color:#000000 !important;
 }

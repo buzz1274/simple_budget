@@ -3,7 +3,6 @@ from django.db import models
 from sqlalchemy.sql.expression import between
 from sqlalchemy import desc, asc, func, case
 from sqlalchemy.orm import aliased
-from simple_budget.models.transaction.transaction import Transaction
 from simple_budget.models.transaction.transaction_category import TransactionCategory
 from simple_budget.helper.sql import SQL
 
@@ -12,8 +11,8 @@ class TransactionLine(models.Model):
     """
     transaction line model
     """
-    transaction_line_id = models.IntegerField(primary_key=True)
-    transaction = models.ForeignKey(Transaction, blank=True, null=True)
+    transaction_line_id = models.AutoField(primary_key=True)
+    transaction = models.ForeignKey("Transaction", blank=True, null=True)
     transaction_category = \
         models.ForeignKey(TransactionCategory, blank=True, null=True)
     amount = \
@@ -70,9 +69,11 @@ class TransactionLine(models.Model):
                       parent_transaction_category.c.transaction_category_id)
 
         if sort % 2:
-            transaction_lines = transaction_lines.order_by(desc(sort_order[sort_lookup][0]))
+            transaction_lines = \
+                transaction_lines.order_by(desc(sort_order[sort_lookup][0]))
         else:
-            transaction_lines = transaction_lines.order_by(asc(sort_order[sort_lookup][0]))
+            transaction_lines = \
+                transaction_lines.order_by(asc(sort_order[sort_lookup][0]))
 
         return [sort, transaction_lines]
 
