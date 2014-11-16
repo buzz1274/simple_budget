@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from simple_budget.helper.sql import SQL
 from sqlalchemy.orm import aliased
-from sqlalchemy import func, case
+from sqlalchemy import func, case, desc, asc
 
 class TransactionCategory(models.Model):
     """
@@ -18,13 +18,25 @@ class TransactionCategory(models.Model):
         db_table = 'transaction_category'
 
     @staticmethod
-    def transaction_category_mapping():
+    def transaction_category_mapping(sort):
         """
         returns budget/transaction category mapping
         :return:
         """
         sql = SQL()
         parent_transaction_category = aliased(sql.transaction_category)
+
+        sort_order = {0: ['category'],
+                      2: [sql.budget_category.c.budget_category],
+                      4: [sql.budget_type.c.budget_type]}
+
+        try:
+            sort = int(sort)
+            sort_lookup = sort - (sort % 2)
+            sort_order[sort_lookup]
+        except (ValueError, IndexError, TypeError):
+            sort = 0
+            sort_lookup = 0
 
         transaction_categories = \
             sql.db_session.query(
@@ -47,9 +59,13 @@ class TransactionCategory(models.Model):
                           parent_transaction_category.c.transaction_category_id). \
                 outerjoin(sql.budget_type,
                           sql.budget_type.c.budget_type_id ==
-                          sql.budget_category.c.budget_type_id). \
-                order_by('category').\
-                order_by(sql.budget_type.c.ordering.asc().nullsfirst()). \
-                order_by(sql.budget_category.c.budget_category.asc().nullsfirst())
+                          sql.budget_category.c.budget_type_id)
 
-        return transaction_categories
+        if sort % 2:
+            transaction_categories = \
+                transaction_categories.order_by(desc(sort_order[sort_lookup][0]))
+        else:
+            transaction_categories = \
+                transaction_categories.order_by(asc(sort_order[sort_lookup][0]))
+
+        return [sort, transaction_categories]

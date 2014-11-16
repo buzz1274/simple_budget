@@ -127,9 +127,12 @@ def category(request):
     """
     displays transaction category --> budget category mapping
     """
+    sort, transaction_categories = \
+        TransactionCategory.transaction_category_mapping(request.GET.get('sort', None))
+
     return render_to_response('transaction/category.html',
-                              {'transaction_categories':
-                                   TransactionCategory.transaction_category_mapping()},
+                              {'sort': sort,
+                               'transaction_categories': transaction_categories},
                               context_instance=RequestContext(request))
 
 def upload_quicken_file(request):

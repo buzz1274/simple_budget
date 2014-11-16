@@ -26,75 +26,47 @@
         </tr>
         <tr>
             <th style="width:14%">
-                {% if not sort == 0 %}
-                    <a class="sort" title="sort ascending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=0">
-                        Date
-                    </a>
-                {% else %}
-                    <a class="sort" title="sort descending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=1">
-                        Date
-                    </a>
-                {% endif %}
-                {% if sort == 0 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
-                {% elif sort == 1 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                <a class="sort" title="sort {% if sort == 0 %}descending{% else %}ascending{% endif %}"
+                   href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 0 %}0{% else %}1{% endif %}">
+                    Date
+                </a>
+                {% if sort == 0 or sort == 1 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 0 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
                 {% endif %}
             </th>
             <th>
-                {% if not sort == 2 %}
-                    <a class="sort" title="sort ascending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=2">
-                        Transaction Category
-                    </a>
-                {% else %}
-                    <a class="sort" title="sort descending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=3">
-                        Transaction Category
-                    </a>
-                {% endif %}
-                {% if sort == 2 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
-                {% elif sort == 3 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                <a class="sort" title="sort {% if sort == 2 %}descending{% else %}ascending{% endif %}"
+                   href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 2 %}2{% else %}3{% endif %}">
+                    Transaction Category
+                </a>
+                {% if sort == 2 or sort == 3 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 2 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
                 {% endif %}
             </th>
             <th>
-                {% if not sort == 4 %}
-                    <a class="sort" title="sort ascending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=4">
-                        Budget Category
-                    </a>
-                {% else %}
-                    <a class="sort" title="sort descending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=5">
-                        Budget Category
-                    </a>
-                {% endif %}
-                {% if sort == 4 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
-                {% elif sort == 5 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                <a class="sort" title="sort {% if sort == 4 %}descending{% else %}ascending{% endif %}"
+                   href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 4 %}4{% else %}5{% endif %}">
+                    Budget Category
+                </a>
+                {% if sort == 4 or sort == 5 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 4 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
                 {% endif %}
             </th>
             <th style="width:15%">
-                {% if not sort == 6 %}
-                    <a class="sort" title="sort ascending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=6">
-                        Amount(£)
-                    </a>
-                {% else %}
-                    <a class="sort" title="sort descending"
-                       href="/transactions/?date={{date|date:"Y-m"}}&sort=7">
-                        Amount(£)
-                    </a>
-                {% endif %}
-                {% if sort == 6 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-up sort_icon"></span>
-                {% elif sort == 7 %}
-                    <span class="pull-right glyphicon glyphicon-chevron-down sort_icon"></span>
+                <a class="sort" title="sort {% if sort == 6 %}descending{% else %}ascending{% endif %}"
+                   href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 6 %}6{% else %}7{% endif %}">
+                    Amount
+                </a>
+                {% if sort == 6 or sort == 7 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 6 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
                 {% endif %}
             </th>
             <th style="width:1%" class="center">-</th>
