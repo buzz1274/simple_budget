@@ -11,7 +11,7 @@ class AddEditTransactionForm(forms.Form):
         self.fields['transaction_category_id'].choices = \
             [('', 'Please select a transaction category')] + \
             [(o.transaction_category_id, str(o.category))
-             for o in TransactionCategory.transaction_category_mapping()]
+             for o in TransactionCategory.transaction_category_mapping(sort=None)[1]]
 
     transaction_line_id = forms.CharField(widget=forms.HiddenInput(),
                                           required=False)
