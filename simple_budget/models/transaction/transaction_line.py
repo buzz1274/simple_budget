@@ -3,7 +3,8 @@ from django.db import models
 from sqlalchemy.sql.expression import between
 from sqlalchemy import desc, asc, func, case
 from sqlalchemy.orm import aliased
-from simple_budget.models.transaction.transaction_category import TransactionCategory
+from simple_budget.models.transaction.transaction_category import \
+    TransactionCategory
 from simple_budget.helper.sql import SQL
 
 
@@ -16,7 +17,8 @@ class TransactionLine(models.Model):
     transaction_category = \
         models.ForeignKey(TransactionCategory, blank=True, null=True)
     amount = \
-        models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+        models.DecimalField(max_digits=7, decimal_places=2, blank=True,
+                            null=True)
 
     class Meta:
         db_table = 'transaction_line'

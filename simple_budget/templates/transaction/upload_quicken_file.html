@@ -3,16 +3,28 @@
     <div class="form">
         <fieldset>
             <legend>Upload Quicken File</legend>
-            <form action="/transaction/upload_quicken_file/" method="post" enctype="multipart/form-data">
+            <form action="/transaction/upload_quicken_file/" method="post"
+                  enctype="multipart/form-data">
                 {% csrf_token %}
-                {{form.as_p}}
-                <input type="submit" value="Submit" />
-                <p class="text-danger" style="padding-top:20px;">
-                    <strong>
-                        Warning!!! uploading a quicken file will delete all
-                        currently stored transactions.
-                    </strong>
-                </p>
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{field}}
+                    {% else %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="id_{{field.name}}">
+                                {{field.label}}:
+                            </label>
+                            {{field}}
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    <p class="text-danger">{{error}}</p>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <input name="submit" type="submit" value="Submit">
+                <input name="submit" type="submit" value="Cancel">
             </form>
         </fieldset>
     </div>

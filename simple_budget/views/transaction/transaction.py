@@ -2,16 +2,22 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.db import DatabaseError
-from simple_budget.models.transaction.transaction_category import TransactionCategory
-from simple_budget.forms.add_edit_transaction_category import AddEditTransactionCategory
+from simple_budget.models.transaction.transaction_category import \
+    TransactionCategory
+from simple_budget.forms.add_edit_transaction_category import \
+    AddEditTransactionCategory
 from simple_budget.models.transaction.transaction import Transaction
 from simple_budget.models.transaction.transaction_line import TransactionLine
-from simple_budget.forms.upload_quicken_file import UploadQuickenFile
-from simple_budget.forms.transaction.add_edit_transaction import AddEditTransactionForm
-from simple_budget.forms.transaction.delete_transaction import DeleteTransactionForm
+from simple_budget.forms.transaction.upload_quicken_file import \
+    UploadQuickenFile
+from simple_budget.forms.transaction.add_edit_transaction import \
+    AddEditTransactionForm
+from simple_budget.forms.transaction.delete_transaction import \
+    DeleteTransactionForm
 from simple_budget.models.qif_parser.qif_parser import QIFParser
 from simple_budget.helper.date_calculation import DateCalculation
 from simple_budget.helper.helper import clean_message_from_url
+from django.conf import settings
 import json
 
 
@@ -139,7 +145,15 @@ def upload_quicken_file(request):
     """
     processes an uploaded quicken file
     """
+    if not settings.QUICKEN_IMPORT_ACTIVE:
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
+        print request.POST.get('submit', None)
+        if request.POST.get('submit', None) == 'Cancel':
+            print request.POST.get('referer', '/')
+            return HttpResponseRedirect(request.POST.get('referer', '/'))
+
         form = UploadQuickenFile(request.POST, request.FILES)
         if form.is_valid():
             if Transaction.process_upload_quicken_file(request.FILES['file']):
@@ -148,7 +162,9 @@ def upload_quicken_file(request):
                 return HttpResponseRedirect('/budget/?message=upload_failure')
 
     else:
-        form = UploadQuickenFile()
+        referer = \
+            clean_message_from_url(request.META.get('HTTP_REFERER', None))
+        form = UploadQuickenFile(initial={'referer': referer})
 
     return render_to_response('transaction/upload_quicken_file.html',
                               {'form': form},
