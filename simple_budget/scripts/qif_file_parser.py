@@ -16,7 +16,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../../simple_budget'
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simple_budget.settings")
 
 from simple_budget.helper.sql import SQL
-from simple_budget.models.qif_parser.qif_parser import QIFParser
+from simple_budget.models.transaction.qif_parser import QIFParser
 
 class QuickenException(Exception):
     pass
@@ -289,7 +289,7 @@ class Quicken(object):
     @staticmethod
     def delete_quicken_file(quicken_file):
         """
-        deletes the processed quciken file
+        deletes the processed quicken file
         """
         try:
             os.remove(quicken_file)

@@ -2,11 +2,39 @@
 {% block content %}
     <div class="form">
         <fieldset>
-            <legend>Transaction Category</legend>
+            <legend>{{action|title}} Transaction Category</legend>
                 <form method="POST" action="">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <input type="submit">
+                    {% for field in form %}
+                        {% if field.is_hidden %}
+                            {{field}}
+                        {% else %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                {% if field.name != 'transaction_category_parent_id' or not transaction_category_has_children %}
+                                    <label class="control-label" for="id_{{field.name}}">
+                                        {{field.label}}:
+                                    </label>
+                                    {{field}}
+                                    {% if field.errors %}
+                                        {% for error in field.errors %}
+                                            <p class="text-danger">{{error}}</p>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <input name="submit" type="submit" value="Submit">
+                    <input name="submit" type="submit" value="Cancel">
+                    {% if QUICKEN_IMPORT_ACTIVE %}
+                        <p class="text-danger form-warning">
+                            <strong>
+                                Warning!!! All manually edited transaction
+                                categories will be reverted if a quicken
+                                file is imported.
+                            </strong>
+                        </p>
+                    {% endif %}
                 </form>
         </fieldset>
     </div>

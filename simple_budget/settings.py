@@ -52,6 +52,7 @@ MIDDLEWARE_CLASSES = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     "simple_budget.context_processors.quicken_import_active",
     "simple_budget.context_processors.get_message",
+    "simple_budget.context_processors.unassigned_transaction_categories",
 )
 
 TEMPLATE_DIRS = (

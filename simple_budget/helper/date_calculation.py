@@ -20,8 +20,11 @@ class DateCalculation(object):
         end_date = date(datetime.now().year, datetime.now().month,
                         calendar.monthrange(datetime.now().year,
                                             datetime.now().month)[1])
-        prev_month = date(datetime.now().year, datetime.now().month - 1, 1)
-        next_month = date(datetime.now().year, datetime.now().month + 1, 1)
+
+        next_month = date(today.year, today.month, 1) + \
+                     relativedelta(months=1)
+        prev_month = date(today.year, today.month, 1) - \
+                     relativedelta(months=1)
 
         if year_month:
             try:

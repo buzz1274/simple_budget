@@ -1,5 +1,15 @@
+{% if unassigned_transaction_categories %}
+    <p class="bg-danger message">
+        <strong class="text-danger">
+            Warning!!! Their are
+            <a class="text-danger" style="text-decoration:underline;"
+               href="/transaction/category/?bc=0">{{unassigned_transaction_categories}}</a>
+            transaction categories that are not assigned to a budget category.
+        </strong>
+    </p>
+{% endif %}
 {% if message %}
-    <p class="bg-{{message_type}}" style="padding:5px;">
+    <p class="bg-{{message_type}} message">
         <strong class="text-{{message_type}}">{{message}}</strong>
     </p>
     {% if message_key == 'in_progress_quicken_file' %}

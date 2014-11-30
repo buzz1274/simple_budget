@@ -18,7 +18,7 @@ class TransactionCategory(models.Model):
         db_table = 'transaction_category'
 
     @staticmethod
-    def transaction_category_mapping(sort):
+    def transaction_category_mapping(sort, budget_category):
         """
         returns budget/transaction category mapping
         :return:
@@ -60,6 +60,16 @@ class TransactionCategory(models.Model):
                 outerjoin(sql.budget_type,
                           sql.budget_type.c.budget_type_id ==
                           sql.budget_category.c.budget_type_id)
+
+        if budget_category:
+            if budget_category == '0':
+                transaction_categories = \
+                    transaction_categories.filter(
+                        sql.budget_category.c.budget_category==None)
+            else:
+                transaction_categories = \
+                    transaction_categories.filter(
+                        sql.budget_category.c.budget_category.ilike(budget_category))
 
         if sort % 2:
             transaction_categories = \

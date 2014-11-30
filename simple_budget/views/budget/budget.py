@@ -1,8 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from simple_budget.models.budget.budget_category import BudgetCategory
-from simple_budget.models.qif_parser.qif_parser import QIFParser
-from simple_budget.helper.message import Message
 from simple_budget.models.budget.budget_type import BudgetType
 from simple_budget.helper.date_calculation import DateCalculation
 
@@ -22,6 +21,9 @@ def budget(request):
     """
     prev_month, next_month, start_date, end_date, display_date = \
         DateCalculation.calculate_dates(request.GET.get('date', None))
+
+    if not start_date or not end_date:
+        return HttpResponseRedirect('/budget/')
 
     transactions, totals, grand_total = \
         BudgetCategory().spending_by_budget_category(start_date, end_date)

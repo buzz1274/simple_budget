@@ -24,6 +24,9 @@ class BudgetCategory(models.Model):
         retrieves spending by budget category between the specified dates
         :return: dict
         """
+        if not start_date or not end_date:
+            return [None, None, None]
+
         today = date(datetime.now().year, datetime.now().month,
                      datetime.now().day)
         end_date_income = start_date - timedelta(1)

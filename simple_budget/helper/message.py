@@ -21,6 +21,27 @@ class Message(object):
                 'transaction_add_failure':
                     {'message': 'An error occurred adding a new transaction.',
                      'type': 'danger'},
+                'transaction_category_add_success':
+                    {'message': 'Transaction category added.',
+                     'type': 'success'},
+                'transaction_category_add_failure':
+                    {'message': 'An error occurred adding a new '
+                                'transaction category.',
+                     'type': 'danger'},
+                'transaction_category_edit_success':
+                    {'message': 'Transaction category edited.',
+                     'type': 'success'},
+                'transaction_category_edit_failure':
+                    {'message': 'An error occurred editing a '
+                                'transaction category.',
+                     'type': 'danger'},
+                'transaction_category_delete_success':
+                    {'message': 'Transaction category deleted.',
+                     'type': 'success'},
+                'transaction_category_delete_failure':
+                    {'message': 'An error occurred deleting a '
+                                'transaction category.',
+                     'type': 'danger'},
                 'transaction_delete_success':
                     {'message': 'Transaction deleted.',
                      'type': 'success'},

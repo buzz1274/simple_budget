@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form">
+        <fieldset>
+            <legend>Delete Transaction Category</legend>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{field}}
+                    {% else %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                            {% if transaction_lines and not transaction_category_children %}
+                                <label class="control-label" for="id_{{field.name}}">
+                                    {{field.label}}:
+                                </label>
+                                {{field}}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{error}}</p>
+                                    {% endfor %}
+                                {% endif %}
+                                <p class="text-danger form-warning">
+                                    <strong>
+                                        Warning!!! This transaction category is
+                                        assigned to {{transaction_lines}}
+                                        transaction lines. Please select a
+                                        transaction category to transfer these
+                                        transaction lines to.
+                                    </strong>
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if transaction_category_children %}
+                    <p class="text-danger form-warning">
+                        <strong>
+                            Warning!!! This transaction category has child
+                            categories. Please assign these categories to a new
+                            parent transaction category before deleting this
+                            transaction category.
+                        </strong>
+                    </p>
+                {% endif %}
+                {% if not transaction_category_children %}
+                    <input name="submit" type="submit" value="Continue">
+                {% endif %}
+                <input name="submit" type="submit" value="Cancel">
+                <p class="text-danger form-warning">
+                    <strong>
+                        Warning!!! Deleting a transaction category cannot be
+                        reversed.
+                    </strong>
+                </p>
+                {% if QUICKEN_IMPORT_ACTIVE %}
+                    <p class="text-danger form-warning">
+                        <strong>
+                            Warning!!! All manually deleted transactions
+                            categories will be restored if a quicken file is
+                            imported.
+                        </strong>
+                    </p>
+                {% endif %}
+            </form>
+        </fieldset>
+    </div>
+{% endblock %}

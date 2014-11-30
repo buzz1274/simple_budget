@@ -1,6 +1,6 @@
 #body {
-     background:#f2f2e9;
-     font-family: "Trebuchet MS";
+    background:#f2f2e9;
+    font-family: "Trebuchet MS";
  }
 .container-fluid {
     margin-right:auto;
@@ -145,4 +145,7 @@ input.form-large {
 }
 label {
     color:#000000 !important;
+}
+p.message {
+    padding:5px;
 }

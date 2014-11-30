@@ -1,6 +1,6 @@
 from django import forms
 
-class UploadQuickenFile(forms.Form):
+class UploadQuickenFileForm(forms.Form):
     file = forms.FileField()
 
     referer = forms.CharField(widget=forms.HiddenInput(),

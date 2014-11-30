@@ -9,7 +9,7 @@
         <tr>
             <th>
                 <a class="sort" title="sort {% if sort == 0 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 0 %}0{% else %}1{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 0 %}0{% else %}1{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
                     Transaction Category
                 </a>
                 {% if sort == 0 or sort == 1 %}
@@ -20,7 +20,7 @@
             </th>
             <th>
                 <a class="sort" title="sort {% if sort == 2 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 2 %}2{% else %}3{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 2 %}2{% else %}3{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
                     Budget Category
                 </a>
                 {% if sort == 2 or sort == 3 %}
@@ -31,7 +31,7 @@
             </th>
             <th>
                 <a class="sort" title="sort {% if sort == 4 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 4 %}4{% else %}5{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 4 %}4{% else %}5{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
                     Budget Type
                 </a>
                 {% if sort == 4 or sort == 5 %}
@@ -42,32 +42,40 @@
             </th>
             <th style="width:1%" class="center">-</th>
         </tr>
-        {% for category in transaction_categories %}
+        {% if not transaction_categories.count %}
             <tr>
-                <td>{{category.category}}</td>
-                <td>{{category.budget_category}}</td>
-                <td>{{category.budget_type}}</td>
-                <td class="text-right">
-                    <div class="dropdown">
-                        <a class="btn btn-xs btn-default dropdown-toggle"
-                           data-toggle="dropdown" href="#">
-                            Actions&nbsp;<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li>
-                                <a role="menuitem"
-                                   href="/transaction/category/edit/{{category.transaction_category_id}}/">
-                                    Edit Category
-                                </a>
-                                <a role="menuitem"
-                                   href="/transaction/category/delete/{{category.transaction_category_id}}/">
-                                    Delete Category
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                <td colspan="4" class="center text-danger">
+                    No transaction categories found
                 </td>
             </tr>
-        {% endfor %}
+        {% else %}
+            {% for category in transaction_categories %}
+                <tr>
+                    <td>{{category.category}}</td>
+                    <td>{{category.budget_category}}</td>
+                    <td>{{category.budget_type}}</td>
+                    <td class="text-right">
+                        <div class="dropdown">
+                            <a class="btn btn-xs btn-default dropdown-toggle"
+                               data-toggle="dropdown" href="#">
+                                Actions&nbsp;<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li>
+                                    <a role="menuitem"
+                                       href="/transaction/category/edit/{{category.transaction_category_id}}/">
+                                        Edit Category
+                                    </a>
+                                    <a role="menuitem"
+                                       href="/transaction/category/delete/{{category.transaction_category_id}}/">
+                                        Delete Category
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
     </table>
 {% endblock %}

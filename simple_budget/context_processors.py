@@ -1,6 +1,8 @@
 from django.conf import settings
 from simple_budget.helper.message import Message
-from simple_budget.models.qif_parser.qif_parser import QIFParser
+from simple_budget.models.transaction.qif_parser import QIFParser
+from simple_budget.models.transaction.transaction_category import \
+    TransactionCategory
 
 
 def quicken_import_active(request):
@@ -10,6 +12,19 @@ def quicken_import_active(request):
     :return:
     """
     return {'QUICKEN_IMPORT_ACTIVE': settings.QUICKEN_IMPORT_ACTIVE}
+
+def unassigned_transaction_categories(request):
+    """
+    display a message if a transaction category is not assigned to a
+    budget category
+    :param request:
+    :return:
+    """
+    unassigned_transaction_categories = \
+        TransactionCategory.objects.filter(budget_category=None).count()
+
+    return {"unassigned_transaction_categories":
+                unassigned_transaction_categories}
 
 def get_message(request):
     """
