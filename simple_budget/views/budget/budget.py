@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from simple_budget.models.transaction.transaction_category import \
     TransactionCategory
 from simple_budget.models.budget.budget_category import BudgetCategory
-from simple_budget.models.budget.budget_type import BudgetType
 from simple_budget.helper.date_calculation import DateCalculation
 from simple_budget.helper.helper import clean_message_from_url
 from simple_budget.forms.budget.add_edit_budget_category_form import \
@@ -14,15 +13,6 @@ from simple_budget.forms.budget.add_edit_budget_category_form import \
 from simple_budget.forms.budget.delete_budget_category_form import \
     DeleteBudgetCategoryForm
 
-@login_required
-def summary(request):
-    """
-    budget summary
-    """
-    return render_to_response('budget/summary.html',
-                              {'spending_by_budget_type':
-                                   BudgetType().spending_by_budget_type()},
-                              context_instance=RequestContext(request))
 
 @login_required
 def budget(request):
