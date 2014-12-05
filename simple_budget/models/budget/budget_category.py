@@ -165,8 +165,6 @@ class BudgetCategory(models.Model):
                       transaction_categories.c.budget_category_id==
                       sql.budget_category.c.budget_category_id)
 
-        print sort
-
         if sort % 2:
             budget_categories = \
                 budget_categories.order_by(desc(sort_order[sort_lookup][0]))
