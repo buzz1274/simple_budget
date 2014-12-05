@@ -40,7 +40,7 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            {% if not user.is_superuser %}
+            {% if user.is_superuser %}
                 <th style="width:1%" class="center">-</th>
             {% endif %}
         </tr>
@@ -64,7 +64,7 @@
                             </a>
                         {% endif %}
                     </td>
-                    {% if not user.is_superuser %}
+                    {% if user.is_superuser %}
                         <td class="text-right">
                             <div class="dropdown">
                                 <a class="btn btn-xs btn-default dropdown-toggle"
