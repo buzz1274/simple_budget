@@ -9,7 +9,7 @@
         <tr>
             <th>
                 <a class="sort" title="sort {% if sort == 0 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 0 %}0{% else %}1{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 0 %}0{% else %}1{% endif %}{% if budget_category_id %}&bc={{budget_category_id}}{% endif %}">
                     Transaction Category
                 </a>
                 {% if sort == 0 or sort == 1 %}
@@ -20,7 +20,7 @@
             </th>
             <th>
                 <a class="sort" title="sort {% if sort == 2 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 2 %}2{% else %}3{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 2 %}2{% else %}3{% endif %}{% if budget_category_id %}&bc={{budget_category_id}}{% endif %}">
                     Budget Category
                 </a>
                 {% if sort == 2 or sort == 3 %}
@@ -31,7 +31,7 @@
             </th>
             <th>
                 <a class="sort" title="sort {% if sort == 4 %}descending{% else %}ascending{% endif %}"
-                   href="/transaction/category/?sort={% if not sort == 4 %}4{% else %}5{% endif %}{% if budget_category %}&bc={{budget_category}}{% endif %}">
+                   href="/transaction/category/?sort={% if not sort == 4 %}4{% else %}5{% endif %}{% if budget_category_id %}&bc={{budget_category_id}}{% endif %}">
                     Budget Type
                 </a>
                 {% if sort == 4 or sort == 5 %}

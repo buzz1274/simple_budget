@@ -25,7 +25,7 @@ class DeleteTransactionCategoryForm(forms.Form):
             select_new_category
 
         for o in TransactionCategory.\
-            transaction_category_mapping(sort=None, budget_category=None)[1]:
+            transaction_category_mapping(sort=None, budget_category_id=None)[1]:
             if (not current_tc_id or
                 o.transaction_category_id != int(current_tc_id)):
                 self.fields['transfer_transaction_category_id'].choices +=\

@@ -21,6 +21,20 @@ class Message(object):
                 'transaction_add_failure':
                     {'message': 'An error occurred adding a new transaction.',
                      'type': 'danger'},
+                'budget_category_add_success':
+                    {'message': 'Budget category added.',
+                     'type': 'success'},
+                'budget_category_add_failure':
+                    {'message': 'An error occurred adding a new '
+                                'budget category.',
+                     'type': 'danger'},
+                'budget_category_edit_success':
+                    {'message': 'Budget category edited.',
+                     'type': 'success'},
+                'budget_category_edit_failure':
+                    {'message': 'An error occurred editing a '
+                                'budget category.',
+                     'type': 'danger'},
                 'transaction_category_add_success':
                     {'message': 'Transaction category added.',
                      'type': 'success'},
@@ -41,6 +55,13 @@ class Message(object):
                 'transaction_category_delete_failure':
                     {'message': 'An error occurred deleting a '
                                 'transaction category.',
+                     'type': 'danger'},
+                'budget_category_delete_success':
+                    {'message': 'Budget category deleted.',
+                     'type': 'success'},
+                'budget_category_delete_failure':
+                    {'message': 'An error occurred deleting a '
+                                'budget category.',
                      'type': 'danger'},
                 'transaction_delete_success':
                     {'message': 'Transaction deleted.',

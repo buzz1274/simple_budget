@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form">
+        <fieldset>
+            <legend>{{action|title}} Budget Category</legend>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.is_hidden %}
+                            {{field}}
+                        {% else %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label class="control-label" for="id_{{field.name}}">
+                                    {{field.label}}:
+                                </label>
+                                {{field}}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{error}}</p>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <input name="submit" type="submit" value="Submit">
+                    <input name="submit" type="submit" value="Cancel">
+                </form>
+        </fieldset>
+    </div>
+{% endblock %}

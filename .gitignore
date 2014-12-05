@@ -12,4 +12,5 @@ config.yaml
 static/assets/js/lib/*
 !static/assets/js/lib/empty
 /_docs/js/*
+runserver.sh
 

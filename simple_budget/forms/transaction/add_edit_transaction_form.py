@@ -15,7 +15,7 @@ class AddEditTransactionForm(forms.Form):
             [(o.transaction_category_id, str(o.category))
              for o in TransactionCategory.
                 transaction_category_mapping(sort=None,
-                                             budget_category=None)[1]]
+                                             budget_category_id=None)[1]]
 
     transaction_line_id = forms.CharField(widget=forms.HiddenInput(),
                                           required=False)

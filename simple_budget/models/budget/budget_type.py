@@ -15,8 +15,11 @@ class BudgetType(models.Model):
     budget type model
     """
     budget_type_id = models.AutoField(primary_key=True)
-    budget_category = models.TextField(blank=False, null=False)
-    budget_amount = models.IntegerField(unique=True, blank=False, null=False)
+    budget_type = models.TextField(blank=False, null=False)
+    ordering = models.PositiveIntegerField(blank=False, null=False)
+
+    class Meta:
+        db_table = 'budget_type'
 
     @staticmethod
     def spending_by_budget_type():

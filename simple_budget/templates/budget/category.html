@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th colspan="4" class="center">
+                Budget Categories
+            </th>
+        </tr>
+        <tr>
+            <th style="width:40%">
+                <a class="sort" title="sort {% if sort == 0 %}descending{% else %}ascending{% endif %}"
+                   href="/budget/category/?sort={% if not sort == 0 %}0{% else %}1{% endif %}">
+                    Budget Category
+                </a>
+                {% if sort == 0 or sort == 1 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 0 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
+                {% endif %}
+            </th>
+            <th>
+                <a class="sort" title="sort {% if sort == 2 %}descending{% else %}ascending{% endif %}"
+                   href="/budget/category/?sort={% if not sort == 2 %}2{% else %}3{% endif %}">
+                    Budget Type
+                </a>
+                {% if sort == 2 or sort == 3 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 2 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
+                {% endif %}
+            </th>
+            <th>
+                <a class="sort" title="sort {% if sort == 4 %}descending{% else %}ascending{% endif %}"
+                   href="/budget/category/?sort={% if not sort == 4 %}4{% else %}5{% endif %}">
+                    Transaction Categories
+                </a>
+                {% if sort == 4 or sort == 5 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 4 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
+                {% endif %}
+            </th>
+            <th style="width:1%" class="center">-</th>
+        </tr>
+        {% if not budget_categories.count %}
+            <tr>
+                <td colspan="4" class="center text-danger">
+                    No budget categories found
+                </td>
+            </tr>
+        {% else %}
+            {% for category in budget_categories %}
+                <tr>
+                    <td>{{category.budget_category}}</td>
+                    <td>{{category.budget_type}}</td>
+                    <td>
+                        {% if not category.tc_count %}
+                            0
+                        {% else %}
+                            <a class="black" href="/transaction/category/?bc={{category.budget_category_id}}">
+                                {{category.tc_count}}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td class="text-right">
+                        <div class="dropdown">
+                            <a class="btn btn-xs btn-default dropdown-toggle"
+                               data-toggle="dropdown" href="#">
+                                Actions&nbsp;<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li>
+                                    <a role="menuitem"
+                                       href="/budget/category/edit/{{category.budget_category_id}}/">
+                                        Edit Category
+                                    </a>
+                                    <a role="menuitem"
+                                       href="/budget/category/delete/{{category.budget_category_id}}/">
+                                        Delete Category
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

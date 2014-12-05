@@ -56,7 +56,7 @@ def add_edit_transaction(request, action, transaction_line_id):
         message = 'transaction_add'
 
     if request.method == 'POST':
-        if request.POST.get('submit', None) == 'Cancel':
+        if request.POST.get('submit', None) != 'Submit':
             return HttpResponseRedirect(request.POST.get('referer', '/'))
 
         form = AddEditTransactionForm(request.POST)
@@ -135,14 +135,14 @@ def category(request):
     """
     displays transaction category --> budget category mapping
     """
-    budget_category = request.GET.get('bc', None)
+    budget_category_id = request.GET.get('bc', None)
     sort, transaction_categories = \
         TransactionCategory.transaction_category_mapping(
-            request.GET.get('sort', None), budget_category)
+            request.GET.get('sort', None), budget_category_id)
 
     return render_to_response('transaction/category.html',
                               {'sort': sort,
-                               'budget_category': budget_category,
+                               'budget_category_id': budget_category_id,
                                'transaction_categories': transaction_categories},
                               context_instance=RequestContext(request))
 
@@ -206,8 +206,8 @@ def add_edit_transaction_category(request, action,
 
     else:
         if action == 'edit' and transaction_category_id:
-            transaction_category = TransactionCategory.objects.get(
-                transaction_category_id=transaction_category_id)
+            transaction_category = get_object_or_404(TransactionCategory,
+                                                     pk=transaction_category_id)
             form = AddEditTransactionCategoryForm(
                 initial={'referer': referer,
                          'transaction_category_id':

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form">
+        <fieldset>
+            <legend>Delete Budget Category</legend>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{field}}
+                    {% else %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                            {% if transaction_categories %}
+                                <label class="control-label" for="id_{{field.name}}">
+                                    {{field.label}}:
+                                </label>
+                                {{field}}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{error}}</p>
+                                    {% endfor %}
+                                {% endif %}
+                                <p class="text-danger form-warning">
+                                    <strong>
+                                        Warning!!! This budget category is
+                                        assigned to {{transaction_categories}}
+                                        transaction categories. Please select a
+                                        budget category to transfer these
+                                        transaction categories to.
+                                    </strong>
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <input name="submit" type="submit" value="Continue">
+                <input name="submit" type="submit" value="Cancel">
+                <p class="text-danger form-warning">
+                    <strong>
+                        Warning!!! Deleting a budget category cannot be
+                        reversed.
+                    </strong>
+                </p>
+            </form>
+        </fieldset>
+    </div>
+{% endblock %}

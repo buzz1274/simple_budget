@@ -107,6 +107,10 @@ table#budget td.notes {
 table#budget th.center, td.center {
     text-align:center;
 }
+table#budget a.black {
+    color:#000000;
+    text-decoration:underline;
+}
 span.sort_icon {
     font-size:0.7em;
 }
