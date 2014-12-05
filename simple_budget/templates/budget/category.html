@@ -40,7 +40,9 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            <th style="width:1%" class="center">-</th>
+            {% if not user.is_superuser %}
+                <th style="width:1%" class="center">-</th>
+            {% endif %}
         </tr>
         {% if not budget_categories.count %}
             <tr>
@@ -62,26 +64,28 @@
                             </a>
                         {% endif %}
                     </td>
-                    <td class="text-right">
-                        <div class="dropdown">
-                            <a class="btn btn-xs btn-default dropdown-toggle"
-                               data-toggle="dropdown" href="#">
-                                Actions&nbsp;<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li>
-                                    <a role="menuitem"
-                                       href="/budget/category/edit/{{category.budget_category_id}}/">
-                                        Edit Category
-                                    </a>
-                                    <a role="menuitem"
-                                       href="/budget/category/delete/{{category.budget_category_id}}/">
-                                        Delete Category
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
+                    {% if not user.is_superuser %}
+                        <td class="text-right">
+                            <div class="dropdown">
+                                <a class="btn btn-xs btn-default dropdown-toggle"
+                                   data-toggle="dropdown" href="#">
+                                    Actions&nbsp;<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a role="menuitem"
+                                           href="/budget/category/edit/{{category.budget_category_id}}/">
+                                            Edit Category
+                                        </a>
+                                        <a role="menuitem"
+                                           href="/budget/category/delete/{{category.budget_category_id}}/">
+                                            Delete Category
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endif %}

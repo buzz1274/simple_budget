@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.db import DatabaseError
+from django.contrib.auth.decorators import login_required, user_passes_test
 from simple_budget.models.transaction.transaction_category import \
     TransactionCategory
 from simple_budget.forms.transaction.add_edit_transaction_category_form import \
@@ -23,6 +24,7 @@ from django.conf import settings
 import json
 
 
+@login_required
 def transactions(request):
     """
     display transaction log
@@ -42,6 +44,10 @@ def transactions(request):
                                'transactions': monthly_transactions},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def add_edit_transaction(request, action, transaction_line_id):
     """
     add/edit a transaction
@@ -95,6 +101,10 @@ def add_edit_transaction(request, action, transaction_line_id):
                  'action': action},
                 context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def delete_transaction(request, transaction_line_id):
     """
     deletes the supplied transaction
@@ -131,6 +141,7 @@ def delete_transaction(request, transaction_line_id):
                                'refer': referer},
                               context_instance=RequestContext(request))
 
+@login_required
 def category(request):
     """
     displays transaction category --> budget category mapping
@@ -146,6 +157,10 @@ def category(request):
                                'transaction_categories': transaction_categories},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def add_edit_transaction_category(request, action,
                                   transaction_category_id=None):
     """
@@ -229,6 +244,10 @@ def add_edit_transaction_category(request, action,
                                    transaction_category_has_children},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def delete_transaction_category(request, transaction_category_id):
     """
     deletes the supplied transaction category
@@ -290,6 +309,10 @@ def delete_transaction_category(request, transaction_category_id):
                                'refer': referer},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def upload_quicken_file(request):
     """
     processes an uploaded quicken file
@@ -317,6 +340,7 @@ def upload_quicken_file(request):
                               {'form': form},
                               context_instance=RequestContext(request))
 
+@login_required
 def upload_quicken_file_status(request):
     """
     gets the status for the last uploaded qif file

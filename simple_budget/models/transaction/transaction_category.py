@@ -3,6 +3,7 @@ from django.db import models
 from simple_budget.helper.sql import SQL
 from sqlalchemy.orm import aliased
 from sqlalchemy import func, case, desc, asc
+from simple_budget.models.budget.budget_category import BudgetCategory
 
 class TransactionCategory(models.Model):
     """
@@ -11,7 +12,7 @@ class TransactionCategory(models.Model):
     transaction_category_id = models.AutoField(primary_key=True)
     transaction_category_parent = models.ForeignKey('self', blank=True,
                                                     null=True)
-    budget_category = models.ForeignKey('BudgetCategory', blank=True, null=True)
+    budget_category = models.ForeignKey(BudgetCategory, blank=True, null=True)
     transaction_category = models.TextField(blank=True)
 
     class Meta:

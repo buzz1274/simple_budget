@@ -13,6 +13,17 @@
 #header {
     background:#ffdf43;
     height:60px;
+    border-bottom:1px solid #000000;
+}
+#welcome {
+    float:right;
+    padding:5px;
+    font-weight:bold;
+    font-size:0.9em;
+}
+#welcome a {
+    color:#000000;
+    text-decoration:underline;
 }
 #header_content {
     padding:15px 0 0 15px;
@@ -38,10 +49,10 @@
 }
 div.navbar-header {
     border-bottom:1px solid #000000;
-    border-top:1px solid #000000;
     width:100%;
     padding:5px 5px 5px 10px;
     background-color:#F9F9F9;
+    height:42px;
 }
 div.navbar_dropdown {
     float:left;

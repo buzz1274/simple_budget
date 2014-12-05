@@ -50,6 +50,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
     "simple_budget.context_processors.quicken_import_active",
     "simple_budget.context_processors.get_message",
     "simple_budget.context_processors.unassigned_transaction_categories",
@@ -66,7 +67,6 @@ STATICFILES_DIRS = (
 ROOT_URLCONF = 'simple_budget.urls'
 
 WSGI_APPLICATION = 'simple_budget.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -85,6 +85,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
+LOGIN_URL = '/login'
 LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'Europe/London'
 USE_I18N = True

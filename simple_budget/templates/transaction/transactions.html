@@ -69,7 +69,9 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            <th style="width:1%" class="center">-</th>
+            {% if user.is_superuser %}
+                <th style="width:1%" class="center">-</th>
+            {% endif %}
         </tr>
         {% if not transactions %}
             <tr>
@@ -99,26 +101,28 @@
                                 {% endif %}">
                         {{transaction.amount}}
                     </td>
-                    <td class="center">
-                        <div class="dropdown">
-                            <a class="btn btn-xs btn-default dropdown-toggle"
-                               data-toggle="dropdown" href="#">
-                                Actions&nbsp;<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li>
-                                    <a role="menuitem"
-                                       href="/transaction/edit/{{transaction.id}}/">
-                                        Edit Transaction
-                                    </a>
-                                    <a role="menuitem"
-                                       href="/transaction/delete/{{transaction.id}}/">
-                                        Delete Transaction
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
+                    {% if user.is_superuser %}
+                        <td class="center">
+                            <div class="dropdown">
+                                <a class="btn btn-xs btn-default dropdown-toggle"
+                                   data-toggle="dropdown" href="#">
+                                    Actions&nbsp;<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a role="menuitem"
+                                           href="/transaction/edit/{{transaction.id}}/">
+                                            Edit Transaction
+                                        </a>
+                                        <a role="menuitem"
+                                           href="/transaction/delete/{{transaction.id}}/">
+                                            Delete Transaction
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endif %}

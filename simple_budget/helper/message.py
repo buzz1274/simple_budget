@@ -69,6 +69,13 @@ class Message(object):
                 'transaction_delete_failure':
                     {'message': 'An error occurred deleting a transaction.',
                      'type': 'danger'},
+                'no_permissions_error':
+                    {'message': 'You do no have permission to access the '
+                                'requested resource.',
+                     'type': 'danger'},
+                'logged_out':
+                    {'message': 'You have logged out.',
+                     'type': 'success'},
                 'in_progress_quicken_file':
                     {'message': 'Quicken QIF file processing.',
                      'type': 'success'}}

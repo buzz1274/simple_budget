@@ -40,7 +40,9 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            <th style="width:1%" class="center">-</th>
+            {% if user.is_superuser %}
+                <th style="width:1%" class="center">-</th>
+            {% endif %}
         </tr>
         {% if not transaction_categories.count %}
             <tr>
@@ -54,26 +56,28 @@
                     <td>{{category.category}}</td>
                     <td>{{category.budget_category}}</td>
                     <td>{{category.budget_type}}</td>
-                    <td class="text-right">
-                        <div class="dropdown">
-                            <a class="btn btn-xs btn-default dropdown-toggle"
-                               data-toggle="dropdown" href="#">
-                                Actions&nbsp;<span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li>
-                                    <a role="menuitem"
-                                       href="/transaction/category/edit/{{category.transaction_category_id}}/">
-                                        Edit Category
-                                    </a>
-                                    <a role="menuitem"
-                                       href="/transaction/category/delete/{{category.transaction_category_id}}/">
-                                        Delete Category
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
+                    {% if user.is_superuser %}
+                        <td class="text-right">
+                            <div class="dropdown">
+                                <a class="btn btn-xs btn-default dropdown-toggle"
+                                   data-toggle="dropdown" href="#">
+                                    Actions&nbsp;<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a role="menuitem"
+                                           href="/transaction/category/edit/{{category.transaction_category_id}}/">
+                                            Edit Category
+                                        </a>
+                                        <a role="menuitem"
+                                           href="/transaction/category/delete/{{category.transaction_category_id}}/">
+                                            Delete Category
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         {% endif %}

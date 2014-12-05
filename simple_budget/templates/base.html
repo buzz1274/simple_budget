@@ -20,89 +20,110 @@
 
     <div class="container-fluid">
         <div id="header">
+            {% if user.is_authenticated %}
+                <div id="welcome">
+                    Welcome back, {{user}}&nbsp;|&nbsp;<a href="/logout">logout</a>
+                </div>
+            {% endif %}
             <div id="header_content">
                 <h1><a href="/">Simple Budget</a></h1>
             </div>
         </div>
-        <div class="navbar-header">
-            <div class="dropdown navbar_dropdown">
-                <a class="btn btn-sm btn-default dropdown-toggle"
-                   data-toggle="dropdown" href="#">
-                    Accounts&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li>
-                        <a role="menuitem" href="/budget/summary/">
-                            Accounts*
-                        </a>
-                        <a role="menuitem" href="/budget/summary/">
-                            Add Account*
-                        </a>
-                        <a role="menuitem" href="/budget/summary/">
-                            Projected Savings*
-                        </a>
-                        <a role="menuitem" href="/budget/summary/">
-                            Net Worth*
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="dropdown navbar_dropdown">
-                <a class="btn btn-sm btn-default dropdown-toggle"
-                   data-toggle="dropdown" href="#">
-                    Budget&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li>
-                        <a role="menuitem" href="/budget/summary/">
-                            Summary*
-                        </a>
-                        <a role="menuitem" href="/budget/">
-                            Monthly Budget*
-                        </a>
-                        <a role="menuitem" href="/budgets/">
-                            Budgets*
-                        </a>
-                        <a role="menuitem" href="/budget/add/">
-                            Add Budget*
-                        </a>
-                        <a role="menuitem" href="/budget/category/">
-                            Budget Categories
-                        </a>
-                        <a role="menuitem" href="/budget/category/add">
-                            Add Budget Category
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="dropdown navbar_dropdown">
-                <a class="btn btn-sm btn-default dropdown-toggle"
-                   data-toggle="dropdown" href="#">
-                    Transactions&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li>
-                        <a role="menuitem" href="/transactions/">
-                            Transactions
-                        </a>
-                        <a role="menuitem" href="/transaction/add">
-                            Add Transaction
-                        </a>
-                        <a role="menuitem" href="/transaction/category/">
-                            Transaction Categories
-                        </a>
-                        <a role="menuitem" href="/transaction/category/add">
-                            Add Transaction Category
-                        </a>
-                        {% if QUICKEN_IMPORT_ACTIVE %}
-                            <a role="menuitem" href="/transaction/upload_quicken_file/">
-                                Upload Quicken File
+        {% if user.is_authenticated %}
+            <div class="navbar-header">
+                <div class="dropdown navbar_dropdown">
+                    <a class="btn btn-sm btn-default dropdown-toggle"
+                       data-toggle="dropdown" href="#">
+                        Accounts&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="dLabel">
+                        <li>
+                            <a role="menuitem" href="/budget/summary/">
+                                Accounts*
                             </a>
-                        {% endif %}
-                    </li>
-                </ul>
+                            {% if user.is_superuser %}
+                                <a role="menuitem" href="/budget/summary/">
+                                    Add Account*
+                                </a>
+                            {% endif %}
+                            <a role="menuitem" href="/budget/summary/">
+                                Projected Savings*
+                            </a>
+                            <a role="menuitem" href="/budget/summary/">
+                                Net Worth*
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown navbar_dropdown">
+                    <a class="btn btn-sm btn-default dropdown-toggle"
+                       data-toggle="dropdown" href="#">
+                        Budget&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="dLabel">
+                        <li>
+                            <a role="menuitem" href="/budget/summary/">
+                                Summary*
+                            </a>
+                            <a role="menuitem" href="/budget/">
+                                Monthly Budget*
+                            </a>
+                            <a role="menuitem" href="/budgets/">
+                                Budgets*
+                            </a>
+                            {% if user.is_superuser %}
+                                <a role="menuitem" href="/budget/add/">
+                                    Add Budget*
+                                </a>
+                            {% endif %}
+                            <a role="menuitem" href="/budget/category/">
+                                Budget Categories
+                            </a>
+                            {% if user.is_superuser %}
+                                <a role="menuitem" href="/budget/category/add">
+                                    Add Budget Category
+                                </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown navbar_dropdown">
+                    <a class="btn btn-sm btn-default dropdown-toggle"
+                       data-toggle="dropdown" href="#">
+                        Transactions&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu"
+                        aria-labelledby="dLabel">
+                        <li>
+                            <a role="menuitem" href="/transactions/">
+                                Transactions
+                            </a>
+                            {% if user.is_superuser %}
+                                <a role="menuitem" href="/transaction/add">
+                                    Add Transaction
+                                </a>
+                            {% endif %}
+                            <a role="menuitem" href="/transaction/category/">
+                                Transaction Categories
+                            </a>
+                            {% if user.is_superuser %}
+                                <a role="menuitem" href="/transaction/category/add">
+                                    Add Transaction Category
+                                </a>
+                            {% endif %}
+                            {% if user.is_superuser and QUICKEN_IMPORT_ACTIVE %}
+                                <a role="menuitem"
+                                   href="/transaction/upload_quicken_file/">
+                                    Upload Quicken File
+                                </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
+        {% endif %}
         <div id="main" class="row-fluid" style="clear:both;">
             <div id="sub_main">
                 {% include 'message.html' %}

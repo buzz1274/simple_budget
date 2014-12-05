@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.db import DatabaseError
+from django.contrib.auth.decorators import login_required, user_passes_test
 from simple_budget.models.transaction.transaction_category import \
     TransactionCategory
 from simple_budget.models.budget.budget_category import BudgetCategory
@@ -13,7 +14,7 @@ from simple_budget.forms.budget.add_edit_budget_category_form import \
 from simple_budget.forms.budget.delete_budget_category_form import \
     DeleteBudgetCategoryForm
 
-
+@login_required
 def summary(request):
     """
     budget summary
@@ -23,6 +24,7 @@ def summary(request):
                                    BudgetType().spending_by_budget_type()},
                               context_instance=RequestContext(request))
 
+@login_required
 def budget(request):
     """
     index
@@ -45,6 +47,7 @@ def budget(request):
                                'prev_month': prev_month},
                               context_instance=RequestContext(request))
 
+@login_required
 def category(request):
     """
     budget categories
@@ -59,6 +62,10 @@ def category(request):
                                'sort': sort},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def add_edit_budget_category(request, action, budget_category_id):
     """
     add edit budget categories
@@ -128,6 +135,10 @@ def add_edit_budget_category(request, action, budget_category_id):
                                'action': action},
                               context_instance=RequestContext(request))
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
 def delete_budget_category(request, budget_category_id):
     """
     deletes the supplied budget category
