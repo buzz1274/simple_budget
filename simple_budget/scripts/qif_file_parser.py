@@ -26,6 +26,7 @@ class Quicken(object):
     sql = None
     transfer_accounts = None
     references = None
+    always_an_expense = None
 
     def __init__(self):
         """
@@ -89,6 +90,9 @@ class Quicken(object):
 
         if 'references' in config:
             self.references = config['references']
+
+        if 'always_an_expense' in config:
+            self.always_an_expense = config['always_an_expense']
 
     def clean_db(self):
         """
@@ -174,6 +178,11 @@ class Quicken(object):
                                     self.save_category(
                                         transaction_line['sub_category'],
                                         transaction_line['category'])
+
+                                if ((transaction_line['sub_category'] in self.always_an_expense or
+                                     transaction_line['category'] in self.always_an_expense) and
+                                    transaction_line['amount'] > 0):
+                                    transaction_line['amount'] *= -1
 
                                 self.save_transaction_line(
                                     transaction_id, transaction_category_id,
