@@ -72,10 +72,18 @@
                             {% else %}
                                 <td class="currency
                                             {% if not transaction.difference and not transaction.actual_spend and transaction.budget_amount %}
-                                                success
+                                                {% if total.budget_type != 'Expense' %}
+                                                    warning
+                                                {% else %}
+                                                    success
+                                                {% endif %}
                                             {% endif %}">
                                     {% if not transaction.difference and not transaction.actual_spend and transaction.budget_amount %}
-                                        {{transaction.budget_amount}}
+                                        {% if total.budget_type != 'Expense' %}
+                                            -{{transaction.budget_amount}}
+                                        {% else %}
+                                            {{transaction.budget_amount}}
+                                        {% endif %}
                                     {% else %}
                                         -
                                     {% endif %}
@@ -91,8 +99,19 @@
                                                 {% endif %}">
                                     {{transaction.difference_percent}}
                                 </td>
+                            {% elif not transaction.actual_spend and transaction.budget_amount %}
+                                <td class="currency
+                                            {% if total.budget_type != 'Expense' %}
+                                                warning
+                                            {% else %}
+                                                success
+                                            {% endif %}">
+                                    100.00
+                                </td>
                             {% else %}
-                                <td class="currency">-</td>
+                                <td class="currency">
+                                    -
+                                </td>
                             {% endif %}
                             <td class="currency">
                                 {% if transaction.average_annual_spend %}
@@ -131,7 +150,11 @@
                 <tr>
                     <td><strong>Total {{total.budget_type}}(£)</strong></td>
                     <td class="currency">
-                        <strong>{{total.budget}}</strong>
+                        {% if total.budget %}
+                            <strong>{{total.budget}}</strong>
+                        {% else %}
+                            -
+                        {%  endif %}
                     </td>
                     <td class="currency">
                         {% if total.actual %}
@@ -140,7 +163,7 @@
                             -
                         {%  endif %}
                     </td>
-                    {% if total.difference %}
+                    {% if total.difference and total.budget and total.actual %}
                         <td class="currency
                                         {% if total.difference > 0 %}
                                             success
@@ -208,7 +231,7 @@
                 {% else %}
                     <td class="currency">-</td>
                 {% endif %}
-                {% if grand_total.difference %}
+                {% if grand_total.difference and grand_total.budget and grand_total.actual %}
                     <td class="currency
                             {% if grand_total.difference > 0 %}
                                 success

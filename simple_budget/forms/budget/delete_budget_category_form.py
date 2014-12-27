@@ -32,7 +32,7 @@ class DeleteBudgetCategoryForm(forms.Form):
                     [(o.budget_category_id, str(o.budget_category))]
 
     budget_category_id = forms.CharField(widget=forms.HiddenInput(),
-                                              required=True)
+                                         required=True)
 
     transfer_budget_category_id = \
         forms.ChoiceField(

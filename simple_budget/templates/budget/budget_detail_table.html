@@ -1,0 +1,198 @@
+<table id="budget" width="100%"
+       class="table table-condensed table-bordered">
+    {% if view_type == 'view' %}
+        <tr>
+            <th colspan="4" class="budget_detail text-center">
+                {{budget.budget_name}}{% if budget.budget_master %}(Master){% endif %}:
+                {{budget.budget_description}}
+            </th>
+        </tr>
+    {% endif %}
+    <tr>
+        <th {% if view_type == 'view' %}style="width:25%"{% endif %}>
+            Budget Category
+        </th>
+        <th {% if view_type == 'view' %}style="width:25%"{% endif %}>
+            12 Month Avg Spend(£)
+        </th>
+        <th style="{% if view_type == 'view' %}width:20%{% else %}width:1%{% endif %}">
+            This Month(£)
+        </th>
+        {% if action == 'edit' or view_type == 'view' %}
+            <th style="{% if view_type == 'view' %}width:25%{% else %}width:1%{% endif %}">
+                Next Month Onwards(£)
+            </th>
+        {% endif %}
+    </tr>
+    {% for total in totals %}
+        {% for transaction in transactions %}
+            {% if total.budget_type == transaction.budget_type %}
+                <tr>
+                    <td>{{transaction.budget_category}}</td>
+                    <td class="currency">
+                        {% if transaction.average_annual_spend %}
+                            <strong>
+                                {{transaction.average_annual_spend}}
+                            </strong>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    {% if view_type == 'view' %}
+                        <td class="currency">
+                            {% if transaction.budget_amount %}
+                                {% if transaction.budget_amount_future != transaction.budget_amount %}
+                                    <strong>*</strong>
+                                {% endif %}
+                                {{transaction.budget_amount}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td class="form-group
+                                    {% if transaction.has_error %}
+                                        has-error
+                                    {% endif %}">
+                            <input autocomplete="off"
+                                   data-budget_type="budget_type_{{transaction.budget_type_id}}"
+                                   class="update_budget_value
+                                          budget_type_{{transaction.budget_type_id}}
+                                          form-control form-small"
+                                   id="budget_category_{{transaction.budget_category_id}}_interface"
+                                   maxlength="8" step="0.01" type="number" />
+                        </td>
+                    {% endif %}
+                    {% if view_type == 'view' %}
+                        <td class="currency">
+                            {% if transaction.budget_amount_future %}
+                                {% if transaction.budget_amount_future != transaction.budget_amount %}
+                                    <strong>*</strong>
+                                {% endif %}
+                                {{transaction.budget_amount_future}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        {% if action == 'edit' %}
+                            <td class="form-group
+                                            {% if transaction.has_error %}
+                                                has-error
+                                            {% endif %}">
+                                <input autocomplete="off"
+                                       data-budget_type="budget_type_{{transaction.budget_type_id}}_future"
+                                       class="update_budget_value_future
+                                              budget_type_{{transaction.budget_type_id}}_future
+                                              form-control form-small"
+                                       id="budget_category_{{transaction.budget_category_id}}_future_interface"
+                                       maxlength="8" step="0.01" type="number" />
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <td colspan="4" class="seperator">&nbsp;</td>
+        </tr>
+        <tr class="update_budget_summary">
+            <td>
+                <strong>Total {{total.budget_type}}</strong>
+            </td>
+            <td class="currency">
+                <strong>
+                    {% if total.average_annual %}
+                        {{total.average_annual}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </strong>
+            </td>
+            <td class="currency">
+                <strong id="budget_type_{{total.budget_type_id}}_total"
+                        data-budget_type="{{total.budget_type}}"
+                        class="budget_type_total">
+                    {% if total.budget %}
+                        {{total.budget}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </strong>
+            </td>
+            {% if action == 'edit' or view_type == 'view' %}
+                <td class="currency">
+                    <strong id="budget_type_{{total.budget_type_id}}_future_total"
+                            data-budget_type="{{total.budget_type}}"
+                            class="budget_type_total_future">
+                        {% if total.budget_future %}
+                            {{total.budget_future}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </strong>
+                </td>
+            {% endif %}
+        </tr>
+        {% if total.budget_type != "Expense" %}
+            <tr>
+                <td colspan="4" class="seperator">&nbsp;</td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    <tr>
+        <td colspan="4" class="seperator">&nbsp;</td>
+    </tr>
+    <tr class="update_budget_summary">
+        <td>
+            <strong>Grand Total</strong>
+        </td>
+        <td class="currency
+                    {% if grand_total.average_annual > 0 %}
+                        success
+                    {% else %}
+                        warning
+                    {% endif %}">
+            <strong>
+                {% if grand_total.average_annual %}
+                    {{grand_total.average_annual}}
+                {% else %}
+                    -
+                {% endif %}
+            </strong>
+        </td>
+        <td class="currency
+                    {% if grand_total.budget >= 0 %}
+                        success
+                    {% else %}
+                        warning
+                    {% endif %}">
+            <strong id="grand_total">
+                {% if grand_total.budget %}
+                    {{grand_total.budget}}
+                {% else %}
+                    -
+                {% endif %}
+            </strong>
+        </td>
+        {% if action == 'edit' or view_type == 'view' %}
+            <td class="currency
+                        {% if grand_total.budget_future >= 0 %}
+                            success
+                        {% else %}
+                            warning
+                        {% endif %}">
+                <strong id="grand_total_future">
+                    {% if grand_total.budget_future %}
+                        {{grand_total.budget_future}}
+                    {% else %}
+                        -
+                    {% endif %}
+                </strong>
+            </td>
+        {% endif %}
+    </tr>
+    <tr>
+        <td colspan="4" class="seperator">&nbsp;</td>
+    </tr>
+</table>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th colspan="4" class="center">
+                Budgets
+            </th>
+        </tr>
+        <tr>
+            <th style="width:15%">
+                Budget Name
+            </th>
+            <th>
+                Budget Description
+            </th>
+            <th style="width:1%">
+                Master
+            </th>
+            {% if user.is_superuser %}
+                <th style="width:1%" class="center">
+                    -
+                </th>
+            {% endif %}
+        </tr>
+        {% if not budgets.count %}
+            <tr>
+                <td colspan="4" class="center text-danger">
+                    No budgets found
+                </td>
+            </tr>
+        {% else %}
+            {% for budget in budgets %}
+                <tr>
+                    <td>
+                        <a href="/budgets/{{budget.budget_id}}/">
+                            {{budget.budget_name}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/budgets/{{budget.budget_id}}/">
+                            {{budget.budget_description}}
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        {% if budget.budget_master %}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {% endif %}
+                    </td>
+                    {% if user.is_superuser %}
+                        <td class="text-right">
+                            <div class="dropdown">
+                                <a class="btn btn-xs btn-default dropdown-toggle"
+                                   data-toggle="dropdown" href="#">
+                                    Actions&nbsp;<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a role="menuitem"
+                                           href="/budget/edit/{{budget.budget_id}}/">
+                                            Edit Budget
+                                        </a>
+                                        <a role="menuitem"
+                                           href="/budget/delete/{{budget.budget_id}}/">
+                                            Delete Budget
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

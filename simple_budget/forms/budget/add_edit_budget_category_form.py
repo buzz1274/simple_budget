@@ -19,13 +19,15 @@ class AddEditBudgetCategoryForm(forms.Form):
     referer = forms.CharField(widget=forms.HiddenInput(),
                               required=False)
 
-    budget_type_id = \
-        forms.ChoiceField(
-            required=True,
-            widget=forms.Select(attrs={'class': 'form-control'}))
-
     budget_category = \
         forms.CharField(
+            label="Budget Catgeory",
             max_length=200, required=True,
             widget=forms.TextInput(attrs={'class': 'form-control',
                                           'autocomplete': 'off'}))
+
+    budget_type_id = \
+        forms.ChoiceField(
+            label="Budget Type",
+            required=True,
+            widget=forms.Select(attrs={'class': 'form-control'}))

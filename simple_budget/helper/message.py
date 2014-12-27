@@ -56,6 +56,18 @@ class Message(object):
                     {'message': 'An error occurred deleting a '
                                 'transaction category.',
                      'type': 'danger'},
+                'budget_add_success':
+                    {'message': 'Budget added.',
+                     'type': 'success'},
+                'budget_add_failure':
+                    {'message': 'An error occurred adding a budget.',
+                     'type': 'danger'},
+                'budget_edit_success':
+                    {'message': 'Budget edited.',
+                     'type': 'success'},
+                'budget_edit_failure':
+                    {'message': 'An error occurred editing a budget.',
+                     'type': 'danger'},
                 'budget_category_delete_success':
                     {'message': 'Budget category deleted.',
                      'type': 'success'},
@@ -66,6 +78,12 @@ class Message(object):
                 'transaction_delete_success':
                     {'message': 'Transaction deleted.',
                      'type': 'success'},
+                'budget_delete_success':
+                    {'message': 'Budget deleted.',
+                     'type': 'success'},
+                'budget_delete_failure':
+                    {'message': 'An error occurred deleting the budget.',
+                     'type': 'danger'},
                 'transaction_delete_failure':
                     {'message': 'An error occurred deleting a transaction.',
                      'type': 'danger'},

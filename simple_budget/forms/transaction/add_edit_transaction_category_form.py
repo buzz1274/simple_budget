@@ -28,19 +28,21 @@ class AddEditTransactionCategoryForm(forms.Form):
     referer = forms.CharField(widget=forms.HiddenInput(),
                               required=False)
 
+    transaction_category = \
+        forms.CharField(
+            max_length=200, required=True,
+            label='Transaction Category',
+            widget=forms.TextInput(attrs={'class': 'form-control',
+                                          'autocomplete': 'off'}))
+
     transaction_category_parent_id = \
         forms.ChoiceField(
             required=False,
             label='Transaction Parent Category',
             widget=forms.Select(attrs={'class': 'form-control form-large'}))
 
-    transaction_category = \
-        forms.CharField(
-            max_length=200, required=True,
-            widget=forms.TextInput(attrs={'class': 'form-control',
-                                          'autocomplete': 'off'}))
-
     budget_category = \
         forms.ChoiceField(
             required=True,
+            label='Budget Category',
             widget=forms.Select(attrs={'class': 'form-control'}))

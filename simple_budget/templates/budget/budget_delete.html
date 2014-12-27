@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form">
+        <fieldset>
+            <legend>Delete Budget</legend>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{field}}
+                    {% endif %}
+                {% endfor %}
+                {% if budget_is_master %}
+                    <p class="text-danger form-warning">
+                        <strong>
+                            Warning!!! This is the master budget please create a
+                            new master budget before attempting to delete this
+                            budget.
+                        </strong>
+                    </p>
+                {% else %}
+                    <input name="submit" type="submit" value="Continue">
+                {% endif %}
+                <input name="submit" type="submit" value="Cancel">
+                {% if not budget_is_master %}
+                    <p class="text-danger form-warning">
+                        <strong>
+                            Warning!!! Deleting a budget cannot be
+                            reversed.
+                        </strong>
+                    </p>
+                {% endif %}
+            </form>
+        </fieldset>
+    </div>
+{% endblock %}

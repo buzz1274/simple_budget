@@ -94,6 +94,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 TEMP_SAVE_PATH = '/tmp/'
 QUICKEN_IMPORT_ACTIVE = True
+SESSION_SAVE_EVERY_REQUEST = True
 
 with open(BASE_DIR + '/simple_budget/config.yaml') as f:
     config = yaml.load(f)

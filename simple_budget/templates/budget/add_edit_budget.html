@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <div class="form">
+    <script src="/static/assets/js/add_edit_budget.js"></script>
+    <div class="form" style="width:80%">
         <fieldset>
-            <legend>Login</legend>
-            <form method="POST" action="/login">
+            <legend>{{action|title}} Budget</legend>
+            <form method="POST" action="">
                 {% csrf_token %}
                 {% for field in form %}
                     {% if field.is_hidden %}
@@ -15,6 +15,7 @@
                                 {{field.label}}:
                             </label>
                             {{field}}
+                            {{field.widget}}
                             {% if field.errors %}
                                 {% for error in field.errors %}
                                     <p class="text-danger">{{error}}</p>
@@ -23,15 +24,19 @@
                         </div>
                     {% endif %}
                 {% endfor %}
-                <input name="submit" type="submit" value="Login">
-                {% if not form.errors and invalid_credentials %}
-                    <p class="text-danger form-warning">
-                        <strong>
-                            You have entered an invalid username and/or
-                            password.
-                        </strong>
-                    </p>
+
+                <div class="add_budget_seperator">&nbsp;</div>
+
+                {% if budget_value_error_found %}
+                    <p class="text-danger">
+                        Please correct all form fields highlighted in red.
+                    </p><br />
                 {% endif %}
+
+                {% include 'budget/budget_detail_table.html' %}
+
+                <input name="submit" type="submit" value="Submit">
+                <input name="submit" type="submit" value="Cancel">
             </form>
         </fieldset>
     </div>

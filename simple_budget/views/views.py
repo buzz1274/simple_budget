@@ -31,19 +31,23 @@ def login(request):
     """
     invalid_credentials = False
 
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST':
         user = authenticate(username=request.POST.get('username', None),
                             password=request.POST.get('password', None))
 
         if user is not None and user.is_active:
             auth_login(request, user)
-            return HttpResponseRedirect(request.GET.get('next', '/'))
+            request.session.set_expiry(900)
+            return HttpResponseRedirect(request.POST.get('next', '/'))
         else:
             invalid_credentials = True
 
         form = LoginForm(request.POST)
     else:
-        form = LoginForm()
+        form = LoginForm(initial={'next': request.GET.get('next', '/')})
 
     return render_to_response('login.html',
                               {'form': form,

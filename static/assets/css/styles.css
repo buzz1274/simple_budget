@@ -72,6 +72,13 @@ div#upload_file {
 table#budget {
     width:100%;
 }
+table#budget tr.update_budget_summary,
+table#budget th.budget_detail {
+    background-color:#f9f9f9;
+}
+table#budget td {
+    vertical-align:middle;
+}
 table#budget tbody tr > td.currency {
     text-align:right;
 }
@@ -129,7 +136,7 @@ td.success {
     background-color: #dff0d8 !important;
 }
 div.form {
-    width:70%;
+    width:65%;
     margin:0 auto;
 }
 div.form fieldset {
@@ -150,6 +157,10 @@ p.form-warning {
     border:1px solid #a94442;
     width:350px;
 }
+select.form-small,
+input.form-small {
+    width:100px;
+}
 select.form-medium,
 input.form-medium {
     width:150px;
@@ -163,4 +174,12 @@ label {
 }
 p.message {
     padding:5px;
+}
+div.add_budget_seperator {
+    line-height:1px;
+    background-color:#000000;
+    border:0px;
+    padding:0px;
+    margin:0 auto 25px;
+    width:80%
 }

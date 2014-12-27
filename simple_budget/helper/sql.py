@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine, Table, MetaData
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import DatabaseError
 from simple_budget.settings import DATABASES
@@ -30,11 +31,17 @@ class SQL(object):
 
             self.db_session = session()
 
+            self.budget = Table('budget', MetaData(),
+                                autoload=True, autoload_with=self.db)
+
             self.budget_category = Table('budget_category', MetaData(),
                                          autoload=True, autoload_with=self.db)
 
             self.budget_type = Table('budget_type', MetaData(),
                                      autoload=True, autoload_with=self.db)
+
+            self.budget_amount = Table('budget_amount', MetaData(),
+                                       autoload=True, autoload_with=self.db)
 
             self.transaction = Table('transaction', MetaData(),
                                      autoload=True, autoload_with=self.db)
@@ -48,3 +55,4 @@ class SQL(object):
 
         except DatabaseError:
             self.db = False
+

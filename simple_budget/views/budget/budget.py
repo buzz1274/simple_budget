@@ -8,10 +8,15 @@ from simple_budget.models.transaction.transaction_category import \
 from simple_budget.models.budget.budget_category import BudgetCategory
 from simple_budget.helper.date_calculation import DateCalculation
 from simple_budget.helper.helper import clean_message_from_url
+from simple_budget.forms.budget.add_edit_budget_form import \
+    AddEditBudgetForm
+from simple_budget.forms.budget.delete_budget_form import \
+    DeleteBudgetForm
 from simple_budget.forms.budget.add_edit_budget_category_form import \
     AddEditBudgetCategoryForm
 from simple_budget.forms.budget.delete_budget_category_form import \
     DeleteBudgetCategoryForm
+from simple_budget.models.budget.budget import Budget
 
 
 @login_required
@@ -26,7 +31,7 @@ def budget(request):
         return HttpResponseRedirect('/budget/')
 
     transactions, totals, grand_total = \
-        BudgetCategory().spending_by_budget_category(start_date, end_date)
+        Budget().get_budget(start_date, end_date)
 
     return render_to_response('budget/budget.html',
                               {'transactions': transactions,
@@ -36,6 +41,147 @@ def budget(request):
                                'next_month': next_month,
                                'prev_month': prev_month},
                               context_instance=RequestContext(request))
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
+def add_edit_budgets(request, action=None, budget_id=None):
+
+    budget_value_error_found = False
+    referer = \
+        clean_message_from_url(request.META.get('HTTP_REFERER', None))
+    prev_month, next_month, start_date, end_date, today = \
+        DateCalculation().calculate_dates()
+
+    transactions, totals, grand_total = \
+        Budget().get_budget(start_date, end_date, budget_id)
+
+    if request.method == 'POST':
+        if request.POST.get('submit', None) != 'Submit':
+            return HttpResponseRedirect(request.POST.get('referer', '/'))
+
+        if action == 'edit':
+            edit_budget = True
+        else:
+            edit_budget = False
+
+        form = AddEditBudgetForm(request.POST, transactions=transactions,
+                                 edit_budget=edit_budget)
+
+        if form.is_valid():
+            if Budget().add_edit_budget(action, request.POST):
+                message = 'success'
+            else:
+                message = 'failure'
+
+            return HttpResponseRedirect(
+                '/budgets/?message=budget_%s_%s' % (action, message,))
+        else:
+            for transaction in transactions:
+                if form['budget_category_%s' %
+                        (transaction.budget_category_id,)].errors:
+                    transaction.has_error = True
+                    budget_value_error_found = True
+
+    else:
+        if action == 'edit' and budget_id:
+            edit_budget = get_object_or_404(Budget, pk=budget_id)
+
+            form = \
+                AddEditBudgetForm(transactions=transactions,
+                                  edit_budget=True,
+                                  initial={'referer':
+                                               referer,
+                                           'budget_id':
+                                               edit_budget.budget_id,
+                                           'budget_name':
+                                               edit_budget.budget_name,
+                                           'budget_description':
+                                               edit_budget.budget_description,
+                                           'budget_master':
+                                               edit_budget.budget_master})
+        else:
+            form = AddEditBudgetForm(transactions=transactions,
+                                     initial={'referer': referer})
+
+    return render_to_response('budget/add_edit_budget.html',
+                              {'form': form,
+                               'action': action,
+                               'budget_value_error_found':
+                                   budget_value_error_found,
+                               'totals': totals,
+                               'grand_total': grand_total,
+                               'transactions': transactions},
+                              context_instance=RequestContext(request))
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
+def delete_budgets(request, budget_id=None):
+    """
+    deletes the supplied budget category
+    :param request:
+    :return:
+    """
+    budget_to_delete = get_object_or_404(Budget, pk=budget_id)
+    referer = \
+        clean_message_from_url(request.META.get('HTTP_REFERER', None))
+
+    if request.method == 'POST':
+        if request.POST.get('submit', None) == 'Cancel':
+            return HttpResponseRedirect(request.POST.get('referer', '/'))
+
+        form = DeleteBudgetForm(request.POST)
+
+        if form.is_valid():
+            if budget_to_delete.delete_budget():
+                return HttpResponseRedirect(
+                    '/budgets/?message=budget_delete_success')
+            else:
+                return HttpResponseRedirect(
+                    '/budgets/?message=budget_delete_failure')
+    else:
+        form = DeleteBudgetForm(initial={'budget_id': budget_to_delete.pk,
+                                         'referer': referer})
+
+    return render_to_response('budget/budget_delete.html',
+                              {'form': form,
+                               'budget_is_master':
+                                   budget_to_delete.budget_master,
+                               'refer': referer},
+                              context_instance=RequestContext(request))
+
+@login_required
+def budgets(request, budget_id=None):
+    """
+    index
+    """
+    if budget_id:
+        budget_to_view = Budget.objects.get(pk=budget_id)
+    else:
+        budget_to_view = None
+
+    if not budget_id or not budget_to_view:
+        return render_to_response('budget/budgets.html',
+                                  {'budgets': Budget.objects.all().
+                                                order_by('-budget_master')},
+                                  context_instance=RequestContext(request))
+    else:
+        prev_month, next_month, start_date, end_date, today = \
+            DateCalculation().calculate_dates()
+
+        transactions, totals, grand_total = \
+            Budget().get_budget(start_date, end_date, budget_id)
+
+        return render_to_response('budget/budget_detail.html',
+                                  {'budget': budget_to_view,
+                                   'view_type': 'view',
+                                   'totals': totals,
+                                   'grand_total': grand_total,
+                                   'transactions': transactions},
+                                  context_instance=RequestContext(request))
 
 @login_required
 def category(request):
@@ -72,7 +218,6 @@ def add_edit_budget_category(request, action, budget_category_id):
         form = AddEditBudgetCategoryForm(request.POST)
 
         if form.is_valid():
-            print form.cleaned_data['budget_category_id']
             try:
                 if form.cleaned_data['budget_category_id']:
                     budget_category = \
@@ -97,7 +242,7 @@ def add_edit_budget_category(request, action, budget_category_id):
                     message = 'success'
                 else:
                     message = 'failure'
-            except DatabaseError, e:
+            except DatabaseError:
                 message = 'failure'
 
             return HttpResponseRedirect('/budget/category/?'
@@ -157,9 +302,6 @@ def delete_budget_category(request, budget_category_id):
         if form.is_valid():
             try:
                 if form.cleaned_data['transfer_budget_category_id']:
-
-                    print form.cleaned_data['transfer_budget_category_id']
-
                     TransactionCategory.objects.filter(budget_category_id=
                                                        budget_category_id). \
                         update(budget_category_id=
