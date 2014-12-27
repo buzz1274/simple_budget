@@ -308,6 +308,11 @@ class Budget(models.Model):
                         budget_category_id=budget_category_id.group(1))
 
                 if budget_category:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        value = 0
+
                     budget_amount = \
                         BudgetAmount(budget=budget,
                                      budget_category=budget_category,
