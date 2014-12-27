@@ -56,7 +56,6 @@ $(document).ready(function() {
                 var total = 0;
 
                 $("." + budget_type).each(function () {
-                    console.log(budget_type + "  " + this.value);
                     if (!isNaN(parseFloat(this.value))) {
                         total += parseFloat(this.value);
                     }
@@ -74,7 +73,6 @@ $(document).ready(function() {
         var grand_total = 0;
 
         $(".budget_type_total" + postfix).each(function () {
-            console.log("HDFJFH");
             if (!isNaN(parseFloat($(this).html()))) {
                 if ($(this).data('budget_type') == 'Income') {
                     grand_total += parseFloat($(this).html());
