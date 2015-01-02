@@ -54,8 +54,20 @@
             {% for category in transaction_categories %}
                 <tr>
                     <td>{{category.category}}</td>
-                    <td>{{category.budget_category}}</td>
-                    <td>{{category.budget_type}}</td>
+                    <td>
+                        {% if category.budget_category %}
+                            {{category.budget_category}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if category.budget_type %}
+                            {{category.budget_type}}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
                     {% if user.is_superuser %}
                         <td class="text-right">
                             <div class="dropdown">

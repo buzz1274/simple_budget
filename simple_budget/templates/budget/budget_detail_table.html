@@ -41,8 +41,10 @@
                     {% if view_type == 'view' %}
                         <td class="currency">
                             {% if transaction.budget_amount %}
-                                {% if transaction.budget_amount_future != transaction.budget_amount %}
-                                    <strong>*</strong>
+                                {% if transaction.budget_amount_future < transaction.budget_amount %}
+                                    <span class="glyphicon glyphicon-arrow-up green"></span>
+                                {% elif transaction.budget_amount_future > transaction.budget_amount %}
+                                    <span class="glyphicon glyphicon-arrow-down red"></span>
                                 {% endif %}
                                 {{transaction.budget_amount}}
                             {% else %}
@@ -66,8 +68,10 @@
                     {% if view_type == 'view' %}
                         <td class="currency">
                             {% if transaction.budget_amount_future %}
-                                {% if transaction.budget_amount_future != transaction.budget_amount %}
-                                    <strong>*</strong>
+                                {% if transaction.budget_amount_future < transaction.budget_amount %}
+                                    <span class="glyphicon glyphicon-arrow-down red"></span>
+                                {% elif transaction.budget_amount_future > transaction.budget_amount %}
+                                    <span class="glyphicon glyphicon-arrow-up green"></span>
                                 {% endif %}
                                 {{transaction.budget_amount_future}}
                             {% else %}

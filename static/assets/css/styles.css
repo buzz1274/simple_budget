@@ -183,3 +183,9 @@ div.add_budget_seperator {
     margin:0 auto 25px;
     width:80%
 }
+span.green {
+    color:#32CD32;
+}
+span.red {
+    color:#FF0000;
+}
