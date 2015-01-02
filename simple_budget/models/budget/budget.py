@@ -39,13 +39,11 @@ class Budget(models.Model):
             else:
                 budget_id = budget[0].budget_id
 
-        today = date(datetime.now().year, datetime.now().month,
-                     datetime.now().day)
         end_date_income = start_date - timedelta(1)
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
 
 
-        annual_start_date = date(today.year, start_date.month, 1) - \
+        annual_start_date = date(start_date.year, start_date.month, 1) - \
                             relativedelta(years=1)
         annual_end_date = date(start_date.year, start_date.month, 1) - \
                           relativedelta(months=1)
@@ -55,10 +53,11 @@ class Budget(models.Model):
 
         next_month_start_date = date(start_date.year, start_date.month, 1) + \
                                 relativedelta(months=1)
-        next_month_end_date = date(next_month_start_date.year,
-                                   next_month_start_date.month,
-                                   calendar.monthrange(next_month_start_date.year,
-                                                       next_month_start_date.month)[1])
+        next_month_end_date = \
+            date(next_month_start_date.year,
+                 next_month_start_date.month,
+                 calendar.monthrange(next_month_start_date.year,
+                                     next_month_start_date.month)[1])
 
         sql = SQL()
         budget_amount_future =\
