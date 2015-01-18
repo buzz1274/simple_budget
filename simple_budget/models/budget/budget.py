@@ -68,15 +68,19 @@ class Budget(models.Model):
             sql.budget_category.c.budget_category_id.label('id'),
             sql.budget_amount.c.budget_amount,
             budget_amount_future.c.budget_amount.label('budget_amount_future'),
-            func.SUM(sql.transaction_line.c.amount). \
-            label('amount'),
+            func.SUM(sql.transaction_line.c.amount).label('amount'),
             case([(sql.budget_type.c.budget_type != 'Expense',
                    func.ABS(func.SUM(sql.transaction_line.c.amount)) -
-                   sql.budget_amount.c.budget_amount),
+                            sql.budget_amount.c.budget_amount
+                   ),
                   (sql.budget_type.c.budget_type == 'Expense',
-                   sql.budget_amount.c.budget_amount -
-                   func.ABS(func.SUM(sql.transaction_line.c.amount))),
-                  ], else_=0).label('difference')). \
+                   case([(func.SUM(sql.transaction_line.c.amount) < 0,
+                          sql.budget_amount.c.budget_amount -
+                          func.ABS(func.SUM(sql.transaction_line.c.amount)))],
+                        else_=sql.budget_amount.c.budget_amount +
+                              func.ABS(func.SUM(sql.transaction_line.c.amount))
+                   )),
+                  ]).label('difference')).\
             join(sql.budget_type,
                  sql.budget_type.c.budget_type_id==sql.budget_category.c.budget_type_id). \
             outerjoin(sql.transaction_category,
@@ -165,7 +169,9 @@ class Budget(models.Model):
                 order_by(sql.budget_category.c.budget_category.asc())
 
         transactions = budget.all()
-        sorted_totals, grand_total = self.calculate_totals(transactions)
+
+        transactions, sorted_totals, grand_total = \
+            self.calculate_totals(transactions)
 
         return [transactions, sorted_totals, grand_total]
 
@@ -234,7 +240,10 @@ class Budget(models.Model):
                     totals[transaction.budget_type]['actual'] += \
                         transaction.actual_spend
 
-                    transaction.actual_spend = abs(transaction.actual_spend)
+                    if transaction.budget_type == 'Expense':
+                        transaction.actual_spend *= -1
+                    else:
+                        transaction.actual_spend = abs(transaction.actual_spend)
 
                 if transaction.budget_amount:
                     totals[transaction.budget_type]['budget'] += \
@@ -284,7 +293,7 @@ class Budget(models.Model):
 
             sorted_totals = sorted(sorted_totals, key=lambda k: k['ordering'])
 
-            return [sorted_totals, grand_total]
+            return [transactions, sorted_totals, grand_total]
 
     @staticmethod
     def add_budget(data, budget_master):
