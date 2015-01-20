@@ -267,8 +267,10 @@ class Budget(models.Model):
 
                 if total['difference'] != 0 and total['budget'] != 0:
                     total['difference_percent'] = \
-                        abs(round(((total['difference'] /
-                                    total['budget']) * 100), 2))
+                        Decimal(abs((total['difference'] /
+                                     total['budget']) * 100)).\
+                            quantize(Decimal('.01'))
+
 
                 sorted_totals.append(total)
 
@@ -288,8 +290,9 @@ class Budget(models.Model):
 
             if grand_total['difference'] != 0 and grand_total['budget'] != 0:
                 grand_total['difference_percent'] = \
-                    abs(round(((float(grand_total['difference']) /
-                                float(grand_total['budget'])) * 100), 2))
+                    Decimal(abs((grand_total['difference'] /
+                                 grand_total['budget']) * 100)). \
+                            quantize(Decimal('.01'))
 
             sorted_totals = sorted(sorted_totals, key=lambda k: k['ordering'])
 
