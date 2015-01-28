@@ -20,11 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'l05&x3tvwwn(d%tgmb_mf36+rrhe8qo-d@e9ar_xiw&_ab)0gu'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = ['*']
 
 
@@ -68,6 +63,30 @@ ROOT_URLCONF = 'simple_budget.urls'
 
 WSGI_APPLICATION = 'simple_budget.wsgi.application'
 
+with open(BASE_DIR + '/simple_budget/config.yaml') as f:
+    config = yaml.load(f)
+
+    if 'server_type' in config and config['server_type'] == 'LIVE':
+        DB_HOST = os.environ['POSTGRES_PORT_5432_TCP_ADDR']
+        TEMPLATE_DEBUG = False
+        DEBUG = False
+    else:
+        DB_HOST = '127.0.0.1'
+        TEMPLATE_DEBUG = True
+        DEBUG = True
+
+    if 'python_path' in config:
+        PYTHON_PATH = config['python_path']
+    else:
+        PYTHON_PATH = None
+
+    if 'start_date' in config:
+        START_DATE = config['start_date']
+    else:
+        START_DATE = None
+
+
+
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
@@ -76,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'accounts',
         'USER': 'accounts',
-        'HOST': '127.0.0.1',
+        'HOST': DB_HOST,
         'PORT': 5432,
         'PASSWORD': 'accounts'
     }
@@ -95,17 +114,4 @@ STATIC_URL = '/static/'
 TEMP_SAVE_PATH = '/tmp/'
 QUICKEN_IMPORT_ACTIVE = True
 SESSION_SAVE_EVERY_REQUEST = True
-
-with open(BASE_DIR + '/simple_budget/config.yaml') as f:
-    config = yaml.load(f)
-
-    if 'python_path' in config:
-        PYTHON_PATH = config['python_path']
-    else:
-        PYTHON_PATH = None
-
-    if 'start_date' in config:
-        START_DATE = config['start_date']
-    else:
-        START_DATE = None
 
