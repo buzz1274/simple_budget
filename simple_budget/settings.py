@@ -80,6 +80,16 @@ with open(BASE_DIR + '/simple_budget/config.yaml') as f:
     else:
         PYTHON_PATH = None
 
+    if 'backup_path' in config:
+        BACKUP_PATH = config['backup_path']
+    else:
+        BACKUP_PATH = None
+
+    if 'backup_files_to_keep' in config:
+        BACKUP_FILES_TO_KEEP = config['backup_files_to_keep']
+    else:
+        BACKUP_FILES_TO_KEEP = None
+
     if 'start_date' in config:
         START_DATE = config['start_date']
     else:
