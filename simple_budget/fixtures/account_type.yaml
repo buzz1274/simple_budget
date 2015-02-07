@@ -1,0 +1,10 @@
+- model: simple_budget.AccountType
+  pk: 1
+  fields:
+    account_type: "Credit Card"
+    ordering: "2"
+- model: simple_budget.AccountType
+  pk: 2
+  fields:
+    account_type: "Bank Account"
+    ordering: "1"

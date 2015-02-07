@@ -69,6 +69,10 @@ div#upload_file {
     float:right;
     width:23%
 }
+h4#page_title {
+    padding:0 0 2px 1px;
+    margin:0px;
+}
 table#budget {
     width:100%;
 }
@@ -188,4 +192,10 @@ span.green {
 }
 span.red {
     color:#FF0000;
+}
+div.info_box {
+    width:80%;
+    margin:0 auto 10px;
+    border:1px solid #000000;
+    padding:5px;
 }

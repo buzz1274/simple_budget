@@ -53,6 +53,15 @@ class SQL(object):
             self.transaction_line = Table('transaction_line', MetaData(),
                                           autoload=True, autoload_with=self.db)
 
+            self.account = Table('account', MetaData(),
+                                 autoload=True, autoload_with=self.db)
+
+            self.account_type = Table('account_type', MetaData(),
+                                      autoload=True, autoload_with=self.db)
+
+            self.account_balance = Table('account_balance', MetaData(),
+                                         autoload=True, autoload_with=self.db)
+
         except DatabaseError:
             self.db = False
 

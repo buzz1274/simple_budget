@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+    <svg class="chart"></svg>
+    <table id="budget" class="table table-condensed table-striped table-bordered">
+        <tr>
+            <th colspan="4" class="center">
+                Debts
+            </th>
+        </tr>
+        <tr>
+            <th style="width:25%;">Account</th>
+            <th style="width:25%;">Current(£)</th>
+            <th style="width:25%;">Last month(£)</th>
+            <th style="width:25%;">12 months ago(£)</th>
+        </tr>
+        <tbody>
+        {% for debt in debts %}
+            <tr>
+                <td>
+                    <a href="/account/{{debt.account_id}}/">
+                        {{debt.account_name}}
+                    </a>
+                </td>
+                <td class="currency">
+                    {% if not debt.current_balance %}
+                        -
+                    {% else %}
+                        {{debt.current_balance}}
+                    {% endif %}
+                </td>
+                <td class="currency">
+                    {% if not debt.last_month_balance %}
+                        -
+                    {% else %}
+                        {{debt.last_month_balance}}
+                    {% endif %}
+                </td>
+                <td class="currency">
+                    {% if not debt.last_year_balance %}
+                        -
+                    {% else %}
+                        {{debt.last_year_balance}}
+                    {% endif %}
+                </td>
+            </tr>
+        {%  endfor %}
+            <tr>
+                <td><strong>Total(£)</strong></td>
+                <td class="currency">
+                    {% if not totals.current_balance %}
+                        -
+                    {% else %}
+                        {{totals.current_balance}}
+                    {% endif %}
+                </td>
+                <td class="currency">
+                    {% if not totals.last_month_balance %}
+                        -
+                    {% else %}
+                        {{totals.last_month_balance}}
+                        {% if totals.last_month_balance_diff %}
+                            <span style="float:left;"
+                                  class="{% if totals.last_month_balance_diff < 0 %}
+                                            green
+                                         {% else %}
+                                            red
+                                         {% endif %}">
+                                <strong>
+                                    ({{totals.last_month_balance_diff}})
+                                </strong>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td class="currency">
+                    {% if not totals.last_year_balance %}
+                        -
+                    {% else %}
+                        {{totals.last_year_balance}}
+                        {% if totals.last_year_balance_diff %}
+                            <span style="float:left;"
+                                  class="{% if totals.last_year_balance_diff < 0 %}
+                                            green
+                                         {% else %}
+                                            red
+                                         {% endif %}">
+                                <strong>
+                                    ({{totals.last_year_balance_diff}})
+                                </strong>
+                            </span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% if totals.last_month_debt_repayment %}
+        <div class="info_box">
+            Based on last months debt repayment of
+            <strong>£{{totals.last_month_debt_repayment}}</strong> it will be
+            <strong>{{totals.last_month_debt_repayment_date|date:"F Y"}}</strong>
+            before all debts are repaid.
+        </div>
+    {% endif %}
+    {% if totals.avg_debt_repayment %}
+        <div class="info_box">
+            Based on the average debt repayment of
+            <strong>£{{totals.avg_debt_repayment}}</strong> per month over the last
+            12 months it will be
+            <strong>{{totals.avg_debt_repayment_date|date:"F Y"}}</strong>
+            before all debts are repaid.
+        </div>
+    {% endif %}
+{% endblock %}
