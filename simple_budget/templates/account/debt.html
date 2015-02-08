@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-    <svg class="chart"></svg>
+    <script src="/static/assets/js/graphs/debt.js"></script>
+    <div id="graph" style="margin-top:10px;"></div>
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
             <th colspan="5" class="center">
-                Debts
+                Debt Balances by Account
             </th>
         </tr>
         <tr>
             <th style="width:20%;">Account</th>
             <th style="width:20%;">Type</th>
-            <th style="width:20%;">Current(£)</th>
-            <th style="width:20%;">Last month(£)</th>
             <th style="width:20%;">12 months ago(£)</th>
+            <th style="width:20%;">Last month(£)</th>
+            <th style="width:20%;">Current(£)</th>
         </tr>
         <tbody>
         {% for debt in debts %}
@@ -24,10 +25,10 @@
                 </td>
                 <td>{{debt.account_type}}</td>
                 <td class="currency">
-                    {% if not debt.current_balance %}
+                    {% if not debt.last_year_balance %}
                         -
                     {% else %}
-                        {{debt.current_balance}}
+                        {{debt.last_year_balance}}
                     {% endif %}
                 </td>
                 <td class="currency">
@@ -38,10 +39,10 @@
                     {% endif %}
                 </td>
                 <td class="currency">
-                    {% if not debt.last_year_balance %}
+                    {% if not debt.current_balance %}
                         -
                     {% else %}
-                        {{debt.last_year_balance}}
+                        {{debt.current_balance}}
                     {% endif %}
                 </td>
             </tr>
@@ -49,10 +50,22 @@
             <tr>
                 <td colspan="2"><strong>Total(£)</strong></td>
                 <td class="currency">
-                    {% if not totals.current_balance %}
+                    {% if not totals.last_year_balance %}
                         -
                     {% else %}
-                        {{totals.current_balance}}
+                        {{totals.last_year_balance}}
+                        {% if totals.last_year_balance_diff %}
+                            <span style="float:left;"
+                                  class="{% if totals.last_year_balance_diff < 0 %}
+                                            green
+                                         {% else %}
+                                            red
+                                         {% endif %}">
+                                <strong>
+                                    ({{totals.last_year_balance_diff}})
+                                </strong>
+                            </span>
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td class="currency">
@@ -75,22 +88,10 @@
                     {% endif %}
                 </td>
                 <td class="currency">
-                    {% if not totals.last_year_balance %}
+                    {% if not totals.current_balance %}
                         -
                     {% else %}
-                        {{totals.last_year_balance}}
-                        {% if totals.last_year_balance_diff %}
-                            <span style="float:left;"
-                                  class="{% if totals.last_year_balance_diff < 0 %}
-                                            green
-                                         {% else %}
-                                            red
-                                         {% endif %}">
-                                <strong>
-                                    ({{totals.last_year_balance_diff}})
-                                </strong>
-                            </span>
-                        {% endif %}
+                        {{totals.current_balance}}
                     {% endif %}
                 </td>
             </tr>
