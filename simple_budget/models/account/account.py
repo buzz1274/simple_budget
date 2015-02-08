@@ -2,11 +2,12 @@ from __future__ import unicode_literals
 from django.db import models
 from account_type import AccountType
 from simple_budget.helper.sql import SQL
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from decimal import Decimal
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 import math
+import calendar
 
 
 class Account(models.Model):
@@ -21,15 +22,27 @@ class Account(models.Model):
     class Meta:
         db_table = 'account'
 
-
     @staticmethod
-    def debt():
+    def account_balances(account_type):
         """
-        gets balance for all debt related account types
+        get account balances of the supplied type
+        :param type:
         :return:
         """
         today = datetime.now()
         sql = SQL()
+
+        start_last_month = date(today.year, today.month, 1) - relativedelta(months=1)
+        end_last_month = date(start_last_month.year, start_last_month.month,
+                              calendar.monthrange(start_last_month.year,
+                                                  start_last_month.month)[1])
+
+        start_last_year = date(today.year, today.month, 1) - relativedelta(months=12)
+        end_last_year = date(start_last_year.year, start_last_year.month,
+                             calendar.monthrange(start_last_year.year,
+                                                 start_last_year.month)[1])
+
+        print start_last_year, end_last_year
 
         balance_max_date = \
             sql.db_session.query(sql.account_balance.c.account_id,
@@ -40,48 +53,70 @@ class Account(models.Model):
         balance_last_month = \
             sql.db_session.query(sql.account_balance.c.account_id,
                                  func.max(sql.account_balance.c.account_balance).
-                                    label('last_month_balance')).\
-                filter(sql.account_balance.c.account_balance_date <= '2015-01-31').\
-                filter(sql.account_balance.c.account_balance_date >= '2015-01-01').\
+                                 label('last_month_balance')). \
+                filter(sql.account_balance.c.account_balance_date <= end_last_month). \
+                filter(sql.account_balance.c.account_balance_date >= start_last_month). \
                 group_by(sql.account_balance.c.account_id).subquery()
 
         balance_last_year = \
             sql.db_session.query(sql.account_balance.c.account_id,
                                  func.max(sql.account_balance.c.account_balance).
                                  label('last_year_balance')). \
-                filter(sql.account_balance.c.account_balance_date <= '2014-01-31'). \
-                filter(sql.account_balance.c.account_balance_date >= '2014-01-01'). \
+                filter(sql.account_balance.c.account_balance_date <= end_last_year). \
+                filter(sql.account_balance.c.account_balance_date >= start_last_year). \
                 group_by(sql.account_balance.c.account_id).subquery()
 
-        debts = sql.db_session.query(
+        account_balances = sql.db_session.query(
                     sql.account.c.account_id,
                     sql.account.c.account_name,
-                    sql.account_balance.c.account_balance.\
+                    sql.account_type.c.account_type,
+                    sql.account_balance.c.account_balance. \
                         label('current_balance'),
                     balance_last_month.c.last_month_balance,
                     balance_last_year.c.last_year_balance). \
-                outerjoin(balance_max_date,
-                          balance_max_date.c.account_id ==
-                          sql.account.c.account_id). \
-                outerjoin(sql.account_balance,
-                          and_(sql.account_balance.c.account_id ==
-                               sql.account.c.account_id,
-                               sql.account_balance.c.account_balance_date ==
-                               balance_max_date.c.max_balance_date)).\
-                outerjoin(balance_last_month,
-                          balance_last_month.c.account_id ==
-                          sql.account.c.account_id). \
-                outerjoin(balance_last_year,
-                          balance_last_year.c.account_id ==
-                          sql.account.c.account_id). \
-                group_by(sql.account.c.account_id,
-                             sql.account.c.account_name,
-                             sql.account_balance.c.account_balance,
-                             balance_last_month.c.last_month_balance,
-                             balance_last_year.c.last_year_balance).\
-                order_by(sql.account.c.account_name.asc())
+            join(sql.account_type,
+                 sql.account_type.c.account_type_id ==
+                 sql.account.c.account_type_id). \
+            outerjoin(balance_max_date,
+                      balance_max_date.c.account_id ==
+                      sql.account.c.account_id). \
+            outerjoin(sql.account_balance,
+                      and_(sql.account_balance.c.account_id ==
+                           sql.account.c.account_id,
+                           sql.account_balance.c.account_balance_date ==
+                           balance_max_date.c.max_balance_date)). \
+            outerjoin(balance_last_month,
+                      balance_last_month.c.account_id ==
+                      sql.account.c.account_id). \
+            outerjoin(balance_last_year,
+                      balance_last_year.c.account_id ==
+                      sql.account.c.account_id). \
+            group_by(sql.account.c.account_id,
+                     sql.account.c.account_name,
+                     sql.account_type.c.account_type,
+                     sql.account_type.c.ordering,
+                     sql.account_balance.c.account_balance,
+                     balance_last_month.c.last_month_balance,
+                     balance_last_year.c.last_year_balance). \
+            order_by(sql.account_type.c.ordering.asc(),
+                     sql.account.c.account_name.asc())
 
-        if not debts:
+        if account_type == 'debt':
+            account_balances = account_balances.filter(
+                or_(sql.account_type.c.account_type=='Credit Card',
+                    sql.account_type.c.account_type=='Loan'))
+
+        return account_balances
+
+    def debt(self):
+        """
+        gets balance for all debt related account types
+        :return:
+        """
+        today = datetime.now()
+        account_balances = self.account_balances(account_type='debt')
+
+        if not account_balances:
             return [False, False]
         else:
             totals = {'current_balance': 0,
@@ -92,14 +127,22 @@ class Account(models.Model):
                       'avg_debt_repayment': 0,
                       'last_month_debt_repayment': 0}
 
-            for debt in debts:
-                totals['current_balance'] += debt.current_balance
-                totals['last_month_balance'] += debt.last_month_balance
-                totals['last_month_balance_diff'] = \
-                    totals['current_balance'] - totals['last_month_balance']
-                totals['last_year_balance'] += debt.last_year_balance
-                totals['last_year_balance_diff'] = \
-                    totals['current_balance'] - totals['last_year_balance']
+            for account_balance in account_balances:
+                if account_balance.current_balance:
+                    totals['current_balance'] += \
+                        account_balance.current_balance
+
+                if account_balance.last_month_balance:
+                    totals['last_month_balance'] += \
+                        account_balance.last_month_balance
+                    totals['last_month_balance_diff'] = \
+                        totals['current_balance'] - totals['last_month_balance']
+
+                if account_balance.last_year_balance:
+                    totals['last_year_balance'] += \
+                        account_balance.last_year_balance
+                    totals['last_year_balance_diff'] = \
+                        totals['current_balance'] - totals['last_year_balance']
 
             if totals['last_year_balance_diff']:
                 totals['avg_debt_repayment'] = \
@@ -120,4 +163,4 @@ class Account(models.Model):
                     relativedelta(months=int(math.ceil(totals['current_balance'] /
                                                        totals['last_month_debt_repayment'])))
 
-            return [debts, totals]
+            return [account_balances, totals]

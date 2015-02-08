@@ -3,15 +3,16 @@
     <svg class="chart"></svg>
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
-            <th colspan="4" class="center">
+            <th colspan="5" class="center">
                 Debts
             </th>
         </tr>
         <tr>
-            <th style="width:25%;">Account</th>
-            <th style="width:25%;">Current(£)</th>
-            <th style="width:25%;">Last month(£)</th>
-            <th style="width:25%;">12 months ago(£)</th>
+            <th style="width:20%;">Account</th>
+            <th style="width:20%;">Type</th>
+            <th style="width:20%;">Current(£)</th>
+            <th style="width:20%;">Last month(£)</th>
+            <th style="width:20%;">12 months ago(£)</th>
         </tr>
         <tbody>
         {% for debt in debts %}
@@ -21,6 +22,7 @@
                         {{debt.account_name}}
                     </a>
                 </td>
+                <td>{{debt.account_type}}</td>
                 <td class="currency">
                     {% if not debt.current_balance %}
                         -
@@ -45,7 +47,7 @@
             </tr>
         {%  endfor %}
             <tr>
-                <td><strong>Total(£)</strong></td>
+                <td colspan="2"><strong>Total(£)</strong></td>
                 <td class="currency">
                     {% if not totals.current_balance %}
                         -

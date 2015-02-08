@@ -8,3 +8,8 @@
   fields:
     account_type: "Bank Account"
     ordering: "1"
+- model: simple_budget.AccountType
+  pk: 3
+  fields:
+    account_type: "Loan"
+    ordering: "3"
