@@ -1,19 +1,21 @@
 {% extends "base.html" %}
+{% load templatetags %}
+
 {% block content %}
     <script src="/static/assets/js/graphs/debt.js"></script>
     <div id="graph" style="margin-top:10px;"></div>
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
             <th colspan="5" class="center">
-                Debt Balances by Account
+                Debt Balances by Account(£)
             </th>
         </tr>
         <tr>
             <th style="width:20%;">Account</th>
-            <th style="width:20%;">Type</th>
-            <th style="width:20%;">12 months ago(£)</th>
-            <th style="width:20%;">Last month(£)</th>
-            <th style="width:20%;">Current(£)</th>
+            <th style="width:14%;">Type</th>
+            <th style="width:22%;">{{totals.last_year_date|date:"F Y"}}</th>
+            <th style="width:22%;">{{totals.last_month_date|date:"F Y"}}</th>
+            <th style="width:22%;">{{totals.today|date:"F Y"}}</th>
         </tr>
         <tbody>
         {% for debt in debts %}
@@ -28,21 +30,21 @@
                     {% if not debt.last_year_balance %}
                         -
                     {% else %}
-                        {{debt.last_year_balance}}
+                        {{debt.last_year_balance|currency}}
                     {% endif %}
                 </td>
                 <td class="currency">
                     {% if not debt.last_month_balance %}
                         -
                     {% else %}
-                        {{debt.last_month_balance}}
+                        {{debt.last_month_balance|currency}}
                     {% endif %}
                 </td>
                 <td class="currency">
                     {% if not debt.current_balance %}
                         -
                     {% else %}
-                        {{debt.current_balance}}
+                        {{debt.current_balance|currency}}
                     {% endif %}
                 </td>
             </tr>
@@ -53,16 +55,16 @@
                     {% if not totals.last_year_balance %}
                         -
                     {% else %}
-                        {{totals.last_year_balance}}
+                        {{totals.last_year_balance|currency}}
                         {% if totals.last_year_balance_diff %}
                             <span style="float:left;"
-                                  class="{% if totals.last_year_balance_diff < 0 %}
+                                  class="{% if totals.last_year_balance_diff > 0 %}
                                             green
                                          {% else %}
                                             red
                                          {% endif %}">
                                 <strong>
-                                    ({{totals.last_year_balance_diff}})
+                                    ({{totals.last_year_balance_diff|currency}})
                                 </strong>
                             </span>
                         {% endif %}
@@ -72,16 +74,16 @@
                     {% if not totals.last_month_balance %}
                         -
                     {% else %}
-                        {{totals.last_month_balance}}
+                        {{totals.last_month_balance|currency}}
                         {% if totals.last_month_balance_diff %}
                             <span style="float:left;"
-                                  class="{% if totals.last_month_balance_diff < 0 %}
+                                  class="{% if totals.last_month_balance_diff > 0 %}
                                             green
                                          {% else %}
                                             red
                                          {% endif %}">
                                 <strong>
-                                    ({{totals.last_month_balance_diff}})
+                                    ({{totals.last_month_balance_diff|currency}})
                                 </strong>
                             </span>
                         {% endif %}
@@ -91,7 +93,7 @@
                     {% if not totals.current_balance %}
                         -
                     {% else %}
-                        {{totals.current_balance}}
+                        {{totals.current_balance|currency}}
                     {% endif %}
                 </td>
             </tr>
@@ -99,8 +101,8 @@
     </table>
     {% if totals.last_month_debt_repayment %}
         <div class="info_box">
-            Based on last months debt repayment of
-            <strong>£{{totals.last_month_debt_repayment}}</strong> it will be
+            Based on this months debt repayment of
+            <strong>£{{totals.last_month_debt_repayment|currency}}</strong> it will be
             <strong>{{totals.last_month_debt_repayment_date|date:"F Y"}}</strong>
             before all debts are repaid.
         </div>
@@ -108,9 +110,9 @@
     {% if totals.avg_debt_repayment %}
         <div class="info_box">
             Based on the average debt repayment of
-            <strong>£{{totals.avg_debt_repayment}}</strong> per month over the last
-            12 months it will be
-            <strong>{{totals.avg_debt_repayment_date|date:"F Y"}}</strong>
+            <strong>£{{totals.avg_debt_repayment|currency}}</strong> per month, between
+            {{totals.last_year_date|date:"F Y"}} and {{totals.last_month_date|date:"F Y"}},
+            it will be <strong>{{totals.avg_debt_repayment_date|date:"F Y"}}</strong>
             before all debts are repaid.
         </div>
     {% endif %}

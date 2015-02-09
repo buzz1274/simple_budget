@@ -28,10 +28,7 @@ def debt_summary(request):
 
     if account_balances:
         for account_balance in account_balances:
-            print account_balance
             data.append({'date': account_balance.account_balance_date.strftime('%Y-%m-%d'),
                          'balance': str(account_balance.balance)})
-
-        print data
 
     return HttpResponse(json.dumps(data), content_type='application/json')

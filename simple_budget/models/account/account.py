@@ -37,12 +37,11 @@ class Account(models.Model):
                               calendar.monthrange(start_last_month.year,
                                                   start_last_month.month)[1])
 
-        start_last_year = date(today.year, today.month, 1) - relativedelta(months=12)
+        start_last_year = date(start_last_month.year,
+                               start_last_month.month, 1) - relativedelta(months=11)
         end_last_year = date(start_last_year.year, start_last_year.month,
                              calendar.monthrange(start_last_year.year,
                                                  start_last_year.month)[1])
-
-        print start_last_year, end_last_year
 
         balance_max_date = \
             sql.db_session.query(sql.account_balance.c.account_id,
@@ -106,7 +105,7 @@ class Account(models.Model):
                 or_(sql.account_type.c.account_type=='Credit Card',
                     sql.account_type.c.account_type=='Loan'))
 
-        return account_balances
+        return [account_balances, start_last_year, start_last_month]
 
     @staticmethod
     def account_balance_summary(account_type=None):
@@ -128,8 +127,6 @@ class Account(models.Model):
             group_by(sql.account_balance.c.account_balance_date).\
             order_by(sql.account_balance.c.account_balance_date.desc())
 
-        print account_balances
-
         if account_type == 'debt':
             account_balances = account_balances.filter(
                 or_(sql.account_type.c.account_type=='Credit Card',
@@ -143,7 +140,8 @@ class Account(models.Model):
             :return:
             """
             today = datetime.now()
-            account_balances = self.account_balances(account_type='debt')
+            account_balances, last_year, last_month = \
+                self.account_balances(account_type='debt')
 
             if not account_balances:
                 return [False, False]
@@ -151,6 +149,9 @@ class Account(models.Model):
                 totals = {'current_balance': 0,
                           'last_month_balance': 0,
                           'last_month_balance_diff': 0,
+                          'today': today,
+                          'last_month_date': last_month,
+                          'last_year_date': last_year,
                           'last_year_balance': 0,
                           'last_year_balance_diff': 0,
                           'avg_debt_repayment': 0,
@@ -165,15 +166,15 @@ class Account(models.Model):
                         totals['last_month_balance'] += \
                             account_balance.last_month_balance
                         totals['last_month_balance_diff'] = \
-                            totals['current_balance'] - totals['last_month_balance']
+                            totals['last_month_balance'] - totals['current_balance']
 
                     if account_balance.last_year_balance:
                         totals['last_year_balance'] += \
                             account_balance.last_year_balance
                         totals['last_year_balance_diff'] = \
-                            totals['current_balance'] - totals['last_year_balance']
+                            totals['last_year_balance'] - totals['last_month_balance']
 
-                if totals['last_year_balance_diff']:
+                if totals['last_year_balance_diff'] > 0:
                     totals['avg_debt_repayment'] = \
                         abs(totals['last_year_balance_diff'] / 12). \
                             quantize(Decimal('.01'))
@@ -183,7 +184,7 @@ class Account(models.Model):
                               relativedelta(months=int(math.ceil(totals['current_balance'] /
                                                                  totals['avg_debt_repayment'])))
 
-                if totals['last_month_balance_diff'] < 0:
+                if totals['last_month_balance_diff'] > 0:
                     totals['last_month_debt_repayment'] = \
                         abs(totals['last_month_balance_diff'])
 

@@ -12,3 +12,7 @@ def in_the_future(date):
             return False
     except ValueError:
         return False
+
+@register.filter(name='currency')
+def currency(value):
+    return "{:,}".format(value)
