@@ -59,9 +59,6 @@ class SQL(object):
             self.account_type = Table('account_type', MetaData(),
                                       autoload=True, autoload_with=self.db)
 
-            self.account_balance = Table('account_balance', MetaData(),
-                                         autoload=True, autoload_with=self.db)
-
         except DatabaseError:
             self.db = False
 

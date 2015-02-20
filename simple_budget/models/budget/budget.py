@@ -83,6 +83,7 @@ class Budget(models.Model):
                   ]).label('difference')).\
             join(sql.budget_type,
                  sql.budget_type.c.budget_type_id==sql.budget_category.c.budget_type_id). \
+            filter(sql.budget_type.c.budget_type != 'N/A').\
             outerjoin(sql.transaction_category,
                       sql.transaction_category.c.budget_category_id==
                       sql.budget_category.c.budget_category_id). \
@@ -159,6 +160,7 @@ class Budget(models.Model):
                 join(sql.budget_type,
                      sql.budget_type.c.budget_type_id ==
                      sql.budget_category.c.budget_type_id). \
+                filter(sql.budget_type.c.budget_type != 'N/A').\
                 outerjoin(spend,
                           and_(spend.c.id==
                                sql.budget_category.c.budget_category_id)). \

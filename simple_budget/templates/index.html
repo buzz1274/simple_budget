@@ -12,33 +12,31 @@
             <th style="width:22%">Debt Repayment(£)</th>
             <th style="width:14%">Remaining(£)</th>
         </tr>
-        <tbody>
-            {% for key, spending in spending_by_budget_type.items %}
-                <tr>
-                    <td>
-                        <a href="/budget/?date={{spending.date|date:"Y-m"}}">
-                            {{spending.date|date:"F Y"}}
-                        </a>
-                    </td>
-                    <td class="currency">{{spending.previous_month_income}}</td>
-                    <td class="currency">{{spending.expense}}</td>
-                    <td class="currency">{{spending.savings}}</td>
-                    <td class="currency">{{spending.debt_repayment}}</td>
-                    <td class="currency
-                            {% if spending.total < 0 %}
-                                warning
-                            {% else %}
-                                success{% endif %}">
-                        {{spending.total}}
-                    </td>
-                </tr>
-            {%  endfor %}
+        {% for key, spending in spending_by_budget_type.items %}
+            <tr>
+                <td>
+                    <a href="/budget/?date={{spending.date|date:"Y-m"}}">
+                        {{spending.date|date:"F Y"}}
+                    </a>
+                </td>
+                <td class="currency">{{spending.previous_month_income}}</td>
+                <td class="currency">{{spending.expense}}</td>
+                <td class="currency">{{spending.savings}}</td>
+                <td class="currency">{{spending.debt_repayment}}</td>
+                <td class="currency
+                        {% if spending.total < 0 %}
+                            warning
+                        {% else %}
+                            success{% endif %}">
+                    {{spending.total}}
+                </td>
+            </tr>
+        {%  endfor %}
         <tr>
             <td colspan="6" class="notes">
                 *Income figures calculated using values from
                 previous month.
             </td>
         </tr>
-        </tbody>
     </table>
 {% endblock %}

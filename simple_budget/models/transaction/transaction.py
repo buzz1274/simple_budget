@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from simple_budget.models.transaction.transaction_line import TransactionLine
+from simple_budget.models.account.account import Account
 from django.conf import settings
 from django.db import transaction as db_transaction
 from django.db import DatabaseError
@@ -15,6 +16,7 @@ class Transaction(models.Model):
     """
     transaction_id = models.AutoField(primary_key=True)
     transaction_date = models.DateField(null=False, blank=False)
+    account = models.ForeignKey(Account, blank=True, null=True)
 
     class Meta:
         db_table = 'transaction'

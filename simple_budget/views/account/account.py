@@ -23,12 +23,5 @@ def debt_summary(request):
     """
     index
     """
-    account_balances = Account().account_balance_summary('debt')
-    data = []
-
-    if account_balances:
-        for account_balance in account_balances:
-            data.append({'date': account_balance.account_balance_date.strftime('%Y-%m-%d'),
-                         'balance': str(account_balance.balance)})
-
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return HttpResponse(json.dumps(Account().debt_balance_summary()),
+                        content_type='application/json')

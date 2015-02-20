@@ -113,9 +113,18 @@ class Quicken(object):
         """
         with open(quicken_file, 'r') as f:
             transaction_found = False
+            negate_amount = False
+            account_found = False
+            account_id = False
             transaction = {}
 
             for line in f:
+                if line[0:8] == '!Account':
+                    account_found = True
+                if line[0] == 'N' and not transaction_found and account_found:
+                    account_found = False
+                    account_id = self.get_account_id(line[1:].strip())
+
                 if line[0] == 'D':
                     try:
                         date = datetime.strptime(line[1:].strip(), '%d/%m/%y')
@@ -138,8 +147,11 @@ class Quicken(object):
                 elif transaction_found and line[0] == 'S':
                     category, sub_category = self.split_category(line[1:])
 
-                elif transaction_found and line[0] == 'N':
+                elif transaction_found and (line[0] == 'N' or line[0] == 'M'):
                     transaction['reference'] = line[1:].strip()
+
+                    if line.strip() == 'NXOut':
+                        negate_amount = True
 
                 elif transaction_found and line[0] == '$' and category:
                     transaction['split'].append(
@@ -150,7 +162,7 @@ class Quicken(object):
                     sub_category = None
 
                 elif line[0] == '^':
-                    if transaction:
+                    if transaction and account_id:
                         if not transaction['split']:
                             transaction['split'].append(
                                 {'category': transaction['category'],
@@ -158,21 +170,20 @@ class Quicken(object):
                                  'amount': transaction['amount']})
 
                         transaction_id = \
-                            self.save_transaction(transaction['date'])
+                            self.save_transaction(account_id,
+                                                  transaction['date'])
 
                         for transaction_line in transaction['split']:
-                            if (transaction_line['category'] and
-                                (not transaction['reference'] or
-                                 transaction['reference'] != 'xxx') and
-                                (not re.match('\[', transaction_line['category']) or
-                                 transaction_line['category'] in self.transfer_accounts or
-                                 (transaction['reference'] and
-                                  transaction['reference'] in self.references))):
-
-                                if transaction['reference'] in self.references:
-                                    transaction_line['sub_category'] = None
-                                    transaction_line['category'] = \
+                            if transaction_line['category']:
+                                if (transaction['reference'] in self.references and
+                                    transaction['reference'] != 'xxx'):
+                                    transaction_line['sub_category'] = \
                                         self.references[transaction['reference']]
+
+                                if transaction_line['category'][0] == '[':
+                                    transaction_line['category'] = \
+                                        re.sub(r"\[|\]", "", transaction_line['category'])
+                                    self.get_account_id(transaction_line['category'])
 
                                 transaction_category_id = \
                                     self.save_category(
@@ -184,20 +195,68 @@ class Quicken(object):
                                     transaction_line['amount'] > 0):
                                     transaction_line['amount'] *= -1
 
+                                if negate_amount:
+                                    transaction_line['amount'] *= -1
+
                                 self.save_transaction_line(
                                     transaction_id, transaction_category_id,
                                     transaction_line['amount'])
 
                     transaction_found = False
+                    negate_amount = False
                     transaction = {}
 
-    def save_transaction(self, transaction_date):
+    def get_account_id(self, account_name):
+        """
+        get the account_id for the named account
+        @return integer
+        """
+        account_name = re.sub(r"\[|\]", "", account_name)
+        account_id = self.sql.db_session.query(
+                        self.sql.account.c.account_id).\
+                            filter(account_name ==
+                                   self.sql.account.c.account_name).scalar()
+
+        if not account_id:
+            account_id = self.add_account(account_name)
+
+        return account_id
+
+    def add_account(self, account_name):
+        """
+        add a new account
+        :param account_name:
+        @return integer
+        """
+        account_name = re.sub(r"\[|\]", "", account_name)
+        account_id = self.sql.db_session.execute(
+                        self.sql.account.insert().\
+                        values(account_name=account_name).\
+                        returning(self.sql.account.c.account_id)).scalar()
+
+        if not self.get_category_id(account_name, None):
+            budget_category_id = self.sql.db_session.query(
+                self.sql.budget_category.c.budget_category_id). \
+                filter(self.sql.budget_category.c.budget_category ==
+                       'n/a'). \
+                scalar()
+
+            self.sql.db_session.execute(
+                self.sql.transaction_category.insert(). \
+                values(transaction_category=account_name,
+                       budget_category_id=budget_category_id,
+                       transaction_category_parent_id=None))
+
+        return account_id
+
+    def save_transaction(self, account_id, transaction_date):
         """
         saves the transaction
         """
         return self.sql.db_session.execute(
                     self.sql.transaction.insert(). \
-                    values(transaction_date=transaction_date). \
+                    values(transaction_date=transaction_date,
+                           account_id=account_id). \
                     returning(self.sql.transaction.c.transaction_id)).scalar()
 
     def save_transaction_line(self, transaction_id, transaction_category_id, amount):
@@ -216,6 +275,14 @@ class Quicken(object):
         saves the supplied transaction_category
         @return integer transaction_category_id
         """
+        if transaction_category:
+            transaction_category = \
+                re.sub(r"\[|\]", "", transaction_category)
+
+        if parent_transaction_category:
+            parent_transaction_category = \
+                re.sub(r"\[|\]", "", parent_transaction_category)
+
         if not transaction_category:
             transaction_category = parent_transaction_category
             transaction_category_parent_id = None
@@ -235,7 +302,6 @@ class Quicken(object):
         transaction_category_id = self.get_category_id(
                                         transaction_category,
                                         transaction_category_parent_id)
-
         if transaction_category_id:
             return transaction_category_id
         else:

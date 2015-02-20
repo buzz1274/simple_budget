@@ -55,7 +55,7 @@
                 <tr>
                     <td>{{category.category}}</td>
                     <td>
-                        {% if category.budget_category %}
+                        {% if category.budget_category and category.budget_type %}
                             {{category.budget_category}}
                         {% else %}
                             -

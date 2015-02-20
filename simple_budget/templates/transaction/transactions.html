@@ -4,7 +4,7 @@
 {% block content %}
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
-            <th id="date_header" colspan="5">
+            <th id="date_header" colspan="6">
                 {% if prev_month %}
                     <span id="previous_date">
                         <a href="/transactions/?date={{prev_month|date:"Y-m"}}"
@@ -25,7 +25,7 @@
             </th>
         </tr>
         <tr>
-            <th style="width:14%">
+            <th style="width:15%">
                 <a class="sort" title="sort {% if sort == 0 %}descending{% else %}ascending{% endif %}"
                    href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 0 %}0{% else %}1{% endif %}">
                     Date
@@ -33,6 +33,17 @@
                 {% if sort == 0 or sort == 1 %}
                     <span class="pull-right glyphicon
                                  glyphicon-chevron-{% if sort == 0 %}up{% else %}down{% endif %}
+                                 sort_icon"></span>
+                {% endif %}
+            </th>
+            <th>
+                <a class="sort" title="sort {% if sort == 8 %}descending{% else %}ascending{% endif %}"
+                   href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 8 %}8{% else %}9{% endif %}">
+                    Account
+                </a>
+                {% if sort == 8 or sort == 9 %}
+                    <span class="pull-right glyphicon
+                                 glyphicon-chevron-{% if sort == 8 %}up{% else %}down{% endif %}
                                  sort_icon"></span>
                 {% endif %}
             </th>
@@ -47,7 +58,7 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            <th>
+            <th style="width:20%">
                 <a class="sort" title="sort {% if sort == 4 %}descending{% else %}ascending{% endif %}"
                    href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 4 %}4{% else %}5{% endif %}">
                     Budget Category
@@ -58,7 +69,7 @@
                                  sort_icon"></span>
                 {% endif %}
             </th>
-            <th style="width:15%">
+            <th style="width:10%">
                 <a class="sort" title="sort {% if sort == 6 %}descending{% else %}ascending{% endif %}"
                    href="/transactions/?date={{date|date:"Y-m"}}&sort={% if not sort == 6 %}6{% else %}7{% endif %}">
                     Amount
@@ -88,10 +99,17 @@
                         {{transaction.transaction_date}}
                     </td>
                     <td>
+                        {{transaction.account_name}}
+                    </td>
+                    <td>
                         {{transaction.category}}
                     </td>
                     <td>
-                        {{transaction.budget_category}}
+                        {% if transaction.budget_category != 'n/a' %}
+                            {{transaction.budget_category}}
+                        {% else %}
+                            -
+                        {% endif %}
                     </td>
                     <td class="currency
                                 {% if transaction.amount > 0 %}

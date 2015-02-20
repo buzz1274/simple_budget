@@ -33,9 +33,8 @@ class TransactionLine(models.Model):
         sort_order = {0: [sql.transaction.c.transaction_date],
                       2: ['category'],
                       4: [sql.budget_category.c.budget_category],
-                      6: [sql.budget_category.c.budget_category],
-                      8: [sql.transaction_line.c.amount],
-                      10: [sql.transaction_line.c.amount]}
+                      6: [sql.transaction_line.c.amount],
+                      8: [sql.account.c.account_name]}
 
         try:
             sort = int(sort)
@@ -49,6 +48,7 @@ class TransactionLine(models.Model):
 
         transaction_lines = sql.db_session.query(
             sql.transaction_line.c.transaction_line_id.label('id'),
+            sql.account.c.account_name,
             sql.budget_category.c.budget_category,
             sql.transaction.c.transaction_date, sql.transaction_line.c.amount,
             case([(parent_transaction_category.c.transaction_category.isnot(None),
@@ -57,8 +57,9 @@ class TransactionLine(models.Model):
                                sql.transaction_category.c.transaction_category))
                  ], else_=sql.transaction_category.c.transaction_category). \
                 label('category')).\
-            filter(sql.transaction.c.transaction_id==
-                   sql.transaction_line.c.transaction_id). \
+            join(sql.transaction,
+                 sql.transaction.c.transaction_id==
+                 sql.transaction_line.c.transaction_id). \
             filter(sql.budget_category.c.budget_category_id==
                    sql.transaction_category.c.budget_category_id). \
             filter(between(sql.transaction.c.transaction_date, start_date,
@@ -66,6 +67,9 @@ class TransactionLine(models.Model):
             join(sql.transaction_category,
                  sql.transaction_category.c.transaction_category_id==
                  sql.transaction_line.c.transaction_category_id). \
+            join(sql.account,
+                 sql.account.c.account_id==
+                 sql.transaction.c.account_id). \
             outerjoin(parent_transaction_category,
                       sql.transaction_category.c.transaction_category_parent_id ==
                       parent_transaction_category.c.transaction_category_id)

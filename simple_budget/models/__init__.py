@@ -1,6 +1,5 @@
 from account.account_type import AccountType
 from account.account import Account
-from account.account_balance import AccountBalance
 from budget.budget import Budget
 from budget.budget_category import BudgetCategory
 from transaction.qif_parser import QIFParser

@@ -4,51 +4,51 @@
 {% block content %}
     <script src="/static/assets/js/graphs/debt.js"></script>
     <div id="graph" style="margin-top:10px;"></div>
-    <table id="budget" class="table table-condensed table-striped table-bordered">
-        <tr>
-            <th colspan="5" class="center">
-                Debt Balances by Account(£)
-            </th>
-        </tr>
-        <tr>
-            <th style="width:20%;">Account</th>
-            <th style="width:14%;">Type</th>
-            <th style="width:22%;">{{totals.last_year_date|date:"F Y"}}</th>
-            <th style="width:22%;">{{totals.last_month_date|date:"F Y"}}</th>
-            <th style="width:22%;">{{totals.today|date:"F Y"}}</th>
-        </tr>
-        <tbody>
-        {% for debt in debts %}
+    {% if debts %}
+        <table id="budget" class="table table-condensed table-striped table-bordered">
             <tr>
-                <td>
-                    <a href="/account/{{debt.account_id}}/">
-                        {{debt.account_name}}
-                    </a>
-                </td>
-                <td>{{debt.account_type}}</td>
-                <td class="currency">
-                    {% if not debt.last_year_balance %}
-                        -
-                    {% else %}
-                        {{debt.last_year_balance|currency}}
-                    {% endif %}
-                </td>
-                <td class="currency">
-                    {% if not debt.last_month_balance %}
-                        -
-                    {% else %}
-                        {{debt.last_month_balance|currency}}
-                    {% endif %}
-                </td>
-                <td class="currency">
-                    {% if not debt.current_balance %}
-                        -
-                    {% else %}
-                        {{debt.current_balance|currency}}
-                    {% endif %}
-                </td>
+                <th colspan="5" class="center">
+                    Debt Balances by Account(£)
+                </th>
             </tr>
-        {%  endfor %}
+            <tr>
+                <th style="width:25%;">Account</th>
+                <th style="width:12%;">Type</th>
+                <th style="width:21%;">{{totals.last_year_date|date:"F Y"}}</th>
+                <th style="width:21%;">{{totals.last_month_date|date:"F Y"}}</th>
+                <th style="width:21%;">{{totals.today|date:"F Y"}}</th>
+            </tr>
+            {% for debt in debts %}
+                <tr>
+                    <td>
+                        <a href="/account/{{debt.account_id}}/">
+                            {{debt.account_name}}
+                        </a>
+                    </td>
+                    <td>{{debt.account_type}}</td>
+                    <td class="currency">
+                        {% if not debt.last_year_balance %}
+                            -
+                        {% else %}
+                            {{debt.last_year_balance|currency}}
+                        {% endif %}
+                    </td>
+                    <td class="currency">
+                        {% if not debt.last_month_balance %}
+                            -
+                        {% else %}
+                            {{debt.last_month_balance|currency}}
+                        {% endif %}
+                    </td>
+                    <td class="currency">
+                        {% if not debt.current_balance %}
+                            -
+                        {% else %}
+                            {{debt.current_balance|currency}}
+                        {% endif %}
+                    </td>
+                </tr>
+            {%  endfor %}
             <tr>
                 <td colspan="2"><strong>Total(£)</strong></td>
                 <td class="currency">
@@ -97,23 +97,23 @@
                     {% endif %}
                 </td>
             </tr>
-        </tbody>
-    </table>
-    {% if totals.last_month_debt_repayment %}
-        <div class="info_box">
-            Based on this months debt repayment of
-            <strong>£{{totals.last_month_debt_repayment|currency}}</strong> it will be
-            <strong>{{totals.last_month_debt_repayment_date|date:"F Y"}}</strong>
-            before all debts are repaid.
-        </div>
-    {% endif %}
-    {% if totals.avg_debt_repayment %}
-        <div class="info_box">
-            Based on the average debt repayment of
-            <strong>£{{totals.avg_debt_repayment|currency}}</strong> per month, between
-            {{totals.last_year_date|date:"F Y"}} and {{totals.last_month_date|date:"F Y"}},
-            it will be <strong>{{totals.avg_debt_repayment_date|date:"F Y"}}</strong>
-            before all debts are repaid.
-        </div>
+        </table>
+        {% if totals.last_month_debt_repayment %}
+            <div class="info_box">
+                Based on this months debt repayment of
+                <strong>£{{totals.last_month_debt_repayment|currency}}</strong> it will be
+                <strong>{{totals.last_month_debt_repayment_date|date:"F Y"}}</strong>
+                before all debts are repaid.
+            </div>
+        {% endif %}
+        {% if totals.avg_debt_repayment %}
+            <div class="info_box">
+                Based on the average debt repayment of
+                <strong>£{{totals.avg_debt_repayment|currency}}</strong> per month, between
+                {{totals.last_year_date|date:"F Y"}} and {{totals.today|date:"F Y"}},
+                it will be <strong>{{totals.avg_debt_repayment_date|date:"F Y"}}</strong>
+                before all debts are repaid.
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
