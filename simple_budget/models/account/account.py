@@ -124,115 +124,115 @@ class Account(models.Model):
         return debt_balances
 
     def debt(self):
-            """
-            gets balance for all debt related account types
-            :return:
-            """
-            today = datetime.now()
+        """
+        gets balance for all debt related account types
+        :return:
+        """
+        today = datetime.now()
 
-            start_this_month = date(today.year, today.month, 1)
-            start_last_month = date(today.year, today.month, 1) - \
-                               relativedelta(months=1)
-            start_last_year = date(start_this_month.year,
-                                   start_this_month.month, 1) - \
-                              relativedelta(months=11)
+        start_this_month = date(today.year, today.month, 1)
+        start_last_month = date(today.year, today.month, 1) - \
+                           relativedelta(months=1)
+        start_last_year = date(start_this_month.year,
+                               start_this_month.month, 1) - \
+                          relativedelta(months=11)
 
-            accounts = self.accounts(account_type='debt')
+        accounts = self.accounts(account_type='debt')
 
-            if not accounts:
-                return [False, False]
-            else:
-                account_balances = []
-                totals = {'current_balance': 0,
-                          'last_month_balance': 0,
-                          'last_month_balance_diff': 0,
-                          'today': today,
-                          'last_month_date': start_last_month,
-                          'last_year_date': start_last_year,
-                          'last_year_balance': 0,
-                          'last_year_balance_diff': 0,
-                          'avg_debt_repayment': 0,
-                          'last_month_debt_repayment': 0}
+        if not accounts:
+            return [False, False]
+        else:
+            account_balances = []
+            totals = {'current_balance': 0,
+                      'last_month_balance': 0,
+                      'last_month_balance_diff': 0,
+                      'today': today,
+                      'last_month_date': start_last_month,
+                      'last_year_date': start_last_year,
+                      'last_year_balance': 0,
+                      'last_year_balance_diff': 0,
+                      'avg_debt_repayment': 0,
+                      'last_month_debt_repayment': 0}
 
-                for account in accounts:
-                    if not account.account_hidden:
-                        current_balance = 0
-                        balances = \
-                            self.account_balance_summary(
-                                account_id=account.account_id)
+            for account in accounts:
+                if not account.account_hidden:
+                    current_balance = 0
+                    balances = \
+                        self.account_balance_summary(
+                            account_id=account.account_id)
 
-                        if not balances:
-                            if current_balance:
-                                account_balances['current_balance'] = \
-                                    current_balance
-                            else:
-                                account_balances['current_balance'] = 0
+                    if not balances:
+                        if current_balance:
+                            account_balances['current_balance'] = \
+                                current_balance
                         else:
-                            for balance in balances:
-                                current_balance = \
-                                    Decimal(current_balance - balance.balance).\
-                                        quantize(Decimal('.01'))
+                            account_balances['current_balance'] = 0
+                    else:
+                        for balance in balances:
+                            current_balance = \
+                                Decimal(current_balance - balance.balance).\
+                                    quantize(Decimal('.01'))
 
-                                if (str(balance.date.strftime('%Y-%m-%d')) ==
-                                    str(start_this_month)):
-                                    break
+                            if (str(balance.date.strftime('%Y-%m-%d')) ==
+                                str(start_this_month)):
+                                break
 
-                                if (str(balance.date.strftime('%Y-%m-%d')) ==
-                                    str(start_last_month)):
-                                    last_month_balance = current_balance
+                            if (str(balance.date.strftime('%Y-%m-%d')) ==
+                                str(start_last_month)):
+                                last_month_balance = current_balance
 
-                                if (str(balance.date.strftime('%Y-%m-%d')) ==
-                                    str(start_last_year)):
-                                    last_year_balance = current_balance
+                            if (str(balance.date.strftime('%Y-%m-%d')) ==
+                                str(start_last_year)):
+                                last_year_balance = current_balance
 
-                        account_balances.append(
-                            {'account_id': account.account_id,
-                             'account_name': account.account_name,
-                             'account_type': account.account_type,
-                             'last_month_balance': last_month_balance,
-                             'last_year_balance': last_year_balance,
-                             'current_balance': current_balance})
+                    account_balances.append(
+                        {'account_id': account.account_id,
+                         'account_name': account.account_name,
+                         'account_type': account.account_type,
+                         'last_month_balance': last_month_balance,
+                         'last_year_balance': last_year_balance,
+                         'current_balance': current_balance})
 
-                        last_month_balance = 0
-                        last_year_balance = 0
+                    last_month_balance = 0
+                    last_year_balance = 0
 
-                if account_balances:
-                    for account_balance in account_balances:
-                        if account_balance['current_balance']:
-                            totals['current_balance'] += \
-                                account_balance['current_balance']
+            if account_balances:
+                for account_balance in account_balances:
+                    if account_balance['current_balance']:
+                        totals['current_balance'] += \
+                            account_balance['current_balance']
 
-                        if account_balance['last_month_balance']:
-                            totals['last_month_balance'] += \
-                                account_balance['last_month_balance']
+                    if account_balance['last_month_balance']:
+                        totals['last_month_balance'] += \
+                            account_balance['last_month_balance']
 
-                        if account_balance['last_year_balance']:
-                            totals['last_year_balance'] += \
-                                account_balance['last_year_balance']
+                    if account_balance['last_year_balance']:
+                        totals['last_year_balance'] += \
+                            account_balance['last_year_balance']
 
-                    totals['last_month_balance_diff'] = \
-                        totals['last_month_balance'] - totals['current_balance']
+                totals['last_month_balance_diff'] = \
+                    totals['last_month_balance'] - totals['current_balance']
 
-                    totals['last_year_balance_diff'] = \
-                        totals['last_year_balance'] - totals['current_balance']
+                totals['last_year_balance_diff'] = \
+                    totals['last_year_balance'] - totals['current_balance']
 
-                    if totals['last_year_balance_diff'] > 0:
-                        totals['avg_debt_repayment'] = \
-                            abs(totals['last_year_balance_diff'] / 12). \
-                                quantize(Decimal('.01'))
+                if totals['last_year_balance_diff'] > 0:
+                    totals['avg_debt_repayment'] = \
+                        abs(totals['last_year_balance_diff'] / 12). \
+                            quantize(Decimal('.01'))
 
-                        totals['avg_debt_repayment_date'] = \
-                            date(today.year, today.month, 1) + \
-                            relativedelta(months=int(math.ceil(totals['current_balance'] /
-                                                               totals['avg_debt_repayment'])))
+                    totals['avg_debt_repayment_date'] = \
+                        date(today.year, today.month, 1) + \
+                        relativedelta(months=int(math.ceil(totals['current_balance'] /
+                                                           totals['avg_debt_repayment'])))
 
-                    if totals['last_month_balance_diff'] > 0:
-                        totals['last_month_debt_repayment'] = \
-                            abs(totals['last_month_balance_diff'])
+                if totals['last_month_balance_diff'] > 0:
+                    totals['last_month_debt_repayment'] = \
+                        abs(totals['last_month_balance_diff'])
 
-                        totals['last_month_debt_repayment_date'] = \
-                            date(today.year, today.month, 1) + \
-                            relativedelta(months=int(math.ceil(totals['current_balance'] /
-                                                               totals['last_month_debt_repayment'])))
+                    totals['last_month_debt_repayment_date'] = \
+                        date(today.year, today.month, 1) + \
+                        relativedelta(months=int(math.ceil(totals['current_balance'] /
+                                                           totals['last_month_debt_repayment'])))
 
-                return [account_balances, totals]
+            return [account_balances, totals]
