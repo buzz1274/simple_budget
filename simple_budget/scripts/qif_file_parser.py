@@ -231,7 +231,8 @@ class Quicken(object):
         account_name = re.sub(r"\[|\]", "", account_name)
         account_id = self.sql.db_session.execute(
                         self.sql.account.insert().\
-                        values(account_name=account_name).\
+                        values(account_name=account_name,
+                               account_hidden=False).\
                         returning(self.sql.account.c.account_id)).scalar()
 
         if not self.get_category_id(account_name, None):
