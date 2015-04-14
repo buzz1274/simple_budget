@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load templatetags %}
 
 {% block content %}
     <svg class="chart"></svg>
@@ -20,10 +21,18 @@
                             {{spending.date|date:"F Y"}}
                         </a>
                     </td>
-                    <td class="currency">{{spending.previous_month_income}}</td>
-                    <td class="currency">{{spending.expense}}</td>
-                    <td class="currency">{{spending.savings}}</td>
-                    <td class="currency">{{spending.debt_repayment}}</td>
+                    <td class="currency">
+                        {{spending.previous_month_income|currency}}
+                    </td>
+                    <td class="currency">
+                        {{spending.expense|currency}}
+                    </td>
+                    <td class="currency">
+                        {{spending.savings|currency}}
+                    </td>
+                    <td class="currency">
+                        {{spending.debt_repayment|currency}}
+                    </td>
                     <td class="currency
                             {% if spending.total < 0 %}
                                 warning

@@ -1,3 +1,5 @@
+{% load templatetags %}
+
 <table id="budget" width="100%"
        class="table table-condensed table-bordered">
     {% if view_type == 'view' %}
@@ -32,7 +34,7 @@
                     <td class="currency">
                         {% if transaction.average_annual_spend %}
                             <strong>
-                                {{transaction.average_annual_spend}}
+                                {{transaction.average_annual_spend|currency}}
                             </strong>
                         {% else %}
                             -
@@ -46,7 +48,7 @@
                                 {% elif transaction.budget_amount_future > transaction.budget_amount %}
                                     <span class="glyphicon glyphicon-arrow-down red"></span>
                                 {% endif %}
-                                {{transaction.budget_amount}}
+                                {{transaction.budget_amount|currency}}
                             {% else %}
                                 -
                             {% endif %}
@@ -73,7 +75,7 @@
                                 {% elif transaction.budget_amount_future > transaction.budget_amount %}
                                     <span class="glyphicon glyphicon-arrow-up green"></span>
                                 {% endif %}
-                                {{transaction.budget_amount_future}}
+                                {{transaction.budget_amount_future|currency}}
                             {% else %}
                                 -
                             {% endif %}
@@ -107,7 +109,7 @@
             <td class="currency">
                 <strong>
                     {% if total.average_annual %}
-                        {{total.average_annual}}
+                        {{total.average_annual|currency}}
                     {% else %}
                         -
                     {% endif %}
@@ -118,7 +120,7 @@
                         data-budget_type="{{total.budget_type}}"
                         class="budget_type_total">
                     {% if total.budget %}
-                        {{total.budget}}
+                        {{total.budget|currency}}
                     {% else %}
                         -
                     {% endif %}
@@ -130,7 +132,7 @@
                             data-budget_type="{{total.budget_type}}"
                             class="budget_type_total_future">
                         {% if total.budget_future %}
-                            {{total.budget_future}}
+                            {{total.budget_future|currency}}
                         {% else %}
                             -
                         {% endif %}
@@ -159,7 +161,7 @@
                     {% endif %}">
             <strong>
                 {% if grand_total.average_annual %}
-                    {{grand_total.average_annual}}
+                    {{grand_total.average_annual|currency}}
                 {% else %}
                     -
                 {% endif %}
@@ -173,7 +175,7 @@
                     {% endif %}">
             <strong id="grand_total">
                 {% if grand_total.budget %}
-                    {{grand_total.budget}}
+                    {{grand_total.budget|currency}}
                 {% else %}
                     -
                 {% endif %}
@@ -188,7 +190,7 @@
                         {% endif %}">
                 <strong id="grand_total_future">
                     {% if grand_total.budget_future %}
-                        {{grand_total.budget_future}}
+                        {{grand_total.budget_future|currency}}
                     {% else %}
                         -
                     {% endif %}

@@ -17,7 +17,18 @@ from simple_budget.forms.budget.add_edit_budget_category_form import \
 from simple_budget.forms.budget.delete_budget_category_form import \
     DeleteBudgetCategoryForm
 from simple_budget.models.budget.budget import Budget
+from simple_budget.models.budget.budget_type import BudgetType
 
+
+@login_required
+def summary(request):
+    """
+    index
+    """
+    return render_to_response('budget/summary.html',
+                              {'spending_by_budget_type':
+                                   BudgetType().spending_by_budget_type()},
+                              context_instance=RequestContext(request))
 
 @login_required
 def budget(request):

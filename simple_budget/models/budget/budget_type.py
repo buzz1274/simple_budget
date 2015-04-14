@@ -77,7 +77,10 @@ class BudgetType(models.Model):
                 if not key in spending:
                     spending[key] = {'date': s.year_month}
 
-                spending[key][re.sub(' ', '_', s.budget_type.lower())] = abs(s.amount)
+                if s.budget_type.lower() != 'income':
+                    spending[key][re.sub(' ', '_', s.budget_type.lower())] = s.amount * -1
+                else:
+                    spending[key][re.sub(' ', '_', s.budget_type.lower())] = abs(s.amount)
 
             for key, item in spending.iteritems():
                 income_previous_month = \

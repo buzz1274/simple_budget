@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load templatetags %}
 
 {% block content %}
     <table id="budget" class="table table-condensed
@@ -48,14 +49,14 @@
                             </td>
                             <td class="currency">
                                 {% if transaction.budget_amount %}
-                                    {{transaction.budget_amount}}
+                                    {{transaction.budget_amount|currency}}
                                 {% else %}
                                     -
                                 {% endif %}
                             </td>
                             <td class="currency">
                                 {% if transaction.actual_spend %}
-                                    {{transaction.actual_spend}}
+                                    {{transaction.actual_spend|currency}}
                                 {% else %}
                                     -
                                 {% endif %}
@@ -67,7 +68,7 @@
                                     {% else %}
                                         warning
                                     {% endif %}">
-                                    {{transaction.difference}}
+                                    {{transaction.difference|currency}}
                                 </td>
                             {% else %}
                                 <td class="currency
@@ -80,9 +81,9 @@
                                             {% endif %}">
                                     {% if not transaction.difference and not transaction.actual_spend and transaction.budget_amount %}
                                         {% if total.budget_type != 'Expense' %}
-                                            -{{transaction.budget_amount}}
+                                            -{{transaction.budget_amount|currency}}
                                         {% else %}
-                                            {{transaction.budget_amount}}
+                                            {{transaction.budget_amount|currency}}
                                         {% endif %}
                                     {% else %}
                                         -
@@ -97,7 +98,7 @@
                                                 {% else %}
                                                     warning
                                                 {% endif %}">
-                                    {{transaction.difference_percent}}
+                                    {{transaction.difference_percent|currency}}
                                 </td>
                             {% elif not transaction.actual_spend and transaction.budget_amount %}
                                 <td class="currency
@@ -115,7 +116,7 @@
                             {% endif %}
                             <td class="currency">
                                 {% if transaction.average_annual_spend %}
-                                    {{transaction.average_annual_spend}}
+                                    {{transaction.average_annual_spend|currency}}
                                 {% else %}
                                     -
                                 {% endif %}
@@ -151,14 +152,14 @@
                     <td><strong>Total {{total.budget_type}}(£)</strong></td>
                     <td class="currency">
                         {% if total.budget %}
-                            <strong>{{total.budget}}</strong>
+                            <strong>{{total.budget|currency}}</strong>
                         {% else %}
                             -
                         {%  endif %}
                     </td>
                     <td class="currency">
                         {% if total.actual %}
-                            <strong>{{total.actual}}</strong>
+                            <strong>{{total.actual|currency}}</strong>
                         {% else %}
                             -
                         {%  endif %}
@@ -170,7 +171,7 @@
                                         {% else %}
                                             warning
                                         {% endif %}">
-                            <strong>{{total.difference}}</strong>
+                            <strong>{{total.difference|currency}}</strong>
                         </td>
                     {% else %}
                         <td class="currency">-</td>
@@ -183,7 +184,7 @@
                                             warning
                                         {% endif %}">
                             <strong>
-                                {{total.difference_percent}}
+                                {{total.difference_percent|currency}}
                             </strong>
                         </td>
                     {% else %}
@@ -191,7 +192,7 @@
                     {% endif %}
                     <td class="currency">
                         {% if total.average_annual %}
-                            <strong>{{total.average_annual}}</strong>
+                            <strong>{{total.average_annual|currency}}</strong>
                         {% else %}
                             -
                         {% endif %}
@@ -211,7 +212,7 @@
                                     warning
                                 {% endif %}">
                         <strong>
-                            {{grand_total.budget}}
+                            {{grand_total.budget|currency}}
                         </strong>
                     </td>
                 {% else %}
@@ -225,7 +226,7 @@
                                 warning
                             {% endif %}">
                         <strong>
-                            {{grand_total.actual}}
+                            {{grand_total.actual|currency}}
                         </strong>
                     </td>
                 {% else %}
@@ -239,7 +240,7 @@
                                 warning
                             {% endif %}">
                         <strong>
-                            {{grand_total.difference}}
+                            {{grand_total.difference|currency}}
                         </strong>
                     </td>
                 {% else %}
@@ -253,7 +254,7 @@
                                 warning
                             {% endif %}">
                         <strong>
-                            {{grand_total.difference_percent}}
+                            {{grand_total.difference_percent|currency}}
                         </strong>
                     </td>
                 {% else %}
@@ -267,7 +268,7 @@
                                 warning
                             {% endif %}">
                         <strong>
-                            {{grand_total.average_annual}}
+                            {{grand_total.average_annual|currency}}
                         </strong>
                     </td>
                 {% else %}

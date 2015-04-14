@@ -5,16 +5,13 @@ from django.contrib.auth import (authenticate, login as auth_login,
 from django.contrib.auth.decorators import login_required
 from simple_budget.forms.login_form import LoginForm
 from django.http import HttpResponseRedirect
-from simple_budget.models.budget.budget_type import BudgetType
 
 @login_required
 def index(request):
     """
     index
     """
-    return render_to_response('index.html',
-                              {'spending_by_budget_type':
-                                   BudgetType().spending_by_budget_type()},
+    return render_to_response('index.html', {},
                               context_instance=RequestContext(request))
 
 def logout(request):

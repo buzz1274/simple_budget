@@ -69,17 +69,24 @@ class Budget(models.Model):
             sql.budget_amount.c.budget_amount,
             budget_amount_future.c.budget_amount.label('budget_amount_future'),
             func.SUM(sql.transaction_line.c.amount).label('amount'),
-            case([(sql.budget_type.c.budget_type != 'Expense',
-                   func.ABS(func.SUM(sql.transaction_line.c.amount)) -
-                            sql.budget_amount.c.budget_amount
-                   ),
-                  (sql.budget_type.c.budget_type == 'Expense',
+            case([(sql.budget_type.c.budget_type == 'Expense',
                    case([(func.SUM(sql.transaction_line.c.amount) < 0,
                           sql.budget_amount.c.budget_amount -
                           func.ABS(func.SUM(sql.transaction_line.c.amount)))],
                         else_=sql.budget_amount.c.budget_amount +
                               func.ABS(func.SUM(sql.transaction_line.c.amount))
                    )),
+                  (sql.budget_type.c.budget_type == 'Savings',
+                   case([(func.SUM(sql.transaction_line.c.amount) > 0,
+                          (sql.budget_amount.c.budget_amount +
+                           func.SUM(sql.transaction_line.c.amount)) * -1)],
+                        else_=func.ABS(func.SUM(sql.transaction_line.c.amount)) -
+                              sql.budget_amount.c.budget_amount
+                   )),
+                  (sql.budget_type.c.budget_type != 'Expense',
+                   func.ABS(func.SUM(sql.transaction_line.c.amount)) -
+                            sql.budget_amount.c.budget_amount
+                   )
                   ]).label('difference')).\
             join(sql.budget_type,
                  sql.budget_type.c.budget_type_id==sql.budget_category.c.budget_type_id). \
@@ -123,10 +130,13 @@ class Budget(models.Model):
 
         annual_spend = sql.db_session.query(
             sql.transaction_category.c.budget_category_id.label('id'),
-            func.ROUND(
-                func.ABS(
-                    func.SUM(sql.transaction_line.c.amount) / 12), 2). \
-            label('amount')). \
+            case([(sql.budget_category.c.budget_category == 'Income',
+                   func.ROUND(func.ABS(
+                       func.SUM(sql.transaction_line.c.amount) / 12), 2)),
+                  ],
+                 else_= func.ROUND(
+                    (func.SUM(sql.transaction_line.c.amount * -1) / 12), 2)).
+                label('amount')).\
             filter(sql.transaction_line.c.transaction_category_id==
                    sql.transaction_category.c.transaction_category_id). \
             filter(sql.transaction.c.transaction_id==
@@ -239,13 +249,15 @@ class Budget(models.Model):
                          'ordering': transaction.ordering}
 
                 if transaction.actual_spend:
-                    totals[transaction.budget_type]['actual'] += \
-                        transaction.actual_spend
-
-                    if transaction.budget_type == 'Expense':
+                    if (transaction.budget_type == 'Savings' or
+                        (transaction.budget_type == 'Expense' and
+                         transaction.actual_spend > 0.01)):
                         transaction.actual_spend *= -1
                     else:
                         transaction.actual_spend = abs(transaction.actual_spend)
+
+                    totals[transaction.budget_type]['actual'] += \
+                        transaction.actual_spend
 
                 if transaction.budget_amount:
                     totals[transaction.budget_type]['budget'] += \
@@ -256,11 +268,15 @@ class Budget(models.Model):
                         transaction.budget_amount_future
 
                 if transaction.average_annual_spend:
+                    if transaction.budget_category == 'Pension':
+                        transaction.average_annual_spend *= -1
+
                     totals[transaction.budget_type]['average_annual'] += \
                         transaction.average_annual_spend
 
             for key, total in totals.iteritems():
-                total['actual'] = abs(total['actual'])
+                if total['budget_type'] != 'Savings':
+                    total['actual'] = abs(total['actual'])
 
                 if total['budget_type'] == 'Expense':
                     total['difference'] = total['budget'] - total['actual']
