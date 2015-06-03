@@ -11,6 +11,7 @@ import sys
 import os.path
 import yaml
 import django
+import traceback
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../simple_budget'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simple_budget.settings")
@@ -163,7 +164,7 @@ class Quicken(object):
 
                 elif line[0] == '^':
                     if transaction and account_id:
-                        if not transaction['split']:
+                        if not transaction['split'] and 'amount' in transaction:
                             transaction['split'].append(
                                 {'category': transaction['category'],
                                  'sub_category': transaction['sub_category'],
@@ -401,4 +402,3 @@ if __name__ == '__main__':
         Quicken().main()
     except Exception, e:
         Quicken.display_message(e, 'error')
-
