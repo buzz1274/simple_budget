@@ -156,6 +156,8 @@ class Account(models.Model):
 
             for account in accounts:
                 if not account.account_hidden:
+                    last_month_balance = 0
+                    last_year_balance = 0
                     current_balance = 0
                     balances = \
                         self.account_balance_summary(
@@ -192,9 +194,6 @@ class Account(models.Model):
                          'last_month_balance': last_month_balance,
                          'last_year_balance': last_year_balance,
                          'current_balance': current_balance})
-
-                    last_month_balance = 0
-                    last_year_balance = 0
 
             if account_balances:
                 for account_balance in account_balances:
