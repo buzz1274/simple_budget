@@ -72,7 +72,7 @@ with open(BASE_DIR + '/simple_budget/config.yaml') as f:
         TEMPLATE_DEBUG = False
         DEBUG = False
     else:
-        DB_HOST = '127.0.0.1'
+        DB_HOST = os.environ['POSTGRES_PORT_5432_TCP_ADDR']
         TEMPLATE_DEBUG = True
         DEBUG = True
 
