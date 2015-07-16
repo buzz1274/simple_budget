@@ -38,10 +38,79 @@
                                 warning
                             {% else %}
                                 success{% endif %}">
-                        {{spending.total}}
+                        {{spending.total|currency}}
                     </td>
                 </tr>
             {%  endfor %}
+            <tr>
+                <td colspan="6" class="seperator">&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td class="currency">
+                    <strong>
+                        {{total_spending.previous_month_income|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{total_spending.expense|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{total_spending.savings|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{total_spending.debt_repayment|currency}}
+                    </strong>
+                </td>
+                <td class="currency
+                            {% if total_spending.total < 0 %}
+                                warning
+                            {% else %}
+                                success{% endif %}">
+                    {{total_spending.total|currency}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="seperator">&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Average</strong></td>
+                <td class="currency">
+                    <strong>
+                        {{average_spending.previous_month_income|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{average_spending.expense|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{average_spending.savings|currency}}
+                    </strong>
+                </td>
+                <td class="currency">
+                    <strong>
+                        {{average_spending.debt_repayment|currency}}
+                    </strong>
+                </td>
+                <td class="currency
+                            {% if total_spending.total < 0 %}
+                                warning
+                            {% else %}
+                                success{% endif %}">
+                    {{average_spending.total|currency}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="seperator">&nbsp;</td>
+            </tr>
             <tr>
                 <td colspan="6" class="notes">
                     *Income figures calculated using values from

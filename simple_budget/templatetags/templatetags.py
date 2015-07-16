@@ -15,4 +15,4 @@ def in_the_future(date):
 
 @register.filter(name='currency')
 def currency(value):
-    return "{:,}".format(value)
+    return "{:,.2f}".format(value)

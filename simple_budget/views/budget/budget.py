@@ -25,9 +25,13 @@ def summary(request):
     """
     index
     """
+    total_spending, average_spending, spending_by_budget_type = \
+        BudgetType().spending_by_budget_type()
+
     return render_to_response('budget/summary.html',
-                              {'spending_by_budget_type':
-                                   BudgetType().spending_by_budget_type()},
+                              {'total_spending': total_spending,
+                               'average_spending': average_spending,
+                               'spending_by_budget_type': spending_by_budget_type},
                               context_instance=RequestContext(request))
 
 @login_required

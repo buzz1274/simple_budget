@@ -5,6 +5,7 @@ from simple_budget.helper.sql import SQL
 from simple_budget.settings import START_DATE
 from sqlalchemy import func
 from dateutil.relativedelta import relativedelta
+import decimal
 import calendar
 import re
 import collections
@@ -66,6 +67,10 @@ class BudgetType(models.Model):
 
         spend = spend.all()
         spending = {}
+        average_spending = {}
+        total_spending = {'previous_month_income': 0, 'expense': 0,
+                          'savings': 0, 'debt_repayment': 0,
+                          'total': 0}
 
         if not spend:
             return False
@@ -103,4 +108,15 @@ class BudgetType(models.Model):
             if spending.keys()[-1] < START_DATE or len(spending.keys()) > 12:
                del spending[spending.keys()[-1]]
 
-            return spending
+            for key, item in spending.iteritems():
+                for item_key, value in item.iteritems():
+                    if item_key != 'date' and not item_key in total_spending:
+                        total_spending[item_key] = value
+                    elif item_key != 'date':
+                        total_spending[item_key] += value
+
+            for key, value in total_spending.iteritems():
+                average_spending[key] = decimal.Decimal(value) / \
+                                        decimal.Decimal(len(spending))
+
+            return [total_spending, average_spending, spending]
