@@ -77,19 +77,9 @@
                             <a role="menuitem" href="/budgets/">
                                 Budgets
                             </a>
-                            {% if user.is_superuser %}
-                                <a role="menuitem" href="/budget/add/">
-                                    Add Budget
-                                </a>
-                            {% endif %}
                             <a role="menuitem" href="/budget/category/">
                                 Budget Categories
                             </a>
-                            {% if user.is_superuser %}
-                                <a role="menuitem" href="/budget/category/add">
-                                    Add Budget Category
-                                </a>
-                            {% endif %}
                         </li>
                     </ul>
                 </div>
@@ -104,19 +94,9 @@
                             <a role="menuitem" href="/transactions/">
                                 Transactions
                             </a>
-                            {% if user.is_superuser %}
-                                <a role="menuitem" href="/transaction/add">
-                                    Add Transaction
-                                </a>
-                            {% endif %}
                             <a role="menuitem" href="/transaction/category/">
                                 Transaction Categories
                             </a>
-                            {% if user.is_superuser %}
-                                <a role="menuitem" href="/transaction/category/add">
-                                    Add Transaction Category
-                                </a>
-                            {% endif %}
                             {% if user.is_superuser and QUICKEN_IMPORT_ACTIVE %}
                                 <a role="menuitem"
                                    href="/transaction/upload_quicken_file/">

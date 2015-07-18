@@ -26,6 +26,9 @@ class AddEditTransactionForm(forms.Form):
             label='Transaction Category',
             widget=forms.Select(attrs={'class': 'form-control form-large'}))
 
+    referer = forms.CharField(widget=forms.HiddenInput(),
+                              required=False)
+
     transaction_date = \
         forms.DateField(
             required=True, input_formats=['%d %B, %Y'],

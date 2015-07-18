@@ -2,8 +2,24 @@
 {% block content %}
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
-            <th colspan="4" class="center">
-                Transaction Categories
+            <th id="table_header" colspan="6">
+                {% if user.is_superuser %}
+                    <div class="dropdown" style="float:right;">
+                        <a class="btn btn-xs btn-default dropdown-toggle"
+                           data-toggle="dropdown" href="#">
+                            Actions&nbsp;<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li>
+                                <a role="menuitem"
+                                   href="/transaction/category/add">
+                                    Add Transaction Category
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+                <div id="title">Transaction Categories</div>
             </th>
         </tr>
         <tr>

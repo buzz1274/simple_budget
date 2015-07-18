@@ -4,24 +4,45 @@
 {% block content %}
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
-            <th id="date_header" colspan="6">
-                {% if prev_month %}
-                    <span id="previous_date">
-                        <a href="/transactions/?date={{prev_month|date:"Y-m"}}"
-                           title="previous month">
+            <th id="table_header" colspan="6">
+                {% if user.is_superuser %}
+                    <div class="dropdown" style="float:right;">
+                        <a class="btn btn-xs btn-default dropdown-toggle"
+                           data-toggle="dropdown" href="#">
+                            Actions&nbsp;<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li>
+                                <a role="menuitem"href="/transaction/add">
+                                    Add Transaction
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+                <div id="title">
+                    {% if prev_month %}
+                        <span id="previous_date">
+                            <a href="/transactions/?date={{prev_month|date:"Y-m"}}"
+                               title="previous month">
                             &laquo;&laquo;
-                        </a>
-                    </span>
-                {% endif %}
-                Transaction Log&nbsp;({{date|date:"F Y"}})
-                {% if next_month %}
-                    <span id="next_date">
-                        <a href="/transactions/?date={{next_month|date:"Y-m"}}"
-                           title="next month">
+                            </a>
+                        </span>
+                    {% else %}
+                        <span id="previous_date">&laquo;&laquo;</span>
+                    {% endif %}
+                    Transaction Log&nbsp;({{date|date:"F Y"}})
+                    {% if next_month %}
+                        <span id="next_date">
+                            <a href="/transactions/?date={{next_month|date:"Y-m"}}"
+                               title="next month">
                             &raquo;&raquo;
-                        </a>
-                    </span>
-                {% endif %}
+                            </a>
+                        </span>
+                    {% else %}
+                        <span id="next_date">&raquo;&raquo;</span>
+                    {% endif %}
+                </div>
             </th>
         </tr>
         <tr>

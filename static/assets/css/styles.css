@@ -95,22 +95,22 @@ table#budget tbody tr > td.warning {
     background-color:#f2dede;
     font-weight:bold;
 }
-table#budget th#date_header {
+table#budget th#table_header {
     text-align:center;
 }
-table#budget th#date_header span > a {
+table#budget th#table_header span > a {
     text-decoration:none;
     color:#000000;
 }
-table#budget th#date_header div#title {
+table#budget th#table_header div#title {
     width:50%;
     margin:auto;
 }
-table#budget th#date_header span#next_date {
+table#budget th#table_header span#next_date {
     float:right;
     color:#D3D3D3;
 }
-table#budget th#date_header span#previous_date {
+table#budget th#table_header span#previous_date {
     float:left;
     color:#D3D3D3;
 }
