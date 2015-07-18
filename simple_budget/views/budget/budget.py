@@ -25,11 +25,17 @@ def summary(request):
     """
     index
     """
+    year, next_year, prev_year = \
+        DateCalculation.calculate_years(request.GET.get('year', None))
+
     total_spending, average_spending, spending_by_budget_type = \
-        BudgetType().spending_by_budget_type()
+        BudgetType().spending_by_budget_type(year)
 
     return render_to_response('budget/summary.html',
-                              {'total_spending': total_spending,
+                              {'year': year,
+                               'next_year': next_year,
+                               'prev_year': prev_year,
+                               'total_spending': total_spending,
                                'average_spending': average_spending,
                                'spending_by_budget_type': spending_by_budget_type},
                               context_instance=RequestContext(request))

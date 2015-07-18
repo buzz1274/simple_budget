@@ -10,6 +10,30 @@ class DateCalculation(object):
     """
 
     @staticmethod
+    def calculate_years(year=None):
+        try:
+            year = int(year)
+        except TypeError:
+            year = None
+
+        if not year:
+            return [None, None, None]
+        else:
+            today = datetime.now()
+
+            if year + 1 <= today.year:
+                next_year = year + 1
+            else:
+                next_year = None
+
+            if year - 1 >= datetime.strptime(START_DATE, '%Y-%m-%d').year:
+                prev_year = year - 1
+            else:
+                prev_year = None
+
+            return [year, next_year, prev_year]
+
+    @staticmethod
     def calculate_dates(year_month=None):
         """
         :param year_month:

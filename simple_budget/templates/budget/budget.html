@@ -6,23 +6,47 @@
                               table-striped table-bordered">
         <tr>
             <th id="date_header" colspan="6">
-                {% if prev_month %}
-                    <span id="previous_date">
-                        <a href="/budget/?date={{prev_month|date:"Y-m"}}"
-                           title="previous month">
-                            &laquo;&laquo;
-                        </a>
-                    </span>
-                {% endif %}
-                Monthly Budget&nbsp;({{date|date:"F Y"}})
-                {% if next_month %}
-                    <span id="next_date">
-                        <a href="/budget/?date={{next_month|date:"Y-m"}}"
-                           title="next month">
-                            &raquo;&raquo;
-                        </a>
-                    </span>
-                {% endif %}
+                <div class="dropdown" style="float:right;">
+                    <a class="btn btn-xs btn-default dropdown-toggle"
+                       data-toggle="dropdown" href="#">
+                        Actions&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>
+                            <a role="menuitem"
+                               href="/transactions/?date={{date|date:"Y-m"}}">
+                                View Transactions
+                            </a>
+                            <a role="menuitem"
+                               href="/budget/summary/?year={{date|date:"Y"}}">
+                                Monthly Summary
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div id="title">
+                    {% if prev_month %}
+                        <span id="previous_date">
+                            <a href="/budget/?date={{prev_month|date:"Y-m"}}"
+                               title="previous month">
+                                &laquo;&laquo;
+                            </a>
+                        </span>
+                    {% else %}
+                        <span id="previous_date">&laquo;&laquo;</span>
+                    {% endif %}
+                    Monthly Budget&nbsp;({{date|date:"F Y"}})
+                    {% if next_month %}
+                        <span id="next_date">
+                            <a href="/budget/?date={{next_month|date:"Y-m"}}"
+                               title="next month">
+                                &raquo;&raquo;
+                            </a>
+                        </span>
+                    {% else %}
+                        <span id="next_date">&raquo;&raquo;</span>
+                    {% endif %}
+                </div>
             </th>
         </tr>
         <tr>
@@ -124,14 +148,6 @@
                         </tr>
                     {% endif %}
                 {% endfor %}
-                {% if total.budget_type == 'Income' %}
-                    <tr>
-                        <td colspan="6" class="notes">
-                            *Income figures calculated using values from
-                            previous month.
-                        </td>
-                    </tr>
-                {%  endif %}
                 {% if total.budget_type == 'Expense' %}
                     <tr>
                         <td colspan="6" class="notes">

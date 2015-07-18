@@ -102,11 +102,17 @@ table#budget th#date_header span > a {
     text-decoration:none;
     color:#000000;
 }
+table#budget th#date_header div#title {
+    width:50%;
+    margin:auto;
+}
 table#budget th#date_header span#next_date {
     float:right;
+    color:#D3D3D3;
 }
 table#budget th#date_header span#previous_date {
     float:left;
+    color:#D3D3D3;
 }
 table#budget td.seperator {
     line-height:1px;

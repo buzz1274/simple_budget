@@ -6,6 +6,53 @@
 
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
+            <th id="date_header" colspan="6">
+                {% if year %}
+                    <div class="dropdown" style="float:right;">
+                        <a class="btn btn-xs btn-default dropdown-toggle"
+                           data-toggle="dropdown" href="#">
+                            Actions&nbsp;<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li>
+                                <a role="menuitem"
+                                   href="/budget/summary/">
+                                    Annual Summary
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+                <div id="title">
+                    {% if year %}
+                        {% if prev_year %}
+                            <span id="previous_date">
+                                <a href="/budget/summary/?year={{prev_year}}"
+                                   title="previous year">
+                                    &laquo;&laquo;
+                                </a>
+                            </span>
+                        {% else %}
+                            <span id="previous_date">&laquo;&laquo;</span>
+                        {% endif %}
+                        Monthly Summary&nbsp;({{year}})
+                        {% if next_year %}
+                            <span id="next_date">
+                                <a href="/budget/summary/?year={{next_year}}"
+                                   title="next year">
+                                    &raquo;&raquo;
+                                </a>
+                            </span>
+                        {% else %}
+                            <span id="next_date">&raquo;&raquo;</span>
+                        {% endif %}
+                    {% else %}
+                        Annual Summary
+                    {% endif %}
+                </div>
+            </th>
+        </tr>
+        <tr>
             <th style="width:17%">Date</th>
             <th style="width:14%">Income(£)</th>
             <th style="width:14%">Expense(£)</th>
@@ -17,12 +64,18 @@
             {% for key, spending in spending_by_budget_type.items %}
                 <tr>
                     <td>
-                        <a href="/budget/?date={{spending.date|date:"Y-m"}}">
-                            {{spending.date|date:"F Y"}}
-                        </a>
+                        {% if year %}
+                            <a href="/budget/?date={{spending.date|date:"Y-m"}}">
+                                {{spending.date|date:"F Y"}}
+                            </a>
+                        {% else %}
+                            <a href="/budget/summary/?year={{spending.date|date:"Y"}}">
+                                {{spending.date|date:"Y"}}
+                            </a>
+                        {% endif %}
                     </td>
                     <td class="currency">
-                        {{spending.previous_month_income|currency}}
+                        {{spending.income|currency}}
                     </td>
                     <td class="currency">
                         {{spending.expense|currency}}
@@ -49,7 +102,7 @@
                 <td><strong>Total</strong></td>
                 <td class="currency">
                     <strong>
-                        {{total_spending.previous_month_income|currency}}
+                        {{total_spending.income|currency}}
                     </strong>
                 </td>
                 <td class="currency">
@@ -82,7 +135,7 @@
                 <td><strong>Average</strong></td>
                 <td class="currency">
                     <strong>
-                        {{average_spending.previous_month_income|currency}}
+                        {{average_spending.income|currency}}
                     </strong>
                 </td>
                 <td class="currency">
@@ -110,12 +163,6 @@
             </tr>
             <tr>
                 <td colspan="6" class="seperator">&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="6" class="notes">
-                    *Income figures calculated using values from
-                    previous month.
-                </td>
             </tr>
         </tbody>
     </table>

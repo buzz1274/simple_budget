@@ -23,29 +23,33 @@ class BudgetType(models.Model):
         db_table = 'budget_type'
 
     @staticmethod
-    def spending_by_budget_type():
+    def spending_by_budget_type(year=None):
         """
         retrieves spending by budget type for the last 12 months
         """
         simple_budget_start_date = datetime.strptime(START_DATE, '%Y-%m-%d')
-        simple_budget_start_date_previous_month = \
-            date(simple_budget_start_date.year,
-                 simple_budget_start_date.month, 1) - relativedelta(months=1)
-
         end_of_this_month = date(datetime.now().year, datetime.now().month,
                                  calendar.monthrange(datetime.now().year,
                                                      datetime.now().month)[1])
 
-        year_ago = date(datetime.now().year,
-                        datetime.now().month, 1) - relativedelta(months=11)
+        if not year:
+            date_trunc = 'YEAR'
+        else:
+            date_trunc = 'MONTH'
+            simple_budget_start_date_previous_month = \
+                date(simple_budget_start_date.year,
+                     simple_budget_start_date.month, 1) - relativedelta(months=1)
+
+            start_of_year = date(year, 1, 1)
+            end_of_year = date(year, 12, 31)
 
         sql = SQL()
         spend = \
             sql.db_session.query(
                 sql.budget_type.c.budget_type,
                 func.SUM(sql.transaction_line.c.amount).label('amount'),
-                func.DATE_TRUNC('MONTH', sql.transaction.c.transaction_date).\
-                    label('year_month')).\
+                func.DATE_TRUNC(date_trunc, sql.transaction.c.transaction_date).\
+                    label('date')).\
                 join(sql.budget_category,
                      sql.budget_category.c.budget_type_id ==
                      sql.budget_type.c.budget_type_id).\
@@ -57,30 +61,40 @@ class BudgetType(models.Model):
                      sql.transaction_category.c.transaction_category_id).\
                 join(sql.transaction,
                      sql.transaction.c.transaction_id ==
-                     sql.transaction_line.c.transaction_id). \
-                filter(sql.transaction.c.transaction_date >= simple_budget_start_date_previous_month). \
-                filter(sql.transaction.c.transaction_date >= year_ago). \
-                filter(sql.transaction.c.transaction_date <= end_of_this_month).\
-                group_by(sql.budget_type.c.budget_type,
-                         func.DATE_TRUNC('MONTH', sql.transaction.c.transaction_date)).\
-                order_by(func.DATE_TRUNC('MONTH', sql.transaction.c.transaction_date))
+                     sql.transaction_line.c.transaction_id).\
+                filter(sql.transaction.c.transaction_date >= simple_budget_start_date). \
+                filter(sql.transaction.c.transaction_date <= end_of_this_month)
+
+        if year:
+            spend = \
+                spend.filter(sql.transaction.c.transaction_date >= simple_budget_start_date_previous_month). \
+                      filter(sql.transaction.c.transaction_date >= start_of_year). \
+                      filter(sql.transaction.c.transaction_date <= end_of_year)
+
+        spend = \
+            spend.group_by(sql.budget_type.c.budget_type,
+                           func.DATE_TRUNC(date_trunc, sql.transaction.c.transaction_date)). \
+                  order_by(func.DATE_TRUNC(date_trunc, sql.transaction.c.transaction_date))
 
         spend = spend.all()
         spending = {}
         average_spending = {}
-        total_spending = {'previous_month_income': 0, 'expense': 0,
+        total_spending = {'income': 0, 'expense': 0,
                           'savings': 0, 'debt_repayment': 0,
                           'total': 0}
 
         if not spend:
-            return False
+            return [False, False, False]
         else:
             for s in spend:
-                key = str(date(s.year_month.year, s.year_month.month,
-                               s.year_month.day))
+                if not year:
+                    key = s.date.year
+                else:
+                    key = str(date(s.date.year, s.date.month,
+                                   s.date.day))
 
                 if not key in spending:
-                    spending[key] = {'date': s.year_month}
+                    spending[key] = {'date': s.date}
 
                 if s.budget_type.lower() != 'income':
                     spending[key][re.sub(' ', '_', s.budget_type.lower())] = s.amount * -1
@@ -88,25 +102,12 @@ class BudgetType(models.Model):
                     spending[key][re.sub(' ', '_', s.budget_type.lower())] = abs(s.amount)
 
             for key, item in spending.iteritems():
-                income_previous_month = \
-                    str(date(item['date'].year, item['date'].month, 1) - \
-                             relativedelta(months=1))
-
-                if income_previous_month in spending.keys():
-                    item['previous_month_income'] = \
-                        spending[income_previous_month]['income']
-                else:
-                    item['previous_month_income'] = item['income']
-
-                item['total'] = item['previous_month_income'] - \
+                item['total'] = item['income'] - \
                                 item['expense'] - \
                                 item['savings'] - item['debt_repayment']
 
             spending = collections.OrderedDict(sorted(spending.items(),
                                                       reverse=True))
-
-            if spending.keys()[-1] < START_DATE or len(spending.keys()) > 12:
-               del spending[spending.keys()[-1]]
 
             for key, item in spending.iteritems():
                 for item_key, value in item.iteritems():

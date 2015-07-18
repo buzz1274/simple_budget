@@ -39,9 +39,10 @@ class Budget(models.Model):
             else:
                 budget_id = budget[0].budget_id
 
-        end_date_income = start_date - timedelta(1)
+        end_date_income = date(start_date.year, start_date.month,
+                               calendar.monthrange(start_date.year,
+                                                   start_date.month)[1])
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
-
 
         annual_start_date = date(start_date.year, start_date.month, 1) - \
                             relativedelta(years=1)
