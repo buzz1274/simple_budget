@@ -42,7 +42,9 @@ class Budget(models.Model):
         end_date_income = date(start_date.year, start_date.month,
                                calendar.monthrange(start_date.year,
                                                    start_date.month)[1])
+
         start_date_income = date(end_date_income.year, end_date_income.month, 1)
+
 
         annual_start_date = date(start_date.year, start_date.month, 1) - \
                             relativedelta(years=1)
@@ -269,9 +271,6 @@ class Budget(models.Model):
                         transaction.budget_amount_future
 
                 if transaction.average_annual_spend:
-                    if transaction.budget_category == 'Pension':
-                        transaction.average_annual_spend *= -1
-
                     totals[transaction.budget_type]['average_annual'] += \
                         transaction.average_annual_spend
 

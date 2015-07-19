@@ -5,21 +5,26 @@
     <table id="budget" class="table table-condensed table-striped table-bordered">
         <tr>
             <th id="table_header" colspan="6">
-                {% if user.is_superuser %}
-                    <div class="dropdown" style="float:right;">
-                        <a class="btn btn-xs btn-default dropdown-toggle"
-                           data-toggle="dropdown" href="#">
-                            Actions&nbsp;<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <div class="dropdown" style="float:right;">
+                    <a class="btn btn-xs btn-default dropdown-toggle"
+                       data-toggle="dropdown" href="#">
+                        Actions&nbsp;<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>
+                            <a role="menuitem"href="/budget/?date={{date|date:"Y-m"}}">
+                                Monthly Budget
+                            </a>
+                        </li>
+                        {% if user.is_superuser %}
                             <li>
                                 <a role="menuitem"href="/transaction/add">
                                     Add Transaction
                                 </a>
                             </li>
-                        </ul>
-                    </div>
-                {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
                 <div id="title">
                     {% if prev_month %}
                         <span id="previous_date">

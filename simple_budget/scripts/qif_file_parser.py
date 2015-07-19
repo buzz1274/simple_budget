@@ -154,6 +154,16 @@ class Quicken(object):
                     if line.strip() == 'NXOut':
                         negate_amount = True
 
+                    if transaction['reference'] == 'emp_pen':
+                        transaction['split'].append(
+                            {'category': self.get_account_name(account_id),
+                             'sub_category': None,
+                             'amount': transaction['amount'] * -1})
+                        transaction['split'].append(
+                            {'category': 'Employment',
+                             'sub_category': 'Pension',
+                             'amount': transaction['amount']})
+
                 elif transaction_found and line[0] == '$' and category:
                     transaction['split'].append(
                         {'category': category,
@@ -314,6 +324,15 @@ class Quicken(object):
 
             return self.get_category_id(transaction_category,
                                         transaction_category_parent_id)
+
+    def get_account_name(self, account_id):
+        """
+        gets account name
+        :param acount_id:
+        :return:
+        """
+        return self.sql.db_session.query(self.sql.account.c.account_name). \
+                    filter(account_id == self.sql.account.c.account_id).scalar()
 
     def get_category_id(self, transaction_category, transaction_category_parent_id):
         """
