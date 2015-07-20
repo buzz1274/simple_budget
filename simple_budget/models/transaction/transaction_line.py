@@ -49,6 +49,7 @@ class TransactionLine(models.Model):
         transaction_lines = sql.db_session.query(
             sql.transaction_line.c.transaction_line_id.label('id'),
             sql.account.c.account_name,
+            sql.account.c.account_id,
             sql.budget_category.c.budget_category,
             sql.transaction.c.transaction_date, sql.transaction_line.c.amount,
             case([(parent_transaction_category.c.transaction_category.isnot(None),

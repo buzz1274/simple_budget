@@ -80,8 +80,6 @@ def add_edit_transaction(request, action, transaction_line_id):
         referer = \
             clean_message_from_url(request.META.get('HTTP_REFERER', None))
 
-        print referer
-
         if action == 'edit':
             form = AddEditTransactionForm(
                 initial={'referer':

@@ -125,7 +125,9 @@
                         {{transaction.transaction_date}}
                     </td>
                     <td>
-                        {{transaction.account_name}}
+                        <a href="/account/{{transaction.account_id}}/">
+                            {{transaction.account_name}}
+                        </a>
                     </td>
                     <td>
                         {{transaction.category}}
