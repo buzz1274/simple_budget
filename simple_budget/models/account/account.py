@@ -23,22 +23,35 @@ class Account(models.Model):
         db_table = 'account'
 
     @staticmethod
-    def accounts(account_type):
+    def accounts(account_type=None):
         """
         get account balances of the supplied type
         :param type:
         :return:
         """
         sql = SQL()
+        end_of_month = date(datetime.now().year, datetime.now().month,
+                            datetime.now().day)
 
         accounts = sql.db_session.query(
                     sql.account.c.account_id,
                     sql.account.c.account_hidden,
                     sql.account.c.account_name,
+                    sql.account.c.account_notes,
+                    func.sum(sql.transaction_line.c.amount). \
+                        label('balance'),
                     sql.account_type.c.account_type). \
             join(sql.account_type,
                  sql.account_type.c.account_type_id ==
-                 sql.account.c.account_type_id).\
+                 sql.account.c.account_type_id). \
+            outerjoin(sql.transaction,
+                 sql.transaction.c.account_id ==
+                 sql.account.c.account_id). \
+            outerjoin(sql.transaction_line,
+                 sql.transaction_line.c.transaction_id ==
+                 sql.transaction.c.transaction_id). \
+            filter(sql.account.c.account_hidden == False).\
+            filter(sql.transaction.c.transaction_date <= end_of_month).\
             group_by(sql.account.c.account_id,
                      sql.account.c.account_name,
                      sql.account_type.c.account_type,
@@ -82,8 +95,7 @@ class Account(models.Model):
         if account_id:
             account_balances = account_balances.filter(
                 sql.account.c.account_id == account_id)
-
-        if account_type == 'debt' and not account_id:
+        elif account_type == 'debt':
             account_balances = account_balances.filter(
                 or_(sql.account_type.c.account_type=='Credit Card',
                     sql.account_type.c.account_type=='Loan',

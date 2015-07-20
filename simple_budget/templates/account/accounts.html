@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load templatetags %}
+
+{% block content %}
+    {% if accounts %}
+        <table id="budget" class="table table-condensed table-striped table-bordered">
+            <tr>
+                <th id="table_header" colspan="6">
+                    {% if user.is_superuser %}
+                        <div class="dropdown" style="float:right;">
+                            <a class="btn btn-xs btn-default dropdown-toggle"
+                               data-toggle="dropdown" href="#">
+                                Actions&nbsp;<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li>
+                                    <a role="menuitem"
+                                       href="/account/add">
+                                        Add Account
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div id="title">Accounts</div>
+                </th>
+            </tr>
+            <tr>
+                <th style="width:55%;">Account</th>
+                <th style="width:30%;">Type</th>
+                <th style="width:15%;">Balance(£)</th>
+            </tr>
+            {% for account_type, balance in summary.items %}
+                {% for account in accounts %}
+                    {% if account.account_type == account_type %}
+                    <tr>
+                        <td>
+                            <a href="/account/{{account.account_id}}/">
+                                {{account.account_name}}
+                            </a>
+                        </td>
+                        <td>{{account.account_type}}</td>
+                        <td class="currency">
+                            {{account.balance|currency}}
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td colspan="6" class="seperator">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <strong>Total {{account_type}}(£)</strong>
+                    </td>
+                    <td class="currency
+                                    {% if balance > 0 %}
+                                        success
+                                    {% else %}
+                                        warning
+                                    {% endif %}">
+                        {{balance|currency}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="seperator">&nbsp;</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2"><strong>Grand Total(£)</strong></td>
+                <td class="currency
+                                {% if grand_total > 0 %}
+                                    success
+                                {% else %}
+                                    warning
+                                {% endif %}">
+                    {{grand_total|currency}}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" class="seperator">&nbsp;</td>
+            </tr>
+        </table>
+    {% endif %}
+{% endblock %}

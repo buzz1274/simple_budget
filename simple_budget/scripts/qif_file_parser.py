@@ -155,13 +155,32 @@ class Quicken(object):
                         negate_amount = True
 
                     if transaction['reference'] == 'emp_pen':
+                        transaction_id = \
+                            self.save_transaction(self.get_account_id('Holding'),
+                                                  transaction['date'])
+
+                        transaction_category_id = \
+                            self.save_category('Pension', 'Employment')
+
+                        self.save_transaction_line(transaction_id,
+                                                   transaction_category_id,
+                                                   transaction['amount'])
+
+                        transaction_id = \
+                            self.save_transaction(self.get_account_id('Holding'),
+                                                  transaction['date'])
+
+                        transaction_category_id = \
+                            self.save_category(None,
+                                               self.get_account_name(account_id))
+
+                        self.save_transaction_line(transaction_id,
+                                                   transaction_category_id,
+                                                   transaction['amount'] * -1)
+
                         transaction['split'].append(
-                            {'category': self.get_account_name(account_id),
+                            {'category': 'Holding',
                              'sub_category': None,
-                             'amount': transaction['amount'] * -1})
-                        transaction['split'].append(
-                            {'category': 'Employment',
-                             'sub_category': 'Pension',
                              'amount': transaction['amount']})
 
                 elif transaction_found and line[0] == '$' and category:

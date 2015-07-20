@@ -40,16 +40,14 @@
                     <ul class="dropdown-menu" role="menu"
                         aria-labelledby="dLabel">
                         <li>
-                            <a role="menuitem" href="/budget/summary/">
-                                Accounts*
+                            <a role="menuitem" href="/accounts/">
+                                Accounts
                             </a>
-                            {% if user.is_superuser %}
-                                <a role="menuitem" href="/budget/summary/">
-                                    Add Account*
-                                </a>
-                            {% endif %}
                             <a role="menuitem" href="/budget/summary/">
                                 Projected Savings*
+                            </a>
+                            <a role="menuitem" href="/budget/summary/">
+                                Mortgage Repayment*
                             </a>
                             <a role="menuitem" href="/account/debt/">
                                 Debt Repayment
