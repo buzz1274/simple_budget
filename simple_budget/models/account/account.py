@@ -61,9 +61,8 @@ class Account(models.Model):
 
         if account_type == 'debt':
             accounts = accounts.filter(
-                or_(sql.account_type.c.account_type=='Credit Card',
-                    sql.account_type.c.account_type=='Loan',
-                    sql.account_type.c.account_type=='Store Card'))
+                or_(sql.account_type.c.account_type=='Loan',
+                    sql.account_type.c.account_type=='Store & Credit Card'))
 
         return accounts
 
@@ -97,9 +96,8 @@ class Account(models.Model):
                 sql.account.c.account_id == account_id)
         elif account_type == 'debt':
             account_balances = account_balances.filter(
-                or_(sql.account_type.c.account_type=='Credit Card',
-                    sql.account_type.c.account_type=='Loan',
-                    sql.account_type.c.account_type=='Store Card'))
+                or_(sql.account_type.c.account_type=='Loan',
+                    sql.account_type.c.account_type=='Store & Credit Card'))
 
         #loop through all balances and fill in any gaps in the date
         #with the balance for the previous month
