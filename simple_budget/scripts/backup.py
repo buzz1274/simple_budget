@@ -5,8 +5,7 @@ import datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../simple_budget'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simple_budget.settings")
 
-from simple_budget.settings import (BACKUP_PATH, BACKUP_FILES_TO_KEEP,
-                                    DATABASES)
+from simple_budget.settings import (BACKUP_PATH, DATABASES)
 
 if not BACKUP_PATH or not os.path.isdir(BACKUP_PATH):
     print "Backup Path does not exist"
@@ -33,11 +32,3 @@ os.popen('cd %s;tar -czf %s %s' %
          (BACKUP_PATH, backup_file, sql_dump_file))
 
 os.popen('rm %s/%s' % (BACKUP_PATH, sql_dump_file))
-
-if BACKUP_FILES_TO_KEEP:
-    files = os.popen('ls -t %s/*.tar.gz' % (BACKUP_PATH,))
-
-    if files:
-        files = list(files)[BACKUP_FILES_TO_KEEP:]
-        if files:
-            for f in files: os.popen('rm %s' % (f,))
