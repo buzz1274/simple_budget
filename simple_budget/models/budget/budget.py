@@ -133,7 +133,7 @@ class Budget(models.Model):
 
         annual_spend = sql.db_session.query(
             sql.transaction_category.c.budget_category_id.label('id'),
-            case([(sql.budget_category.c.budget_category == 'Income',
+            case([(sql.budget_type.c.budget_type == 'Income',
                    func.ROUND(func.ABS(
                        func.SUM(sql.transaction_line.c.amount) / 12), 2)),
                   ],
@@ -146,9 +146,12 @@ class Budget(models.Model):
                    sql.transaction_line.c.transaction_id). \
             filter(sql.budget_category.c.budget_category_id==
                    sql.transaction_category.c.budget_category_id). \
+            filter(sql.budget_type.c.budget_type_id==
+                   sql.budget_category.c.budget_type_id). \
             filter(sql.transaction.c.transaction_date.between(annual_start_date,
                                                               annual_end_date)). \
             group_by(sql.transaction_category.c.budget_category_id,
+                     sql.budget_type.c.budget_type,
                      sql.budget_category.c.budget_category).subquery()
 
         budget = \

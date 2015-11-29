@@ -22,6 +22,9 @@ class BudgetType(models.Model):
     class Meta:
         db_table = 'budget_type'
 
+    def __unicode__(self):
+        return self.budget_type
+
     @staticmethod
     def spending_by_budget_type(year=None):
         """

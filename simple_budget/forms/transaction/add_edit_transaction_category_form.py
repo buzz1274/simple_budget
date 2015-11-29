@@ -18,7 +18,8 @@ class AddEditTransactionCategoryForm(forms.Form):
 
         self.fields['budget_category'].choices = \
             [('', 'Please select a budget category')] + \
-            [(str(o.budget_category_id), str(o.budget_category))
+            [(str(o.budget_category_id), str(o.budget_category +
+                                             ' ['+str(o.budget_type)+']'))
              for o in BudgetCategory.objects.all().order_by('budget_category')]
 
 
