@@ -11,7 +11,6 @@ import sys
 import os.path
 import yaml
 import django
-import traceback
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../../simple_budget'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "simple_budget.settings")
@@ -154,34 +153,23 @@ class Quicken(object):
                     if line.strip() == 'NXOut':
                         negate_amount = True
 
-                    if transaction['reference'] == 'emp_pen':
-                        transaction_id = \
-                            self.save_transaction(self.get_account_id('Holding'),
-                                                  transaction['date'])
+                    if (transaction['reference'].lower() == 'sipp contribution claim' or
+                        transaction['reference'] == 'emp_pen'):
+                        if transaction['reference'] == 'emp_pen':
+                            self.add_transaction_to_holding_account(transaction,
+                                                                    account_id,
+                                                                    'Pension',
+                                                                    'Employment')
 
-                        transaction_category_id = \
-                            self.save_category('Pension', 'Employment')
+                        if transaction['reference'].lower() == 'sipp contribution claim':
+                            self.add_transaction_to_holding_account(transaction,
+                                                                    account_id,
+                                                                    'Sipp Contribution Rebate',
+                                                                    'Pension')
 
-                        self.save_transaction_line(transaction_id,
-                                                   transaction_category_id,
-                                                   transaction['amount'])
-
-                        transaction_id = \
-                            self.save_transaction(self.get_account_id('Holding'),
-                                                  transaction['date'])
-
-                        transaction_category_id = \
-                            self.save_category(None,
-                                               self.get_account_name(account_id))
-
-                        self.save_transaction_line(transaction_id,
-                                                   transaction_category_id,
-                                                   transaction['amount'] * -1)
-
-                        transaction['split'].append(
-                            {'category': 'Holding',
-                             'sub_category': None,
-                             'amount': transaction['amount']})
+                        transaction['split'].append({'category': 'Holding',
+                                                     'sub_category': None,
+                                                     'amount': transaction['amount']})
 
                 elif transaction_found and line[0] == '$' and category:
                     transaction['split'].append(
@@ -384,6 +372,36 @@ class Quicken(object):
                             self.sql.transaction.delete(). \
                             where(self.sql.transaction.c.transaction_id==
                                   row.transaction_id))
+
+    def add_transaction_to_holding_account(self, transaction, account_id,
+                                           transaction_parent_category,
+                                           transaction_category):
+        """"
+        puts a transaction through holding account
+        """
+        transaction_id = \
+            self.save_transaction(self.get_account_id('Holding'),
+                                  transaction['date'])
+
+        transaction_category_id = \
+            self.save_category(transaction_parent_category,
+                               transaction_category)
+
+        self.save_transaction_line(transaction_id,
+                                   transaction_category_id,
+                                   transaction['amount'])
+
+        transaction_id = \
+            self.save_transaction(self.get_account_id('Holding'),
+                                  transaction['date'])
+
+        transaction_category_id = \
+            self.save_category(None,
+                               self.get_account_name(account_id))
+
+        self.save_transaction_line(transaction_id,
+                                   transaction_category_id,
+                                   transaction['amount'] * -1)
 
     @staticmethod
     def split_category(category):

@@ -125,9 +125,13 @@
                         {{transaction.transaction_date}}
                     </td>
                     <td>
-                        <a href="/account/{{transaction.account_id}}/">
-                            {{transaction.account_name}}
-                        </a>
+                        {% if transaction.account_name != 'Holding' %}
+                            <a href="/account/{{transaction.account_id}}/">
+                                {{transaction.account_name}}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
                     </td>
                     <td>
                         {{transaction.category}}

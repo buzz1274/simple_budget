@@ -1,40 +1,42 @@
-{% if unassigned_transaction_categories %}
-    <p class="bg-danger message">
-        <strong class="text-danger">
-            Warning!!! Their are
-            <a class="text-danger" style="text-decoration:underline;"
-               href="/transaction/category/?bc=0">{{unassigned_transaction_categories}}</a>
-            transaction categories that are not assigned to a budget category.
-        </strong>
-    </p>
-{% endif %}
-{% if message %}
-    <p class="bg-{{message_type}} message">
-        <strong class="text-{{message_type}}">{{message}}</strong>
-    </p>
-    {% if message_key == 'in_progress_quicken_file' %}
-        <script>
-            function get_quicken_file_status() {
-                $.getJSON("/transaction/upload_quicken_file_status/",
-                    function (data) {
-                    }).done(function(response) {
-                        if (response.status) {
-                            if(response.status == 'complete') {
-                                window.location =
-                                        '/budget/?message=quicken_upload_complete';
-                            } else if(response.status == 'failed') {
-                                window.location =
-                                        '/budget/?message=quicken_upload_failed';
-                            } else if(response.status != 'in_progress') {
-                                window.location = '/budget/';
+{% if user.is_authenticated %}
+    {% if unassigned_transaction_categories %}
+        <p class="bg-danger message">
+            <strong class="text-danger">
+                Warning!!! Their are
+                <a class="text-danger" style="text-decoration:underline;"
+                   href="/transaction/category/?bc=0">{{unassigned_transaction_categories}}</a>
+                transaction categories that are not assigned to a budget category.
+            </strong>
+        </p>
+    {% endif %}
+    {% if message %}
+        <p class="bg-{{message_type}} message">
+            <strong class="text-{{message_type}}">{{message}}</strong>
+        </p>
+        {% if message_key == 'in_progress_quicken_file' %}
+            <script>
+                function get_quicken_file_status() {
+                    $.getJSON("/transaction/upload_quicken_file_status/",
+                        function (data) {
+                        }).done(function(response) {
+                            if (response.status) {
+                                if(response.status == 'complete') {
+                                    window.location =
+                                            '/budget/?message=quicken_upload_complete';
+                                } else if(response.status == 'failed') {
+                                    window.location =
+                                            '/budget/?message=quicken_upload_failed';
+                                } else if(response.status != 'in_progress') {
+                                    window.location = '/budget/';
+                                }
                             }
                         }
-                    }
-                );
-            }
-            setInterval(function () {
-                get_quicken_file_status();
-            }, 10000);
-        </script>
+                    );
+                }
+                setInterval(function () {
+                    get_quicken_file_status();
+                }, 10000);
+            </script>
+        {% endif %}
     {% endif %}
 {% endif %}

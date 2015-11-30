@@ -73,7 +73,8 @@ class TransactionLine(models.Model):
                  sql.transaction.c.account_id). \
             outerjoin(parent_transaction_category,
                       sql.transaction_category.c.transaction_category_parent_id ==
-                      parent_transaction_category.c.transaction_category_id)
+                      parent_transaction_category.c.transaction_category_id).\
+            filter(sql.transaction_category.c.transaction_category != 'Holding')
 
         if sort % 2:
             transaction_lines = \
