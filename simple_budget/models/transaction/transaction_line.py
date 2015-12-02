@@ -70,10 +70,10 @@ class TransactionLine(models.Model):
             join(sql.transaction_category,
                  sql.transaction_category.c.transaction_category_id==
                  sql.transaction_line.c.transaction_category_id). \
-            outerjoin(sql.budget_category,
-                      sql.budget_category.c.budget_category_id==
-                      sql.transaction_category.c.budget_category_id). \
-            outerjoin(sql.budget_type,
+            join(sql.budget_category,
+                 sql.budget_category.c.budget_category_id==
+                 sql.transaction_category.c.budget_category_id). \
+            join(sql.budget_type,
                    sql.budget_category.c.budget_type_id==
                    sql.budget_type.c.budget_type_id). \
             join(sql.account,
