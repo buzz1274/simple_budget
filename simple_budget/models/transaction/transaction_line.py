@@ -34,7 +34,8 @@ class TransactionLine(models.Model):
                       2: ['category'],
                       4: [sql.budget_category.c.budget_category],
                       6: [sql.transaction_line.c.amount],
-                      8: [sql.account.c.account_name]}
+                      8: [sql.account.c.account_name],
+                      10: [sql.budget_type.c.budget_type]}
 
         try:
             sort = int(sort)
@@ -51,6 +52,7 @@ class TransactionLine(models.Model):
             sql.account.c.account_name,
             sql.account.c.account_id,
             sql.budget_category.c.budget_category,
+            sql.budget_type.c.budget_type,
             sql.transaction.c.transaction_date, sql.transaction_line.c.amount,
             case([(parent_transaction_category.c.transaction_category.isnot(None),
                    func.CONCAT(parent_transaction_category.c.transaction_category,
@@ -68,6 +70,12 @@ class TransactionLine(models.Model):
             join(sql.transaction_category,
                  sql.transaction_category.c.transaction_category_id==
                  sql.transaction_line.c.transaction_category_id). \
+            outerjoin(sql.budget_category,
+                      sql.budget_category.c.budget_category_id==
+                      sql.transaction_category.c.budget_category_id). \
+            outerjoin(sql.budget_type,
+                   sql.budget_category.c.budget_type_id==
+                   sql.budget_type.c.budget_type_id). \
             join(sql.account,
                  sql.account.c.account_id==
                  sql.transaction.c.account_id). \

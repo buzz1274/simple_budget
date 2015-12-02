@@ -2,7 +2,7 @@ $(document).ready(function() {
     "use strict";
 
     var margin = {top: 20, right: 20, bottom: 30, left: 50},
-        width = 720 - margin.left - margin.right,
+        width = 900 - margin.left - margin.right,
         height = 350 - margin.top - margin.bottom;
 
     var parseDate = d3.time.format("%Y-%m-%d").parse;
