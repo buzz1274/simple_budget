@@ -5,6 +5,7 @@ from django.contrib.auth import (authenticate, login as auth_login,
 from django.contrib.auth.decorators import login_required
 from simple_budget.forms.login_form import LoginForm
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 
 @login_required
 def index(request):
@@ -21,6 +22,17 @@ def logout(request):
     """
     auth_logout(request)
     return HttpResponseRedirect('/login/?message=logged_out')
+
+def check_auth(request):
+    """
+    determine if a user is authenticated
+    """
+    if request.user.is_authenticated():
+        status = 200
+    else:
+        status = 401
+
+    return HttpResponse(None, content_type='text/plain', status=status)
 
 def login(request):
     """
