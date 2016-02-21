@@ -77,25 +77,33 @@
                     <td class="currency">
                         {{spending.income|currency}}
                         {% if not year %}
-                            ({{spending.income_average|currency}})
+                            <span style="font-size:0.75em;">
+                                ({{spending.income_average|currency}})
+                            </span>
                         {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.expense|currency}}
                         {% if not year %}
-                            ({{spending.expense_average|currency}})
+                            <span style="font-size:0.75em;">
+                                ({{spending.expense_average|currency}})
+                            </span>
                         {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.savings|currency}}
                         {% if not year %}
-                            ({{spending.savings_average|currency}})
+                            <span style="font-size:0.75em;">
+                                ({{spending.savings_average|currency}})
+                            </span>
                         {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.debt_repayment|currency}}
                         {% if not year %}
-                            ({{spending.debt_repayment_average|currency}})
+                            <span style="font-size:0.75em;">
+                                ({{spending.debt_repayment_average|currency}})
+                            </span>
                         {% endif %}
                     </td>
                     <td class="currency
@@ -105,7 +113,9 @@
                                 success{% endif %}">
                         {{spending.total|currency}}
                         {% if not year %}
-                            ({{spending.total_average|currency}})
+                            <span style="font-size:0.75em;">
+                                ({{spending.total_average|currency}})
+                            </span>
                         {% endif %}
                     </td>
                 </tr>
