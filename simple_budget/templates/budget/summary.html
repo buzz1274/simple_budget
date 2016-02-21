@@ -54,11 +54,11 @@
         </tr>
         <tr>
             <th style="width:17%">Date</th>
-            <th style="width:14%">Income(£)</th>
-            <th style="width:14%">Expense(£)</th>
-            <th style="width:14%">Savings(£)</th>
-            <th style="width:22%">Debt Repayment(£)</th>
-            <th style="width:14%">Remaining(£)</th>
+            <th style="width:17%">Income(£)</th>
+            <th style="width:17%">Expense(£)</th>
+            <th style="width:17%">Savings(£)</th>
+            <th style="width:17%">Debt Repayment(£)</th>
+            <th style="width:17%">Remaining(£)</th>
         </tr>
         <tbody>
             {% for key, spending in spending_by_budget_type.items %}
@@ -76,15 +76,27 @@
                     </td>
                     <td class="currency">
                         {{spending.income|currency}}
+                        {% if not year %}
+                            ({{spending.income_average|currency}})
+                        {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.expense|currency}}
+                        {% if not year %}
+                            ({{spending.expense_average|currency}})
+                        {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.savings|currency}}
+                        {% if not year %}
+                            ({{spending.savings_average|currency}})
+                        {% endif %}
                     </td>
                     <td class="currency">
                         {{spending.debt_repayment|currency}}
+                        {% if not year %}
+                            ({{spending.debt_repayment_average|currency}})
+                        {% endif %}
                     </td>
                     <td class="currency
                             {% if spending.total < 0 %}
@@ -92,6 +104,9 @@
                             {% else %}
                                 success{% endif %}">
                         {{spending.total|currency}}
+                        {% if not year %}
+                            ({{spending.total_average|currency}})
+                        {% endif %}
                     </td>
                 </tr>
             {%  endfor %}

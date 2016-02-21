@@ -86,6 +86,8 @@ class BudgetType(models.Model):
                           'savings': 0, 'debt_repayment': 0,
                           'total': 0}
 
+        print date.today().year
+
         if not spend:
             return [False, False, False]
         else:
@@ -99,15 +101,36 @@ class BudgetType(models.Model):
                 if not key in spending:
                     spending[key] = {'date': s.date}
 
+                category_key = re.sub(' ', '_', s.budget_type.lower())
+
+                print category_key
+
                 if s.budget_type.lower() != 'income':
-                    spending[key][re.sub(' ', '_', s.budget_type.lower())] = s.amount * -1
+                    spending[key][category_key] = s.amount * -1
                 else:
-                    spending[key][re.sub(' ', '_', s.budget_type.lower())] = abs(s.amount)
+                    spending[key][category_key] = abs(s.amount)
+
+                if not year:
+                    if date.today().year == s.date.year:
+                        average_divisor = date.today().month
+                    else:
+                        average_divisor = 12
+
+                    spending[key][category_key+'_average'] = \
+                        spending[key][category_key] / average_divisor
 
             for key, item in spending.iteritems():
                 item['total'] = item['income'] - \
                                 item['expense'] - \
                                 item['savings'] - item['debt_repayment']
+
+                if not year:
+                    if date.today().year == key:
+                        average_divisor = date.today().month
+                    else:
+                        average_divisor = 12
+
+                    item['total_average'] = item['total'] / average_divisor
 
             spending = collections.OrderedDict(sorted(spending.items(),
                                                       reverse=True))
