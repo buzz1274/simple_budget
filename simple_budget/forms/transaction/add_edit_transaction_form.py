@@ -2,6 +2,7 @@
 from django import forms
 from simple_budget.models.transaction.transaction_category import \
     TransactionCategory
+from simple_budget.models.account.account import Account
 import re
 
 
@@ -17,8 +18,20 @@ class AddEditTransactionForm(forms.Form):
                 transaction_category_mapping(sort=None,
                                              budget_category_id=None)[1]]
 
+        self.fields['account_id'].choices = \
+            [('', 'Please select an account')] + \
+            [(o.account_id, str(o.account_name))
+             for o in Account.objects.filter(account_hidden=False).
+                 order_by('account_name')]
+
     transaction_line_id = forms.CharField(widget=forms.HiddenInput(),
                                           required=False)
+
+    account_id = \
+        forms.ChoiceField(
+            required=True,
+            label='Account',
+            widget=forms.Select(attrs={'class': 'form-control form-large'}))
 
     transaction_category_id = \
         forms.ChoiceField(

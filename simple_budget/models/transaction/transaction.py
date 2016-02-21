@@ -31,7 +31,8 @@ class Transaction(models.Model):
         if action == 'edit':
             self.delete_transaction(data)
 
-        new_transaction = Transaction(transaction_date=data['transaction_date'])
+        new_transaction = Transaction(transaction_date=data['transaction_date'],
+                                      account_id=data['account_id'],)
         new_transaction.save()
 
         if not new_transaction.pk:

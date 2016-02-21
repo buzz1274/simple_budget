@@ -68,13 +68,15 @@ def add_edit_transaction(request, action, transaction_line_id):
         form = AddEditTransactionForm(request.POST)
 
         if form.is_valid():
+            referer = request.POST.get('referer', '/transactions/?date=')
+
             try:
                 Transaction().add_edit_transaction(action, form.cleaned_data)
                 return HttpResponseRedirect(
-                    '/transactions/?message=%s_success' % (message,))
+                    '%s&message=%s_success' % (referer, message,))
             except DatabaseError:
                 return HttpResponseRedirect(
-                    '/transactions/?message=%s_failure' % (message,))
+                    '%s&message=%s_failure' % (referer, message,))
 
     else:
         referer = \
@@ -86,6 +88,8 @@ def add_edit_transaction(request, action, transaction_line_id):
                              referer,
                          'transaction_line_id':
                              transaction_line.pk,
+                         'account_id':
+                             transaction_line.transaction.account_id,
                          'transaction_category_id':
                              transaction_line.transaction_category_id,
                          'transaction_date':
