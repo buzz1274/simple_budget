@@ -22,6 +22,7 @@ from simple_budget.helper.date_calculation import DateCalculation
 from simple_budget.helper.helper import clean_message_from_url
 from django.conf import settings
 import json
+import re
 
 
 @login_required
@@ -70,13 +71,18 @@ def add_edit_transaction(request, action, transaction_line_id):
         if form.is_valid():
             referer = request.POST.get('referer', '/transactions/?date=')
 
+            if re.search('\?', referer):
+                sep = '&'
+            else:
+                sep = '?'
+
             try:
                 Transaction().add_edit_transaction(action, form.cleaned_data)
                 return HttpResponseRedirect(
-                    '%s&message=%s_success' % (referer, message,))
+                    '%s%smessage=%s_success' % (referer, sep, message,))
             except DatabaseError:
                 return HttpResponseRedirect(
-                    '%s&message=%s_failure' % (referer, message,))
+                    '%s%smessage=%s_failure' % (referer, sep, message,))
 
     else:
         referer = \
