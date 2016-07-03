@@ -390,6 +390,26 @@ class Budget(models.Model):
 
         return True
 
+    def clone_budget(self, data):
+        """
+        clone a budget
+        """
+        print data
+
+        budget = Budget(budget_name=data['budget_name'],
+                        budget_description=data['budget_description'])
+        budget.save()
+
+        budget_to_clone = BudgetAmount.objects.filter(budget_id=data['budget_id'])
+
+        for row in budget_to_clone:
+            self.update_budget_amounts(budget.budget_id,
+                                       row.budget_category_id,
+                                       Decimal(row.budget_amount),
+                                       False)
+
+        return True
+
     @staticmethod
     def update_budget_amounts(budget_id, budget_category_id, value,
                               future_value):

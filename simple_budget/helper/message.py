@@ -84,6 +84,12 @@ class Message(object):
                 'budget_delete_failure':
                     {'message': 'An error occurred deleting the budget.',
                      'type': 'danger'},
+                'budget_clone_success':
+                    {'message': 'Budget cloned.',
+                     'type': 'success'},
+                'budget_clone_failure':
+                    {'message': 'An error occurred cloning the budget.',
+                     'type': 'danger'},
                 'transaction_delete_failure':
                     {'message': 'An error occurred deleting a transaction.',
                      'type': 'danger'},

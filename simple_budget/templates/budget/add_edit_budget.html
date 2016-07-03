@@ -25,15 +25,17 @@
                     {% endif %}
                 {% endfor %}
 
-                <div class="add_budget_seperator">&nbsp;</div>
+                {% if action != "clone" %}
+                    <div class="add_budget_seperator">&nbsp;</div>
 
-                {% if budget_value_error_found %}
-                    <p class="text-danger">
-                        Please correct all form fields highlighted in red.
-                    </p><br />
+                    {% if budget_value_error_found %}
+                        <p class="text-danger">
+                            Please correct all form fields highlighted in red.
+                        </p><br />
+                    {% endif %}
+
+                    {% include 'budget/budget_detail_table.html' %}
                 {% endif %}
-
-                {% include 'budget/budget_detail_table.html' %}
 
                 <input name="submit" type="submit" value="Submit">
                 <input name="submit" type="submit" value="Cancel">

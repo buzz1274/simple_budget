@@ -12,6 +12,8 @@ from simple_budget.forms.budget.add_edit_budget_form import \
     AddEditBudgetForm
 from simple_budget.forms.budget.delete_budget_form import \
     DeleteBudgetForm
+from simple_budget.forms.budget.clone_budget_form import \
+    CloneBudgetForm
 from simple_budget.forms.budget.add_edit_budget_category_form import \
     AddEditBudgetCategoryForm
 from simple_budget.forms.budget.delete_budget_category_form import \
@@ -134,6 +136,43 @@ def add_edit_budgets(request, action=None, budget_id=None):
                                'totals': totals,
                                'grand_total': grand_total,
                                'transactions': transactions},
+                              context_instance=RequestContext(request))
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser,
+                  login_url='/?message=no_permissions_error',
+                  redirect_field_name=None)
+def clone_budgets(request, budget_id=None):
+    """
+    deletes the supplied budget category
+    :param request:
+    :return:
+    """
+    budget_to_clone = get_object_or_404(Budget, pk=budget_id)
+    referrer = \
+        clean_message_from_url(request.META.get('HTTP_REFERER', None))
+
+    if request.method == 'POST':
+        if request.POST.get('submit', None) == 'Cancel':
+            return HttpResponseRedirect(request.POST.get('referrer', '/'))
+
+        form = CloneBudgetForm(request.POST)
+
+        if form.is_valid():
+            if budget_to_clone.clone_budget(form.cleaned_data):
+                return HttpResponseRedirect(
+                    '/budgets/?message=budget_clone_success')
+            else:
+                return HttpResponseRedirect(
+                    '/budgets/?message=budget_clone_failure')
+    else:
+        form = CloneBudgetForm(initial={'budget_id': budget_to_clone.pk,
+                                        'referrer': referrer})
+
+    return render_to_response('budget/add_edit_budget.html',
+                              {'form': form,
+                               'action': "clone",
+                               'referrer': referrer},
                               context_instance=RequestContext(request))
 
 @login_required
