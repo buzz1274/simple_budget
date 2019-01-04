@@ -88,7 +88,7 @@ class Transaction(models.Model):
         if not os.path.isfile(filename):
             return False
         else:
-            subprocess.Popen(['nohup', settings.PYTHON_PATH,
+            subprocess.Popen([settings.PYTHON_PATH,
                               '%s/simple_budget/scripts/qif_file_parser.py' %
                                 (settings.BASE_DIR,),
                               '-p', filename])

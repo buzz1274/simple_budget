@@ -18,7 +18,7 @@ def currency(value):
     if value:
         return "{:,.2f}".format(value)
 
-    return 0.00
+    return '-'
 
 @register.filter(name='lookup')
 def lookup(value, arg):
