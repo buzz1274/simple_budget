@@ -17,7 +17,11 @@ def accounts(request):
     grand_total = 0
 
     for account in all_accounts:
+        if not account.balance:
+            account.balance = 0
+
         grand_total += account.balance
+
         if account.account_type not in summary:
             summary[account.account_type] = account.balance
         else:

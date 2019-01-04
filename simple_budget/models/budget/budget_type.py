@@ -86,8 +86,6 @@ class BudgetType(models.Model):
                           'savings': 0, 'debt_repayment': 0,
                           'total': 0}
 
-        print date.today().year
-
         if not spend:
             return [False, False, False]
         else:
@@ -102,8 +100,6 @@ class BudgetType(models.Model):
                     spending[key] = {'date': s.date}
 
                 category_key = re.sub(' ', '_', s.budget_type.lower())
-
-                print category_key
 
                 if s.budget_type.lower() != 'income':
                     spending[key][category_key] = s.amount * -1

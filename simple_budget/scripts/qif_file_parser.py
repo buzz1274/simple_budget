@@ -154,7 +154,8 @@ class Quicken(object):
                         negate_amount = True
 
                     if (transaction['reference'].lower() == 'sipp contribution claim' or
-                        transaction['reference'] == 'emp_pen'):
+                        transaction['reference'] == 'emp_pen' or
+                        transaction['reference'] == 'shares_in'):
                         if transaction['reference'] == 'emp_pen':
                             self.add_transaction_to_holding_account(transaction,
                                                                     account_id,
@@ -166,6 +167,12 @@ class Quicken(object):
                                                                     account_id,
                                                                     'Sipp Contribution Rebate',
                                                                     'Pension')
+
+                        if transaction['reference'].lower() == 'shares_in':
+                            self.add_transaction_to_holding_account(transaction,
+                                                                    account_id,
+                                                                    'Employee Shares',
+                                                                    'Employment')
 
                         transaction['split'].append({'category': 'Holding',
                                                      'sub_category': None,

@@ -15,7 +15,10 @@ def in_the_future(date):
 
 @register.filter(name='currency')
 def currency(value):
-    return "{:,.2f}".format(value)
+    if value:
+        return "{:,.2f}".format(value)
+
+    return 0.00
 
 @register.filter(name='lookup')
 def lookup(value, arg):

@@ -394,8 +394,6 @@ class Budget(models.Model):
         """
         clone a budget
         """
-        print data
-
         budget = Budget(budget_name=data['budget_name'],
                         budget_description=data['budget_description'])
         budget.save()
