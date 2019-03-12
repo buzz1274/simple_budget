@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models, transaction, DatabaseError
 from django.db.models import Q
+from simple_budget.settings import START_DATE
 from simple_budget.models.budget.budget_amount import BudgetAmount
 from simple_budget.models.budget.budget_category import BudgetCategory
 from simple_budget.helper.sql import SQL
@@ -61,6 +62,18 @@ class Budget(models.Model):
                  next_month_start_date.month,
                  calendar.monthrange(next_month_start_date.year,
                                      next_month_start_date.month)[1])
+
+        start_date = datetime.strptime(START_DATE, '%Y-%m-%d').date()
+
+        if annual_start_date < start_date:
+            annual_start_date = start_date
+            annual_divisor = \
+                ((annual_end_date.year - annual_start_date.year) * 12 + \
+                 annual_end_date.month - annual_start_date.month) + 1
+        else:
+            annual_divisor = 12
+
+        print(annual_divisor)
 
         sql = SQL()
         budget_amount_future =\
@@ -135,10 +148,10 @@ class Budget(models.Model):
             sql.transaction_category.c.budget_category_id.label('id'),
             case([(sql.budget_type.c.budget_type == 'Income',
                    func.ROUND(func.ABS(
-                       func.SUM(sql.transaction_line.c.amount) / 12), 2)),
+                       func.SUM(sql.transaction_line.c.amount) / annual_divisor), 2)),
                   ],
                  else_= func.ROUND(
-                    (func.SUM(sql.transaction_line.c.amount * -1) / 12), 2)).
+                    (func.SUM(sql.transaction_line.c.amount * -1) / annual_divisor), 2)).
                 label('amount')).\
             filter(sql.transaction_line.c.transaction_category_id==
                    sql.transaction_category.c.transaction_category_id). \
