@@ -63,17 +63,14 @@ class Budget(models.Model):
                  calendar.monthrange(next_month_start_date.year,
                                      next_month_start_date.month)[1])
 
-        start_date = datetime.strptime(START_DATE, '%Y-%m-%d').date()
+        quicken_start_date = datetime.strptime(START_DATE, '%Y-%m-%d').date()
 
-        if annual_start_date < start_date:
-            annual_start_date = start_date
+        if annual_start_date < quicken_start_date:
             annual_divisor = \
-                ((annual_end_date.year - annual_start_date.year) * 12 + \
-                 annual_end_date.month - annual_start_date.month) + 1
+                ((annual_end_date.year - quicken_start_date.year) * 12 + \
+                 annual_end_date.month - quicken_start_date.month) + 1
         else:
             annual_divisor = 12
-
-        print(annual_divisor)
 
         sql = SQL()
         budget_amount_future =\
@@ -163,6 +160,7 @@ class Budget(models.Model):
                    sql.budget_category.c.budget_type_id). \
             filter(sql.transaction.c.transaction_date.between(annual_start_date,
                                                               annual_end_date)). \
+            filter(sql.transaction.c.transaction_date >= quicken_start_date). \
             group_by(sql.transaction_category.c.budget_category_id,
                      sql.budget_type.c.budget_type,
                      sql.budget_category.c.budget_category).subquery()

@@ -58,7 +58,6 @@
             <th style="width:18%">Expense(£)</th>
             <th style="width:18%">Savings(£)</th>
             <th style="width:18%">Debt Repayment(£)</th>
-            <th style="width:18%">Remaining(£)</th>
         </tr>
         <tbody>
             {% for key, spending in spending_by_budget_type.items %}
@@ -90,7 +89,11 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td class="currency">
+                    <td class="currency
+                            {% if spending.savings < 0 %}
+                                warning
+                            {% else %}
+                                success{% endif %}">
                         {{spending.savings|currency}}
                         {% if not year %}
                             <span style="font-size:0.75em;">
@@ -98,23 +101,15 @@
                             </span>
                         {% endif %}
                     </td>
-                    <td class="currency">
+                    <td class="currency
+                            {% if spending.debt_repayment < 0 %}
+                                warning
+                            {% else %}
+                                success{% endif %}">
                         {{spending.debt_repayment|currency}}
                         {% if not year %}
                             <span style="font-size:0.75em;">
                                 ({{spending.debt_repayment_average|currency}})
-                            </span>
-                        {% endif %}
-                    </td>
-                    <td class="currency
-                            {% if spending.total < 0 %}
-                                warning
-                            {% else %}
-                                success{% endif %}">
-                        {{spending.total|currency}}
-                        {% if not year %}
-                            <span style="font-size:0.75em;">
-                                ({{spending.total_average|currency}})
                             </span>
                         {% endif %}
                     </td>
@@ -136,22 +131,23 @@
                             {{total_spending.expense|currency}}
                         </strong>
                     </td>
-                    <td class="currency">
+                    <td class="currency
+                            {% if total_spending.savings < 0 %}
+                                warning
+                            {% else %}
+                                success{% endif %}">
                         <strong>
                             {{total_spending.savings|currency}}
                         </strong>
                     </td>
-                    <td class="currency">
-                        <strong>
-                            {{total_spending.debt_repayment|currency}}
-                        </strong>
-                    </td>
                     <td class="currency
-                                {% if total_spending.total < 0 %}
+                                {% if total_spending.debt_repayment < 0 %}
                                     warning
                                 {% else %}
                                     success{% endif %}">
-                        {{total_spending.total|currency}}
+                        <strong>
+                            {{total_spending.debt_repayment|currency}}
+                        </strong>
                     </td>
                 </tr>
                 <tr>
@@ -178,13 +174,6 @@
                         <strong>
                             {{average_spending.debt_repayment|currency}}
                         </strong>
-                    </td>
-                    <td class="currency
-                                {% if total_spending.total < 0 %}
-                                    warning
-                                {% else %}
-                                    success{% endif %}">
-                        {{average_spending.total|currency}}
                     </td>
                 </tr>
                 <tr>

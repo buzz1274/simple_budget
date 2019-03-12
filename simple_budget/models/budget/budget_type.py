@@ -116,9 +116,10 @@ class BudgetType(models.Model):
                         spending[key][category_key] / average_divisor
 
             for key, item in spending.iteritems():
-                item['total'] = item['income'] - \
-                                item['expense'] - \
-                                item['savings'] - item['debt_repayment']
+                item['debt_repayment'] = \
+                    item['income'] - \
+                    item['expense'] - \
+                    item['savings']
 
                 if not year:
                     if date.today().year == key:
@@ -126,7 +127,7 @@ class BudgetType(models.Model):
                     else:
                         average_divisor = 12
 
-                    item['total_average'] = item['total'] / average_divisor
+                    item['debt_repayment_average'] = item['debt_repayment'] / average_divisor
 
             spending = collections.OrderedDict(sorted(spending.items(),
                                                       reverse=True))
