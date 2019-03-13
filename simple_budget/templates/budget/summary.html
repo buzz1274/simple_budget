@@ -76,7 +76,7 @@
                     <td class="currency">
                         {{spending.income|currency}}
                         {% if not year %}
-                            <span style="font-size:0.75em;">
+                            <span style="font-size:0.65em;float:left;padding-top:8px;">
                                 ({{spending.income_average|currency}})
                             </span>
                         {% endif %}
@@ -84,7 +84,7 @@
                     <td class="currency">
                         {{spending.expense|currency}}
                         {% if not year %}
-                            <span style="font-size:0.75em;">
+                            <span style="font-size:0.65em;float:left;padding-top:8px;">
                                 ({{spending.expense_average|currency}})
                             </span>
                         {% endif %}
@@ -96,7 +96,7 @@
                                 success{% endif %}">
                         {{spending.savings|currency}}
                         {% if not year %}
-                            <span style="font-size:0.75em;">
+                            <span style="font-size:0.65em;float:left;padding-top:8px;">
                                 ({{spending.savings_average|currency}})
                             </span>
                         {% endif %}
@@ -108,7 +108,7 @@
                                 success{% endif %}">
                         {{spending.debt_repayment|currency}}
                         {% if not year %}
-                            <span style="font-size:0.75em;">
+                            <span style="font-size:0.65em;float:left;padding-top:8px;">
                                 ({{spending.debt_repayment_average|currency}})
                             </span>
                         {% endif %}

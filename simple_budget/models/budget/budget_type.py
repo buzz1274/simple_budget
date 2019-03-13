@@ -110,7 +110,11 @@ class BudgetType(models.Model):
                     if date.today().year == s.date.year:
                         average_divisor = date.today().month
                     else:
-                        average_divisor = 12
+                        if simple_budget_start_date.year == s.date.year:
+                            average_divisor = \
+                                (12 - simple_budget_start_date.month) + 1
+                        else:
+                            average_divisor = 12
 
                     spending[key][category_key+'_average'] = \
                         spending[key][category_key] / average_divisor
@@ -125,7 +129,11 @@ class BudgetType(models.Model):
                     if date.today().year == key:
                         average_divisor = date.today().month
                     else:
-                        average_divisor = 12
+                        if simple_budget_start_date.year == key:
+                            average_divisor = \
+                                (12 - simple_budget_start_date.month) + 1
+                        else:
+                            average_divisor = 12
 
                     item['debt_repayment_average'] = item['debt_repayment'] / average_divisor
 
